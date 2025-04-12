@@ -63,7 +63,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Controle de Estoque</title>
+    <title>SIPROQUIM</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -214,8 +214,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <body>
     <div class="container">
         <header>
-            <h1>Sistema de Controle de Estoque</h1>
-            <p>Gerencie produtos, pessoas, movimentações e gere relatórios</p>
+            <h1>SIPROQUIM</h1>
+            <p>Gestão de produtos, usuários e movimentações</p>
         </header>
 
         <div class="menu-section">
@@ -468,7 +468,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         </div>
 
         <footer>
-            <p>Sistema de Controle de Estoque &copy; <?= date('Y') ?></p>
+            <p>SIPROQUIM &copy; <?= date('Y') ?></p>
         </footer>
     </div>
 
