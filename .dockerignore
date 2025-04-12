@@ -1,0 +1,9 @@
+.git
+.gitignore
+.dockerignore
+.env
+*.md
+postgres_data/
+terraform/
+vendor/
+node_modules/
