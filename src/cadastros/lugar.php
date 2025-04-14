@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title
-$pageTitle = $editing ? 'Editar Almoxarifado' : 'Cadastro de Almoxarifado';
+// $pageTitle = $editing ? 'Editar Almoxarifado' : 'Cadastro de Almoxarifado';
 
 // Check if editing existing record
 $editing = false;
