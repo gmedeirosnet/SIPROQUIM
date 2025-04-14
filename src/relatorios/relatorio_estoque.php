@@ -2,6 +2,9 @@
 // relatorios/relatorio_estoque.php
 require_once __DIR__ . '/../config/db.php';
 
+// Set page title for the header
+// $pageTitle = 'Relatório de Estoque';
+
 // Consulta SQL para calcular o saldo atual em estoque por produto e lugar
 $sql = "SELECT
             p.id as produto_id,
@@ -49,106 +52,28 @@ foreach ($estoques as $estoque) {
         $produtos_por_grupo[$estoque['grupo']]++;
     }
 }
+
+// Include header
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Estoque</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .summary {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-        }
-        .summary-item {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .summary-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .text-right {
-            text-align: right;
-        }
-        .low-stock {
-            background-color: #ffe6e6;
-        }
-        .links {
-            margin-top: 20px;
-        }
-        .links a {
-            display: inline-block;
-            margin-right: 10px;
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 3px;
-        }
-        .links a:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Estoque</h1>
+<div class="content">
+    <h2 class="section-title">Relatório de Estoque</h2>
 
-        <div class="summary">
-            <div class="summary-item">
-                <div>Total de Produtos</div>
-                <div class="summary-number"><?= $total_produtos ?></div>
-            </div>
-            <div class="summary-item">
-                <div>Total de Itens em Estoque</div>
-                <div class="summary-number"><?= $total_itens ?></div>
-            </div>
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <div>Total de Produtos: <strong><?= $total_produtos ?></div></strong>
         </div>
+        <div class="dashboard-card">
+            <div>Total de Itens em Estoque: <strong><?= $total_itens ?></div></strong>
+        </div>
+    </div>
 
-        <?php if (count($produtos_por_grupo) > 0): ?>
-        <h2>Produtos por Grupo</h2>
-        <table>
+    <br>
+    <?php if (count($produtos_por_grupo) > 0): ?>
+    <h3 class="mt-4">Produtos por Grupo</h3>
+    <div class="table-responsive">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Grupo</th>
@@ -164,10 +89,12 @@ foreach ($estoques as $estoque) {
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 
-        <h2>Saldo por Produto e Almoxarifado</h2>
-        <table>
+    <h3 class="mt-4">Saldo por Produto e Almoxarifado</h3>
+    <div class="table-responsive">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Produto</th>
@@ -178,7 +105,7 @@ foreach ($estoques as $estoque) {
             </thead>
             <tbody>
                 <?php foreach ($estoques as $estoque): ?>
-                <tr<?= $estoque['saldo'] < 5 ? ' class="low-stock"' : '' ?>>
+                <tr<?= $estoque['saldo'] < 5 ? ' class="table-danger"' : '' ?>>
                     <td><?= $estoque['produto'] ?></td>
                     <td><?= $estoque['grupo'] ?: 'Sem grupo' ?></td>
                     <td><?= $estoque['lugar'] ?: 'Não especificado' ?></td>
@@ -187,12 +114,13 @@ foreach ($estoques as $estoque) {
                 <?php endforeach; ?>
             </tbody>
         </table>
-
-        <div class="links">
-            <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
-            <a href="relatorio_movimentos.php" class="btn">Movimentações</a>
-            <a href="produtos_por_local.php" class="btn">Produtos por Almoxarifado</a>
-        </div>
     </div>
-</body>
-</html>
+
+    <div class="btn-group mt-4">
+        <a href="relatorio_movimentos.php" class="btn btn-outline-primary">Ver Movimentações</a>
+        <a href="produtos_por_local.php" class="btn btn-outline-primary">Produtos por Almoxarifado</a>
+        <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
+    </div>
+</div>
+
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

@@ -2,17 +2,18 @@
 // cadastros/grupo_pessoa.php
 require_once __DIR__ . '/../config/db.php';
 
-// Check if editing existing record
-$editing = false;
-$grupo = null;
+// Set page title for the header
+$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Grupo de Pessoas' : 'Cadastrar Grupo de Pessoas';
 
-if (isset($_GET['id'])) {
+// Check if editing existing record
+$grupo = null;
+if ($editing) {
     $stmt = $pdo->prepare("SELECT * FROM grupos_pessoas WHERE id = :id");
     $stmt->execute(['id' => $_GET['id']]);
     $grupo = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($grupo) {
-        $editing = true;
+    if (!$grupo) {
+        $editing = false;
     }
 }
 
@@ -72,133 +73,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+
+// Include the header
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $editing ? 'Editar' : 'Cadastro de' ?> Grupo de Pessoas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            margin-top: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        textarea {
-            height: 100px;
-            resize: vertical;
-        }
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            margin-top: 10px;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .btn {
-            display: inline-block;
-            padding: 8px 12px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .message {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1><?= $editing ? 'Editar' : 'Cadastro de' ?> Grupo de Pessoas</h1>
+<div class="content">
+    <h2 class="section-title"><?= $editing ? 'Editar' : 'Cadastro de' ?> Grupo de Pessoas</h2>
 
-        <?php if (isset($message)): ?>
-            <div class="message <?= $messageType ?>">
-                <?= $message ?>
-            </div>
-        <?php endif; ?>
+    <?php if (isset($message)): ?>
+        <div class="alert <?= $messageType === 'success' ? 'alert-success' : 'alert-danger' ?>">
+            <?= $message ?>
+        </div>
+    <?php endif; ?>
 
-        <?php if (isset($error)): ?>
-            <div class="message error">
-                <?= $error ?>
-            </div>
-        <?php endif; ?>
+    <?php if (isset($error)): ?>
+        <div class="alert alert-danger">
+            <?= $error ?>
+        </div>
+    <?php endif; ?>
 
-        <form method="post">
-            <div class="form-group">
-                <label for="nome">Nome:</label>
-                <input type="text" name="nome" id="nome" required
-                       value="<?= isset($nome) ? htmlspecialchars($nome) : ($editing ? htmlspecialchars($grupo['nome']) : '') ?>">
-            </div>
+    <form method="post" class="form">
+        <div class="form-group">
+            <label for="nome" class="form-label">Nome: <span class="text-danger">*</span></label>
+            <input type="text" name="nome" id="nome" class="form-control" required
+                   value="<?= isset($nome) ? htmlspecialchars($nome) : ($editing ? htmlspecialchars($grupo['nome']) : '') ?>">
+        </div>
 
-            <div class="form-group">
-                <label for="descricao">Descrição:</label>
-                <textarea name="descricao" id="descricao"><?= isset($descricao) ? htmlspecialchars($descricao) : ($editing ? htmlspecialchars($grupo['descricao'] ?? '') : '') ?></textarea>
-            </div>
+        <div class="form-group">
+            <label for="descricao" class="form-label">Descrição:</label>
+            <textarea name="descricao" id="descricao" class="form-control"><?= isset($descricao) ? htmlspecialchars($descricao) : ($editing ? htmlspecialchars($grupo['descricao'] ?? '') : '') ?></textarea>
+        </div>
 
-            <div class="buttons">
-                <input type="submit" value="<?= $editing ? 'Atualizar' : 'Cadastrar' ?>" class="btn-primary">
+        <div class="btn-group mt-4">
+            <button type="submit" class="btn btn-primary"><?= $editing ? 'Atualizar' : 'Cadastrar' ?></button>
 
-                <?php if ($editing): ?>
-                    <a href="list_grupos_pessoas.php" class="btn">Cancelar</a>
-                <?php else: ?>
-                    <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
-                    <a href="list_grupos_pessoas.php" class="btn-link">Ver Todos os Grupos</a>
-                <?php endif; ?>
-            </div>
-        </form>
-    </div>
-</body>
-</html>
+            <?php if ($editing): ?>
+                <a href="list_grupos_pessoas.php" class="btn btn-secondary">Cancelar</a>
+            <?php else: ?>
+                <a href="list_grupos_pessoas.php" class="btn btn-outline-primary">Ver Todos os Grupos</a>
+                <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
+            <?php endif; ?>
+        </div>
+    </form>
+</div>
+
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

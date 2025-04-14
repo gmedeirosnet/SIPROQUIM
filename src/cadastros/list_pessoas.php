@@ -2,6 +2,9 @@
 // cadastros/list_pessoas.php
 require_once __DIR__ . '/../config/db.php';
 
+// Set page title for the header
+$pageTitle = 'Lista de Pessoas';
+
 // Pagination setup
 $per_page = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -22,8 +25,15 @@ if (!empty($search)) {
     $params[':search'] = "%{$search}%";
 }
 
+// Filter by group if specified
+$filter_grupo = isset($_GET['grupo']) ? (int)$_GET['grupo'] : 0;
+if ($filter_grupo > 0) {
+    $where_clause = !empty($where_clause) ? $where_clause . " AND p.id_grupo_pessoa = :grupo" : "WHERE p.id_grupo_pessoa = :grupo";
+    $params[':grupo'] = $filter_grupo;
+}
+
 // Get persons with pagination and search
-$sql = "SELECT p.id, p.nome, p.email, p.data_cadastro, gp.nome AS grupo_nome
+$sql = "SELECT p.id, p.nome, p.email, p.data_cadastro, gp.nome AS grupo_nome, gp.id AS grupo_id
         FROM pessoas p
         LEFT JOIN grupos_pessoas gp ON p.id_grupo_pessoa = gp.id
         {$where_clause}
@@ -53,163 +63,47 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
         $error = "Não foi possível excluir esta pessoa. Ela pode estar vinculada a registros de movimentação.";
     }
 }
+
+// Include header
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Pessoas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .message {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #e9f3ff;
-        }
-        .actions {
-            display: flex;
-            gap: 5px;
-        }
-        .btn {
-            padding: 8px 12px;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .pagination a, .pagination span {
-            padding: 8px 16px;
-            margin: 0 5px;
-            border: 1px solid #ddd;
-            text-decoration: none;
-            color: #007bff;
-        }
-        .pagination a:hover {
-            background-color: #007bff;
-            color: white;
-        }
-        .pagination .active {
-            background-color: #007bff;
-            color: white;
-        }
-        .pagination .disabled {
-            color: #6c757d;
-            pointer-events: none;
-        }
-        .search-form {
-            margin-bottom: 20px;
-            display: flex;
-        }
-        .search-form input[type="text"] {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px 0 0 4px;
-        }
-        .search-form button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-        }
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Lista de Pessoas</h1>
+<div class="content">
+    <?php if (isset($_GET['deleted'])): ?>
+        <div class="alert alert-success">Pessoa excluída com sucesso!</div>
+    <?php endif; ?>
 
-        <?php if (isset($_GET['deleted'])): ?>
-            <div class="message success">Pessoa excluída com sucesso!</div>
-        <?php endif; ?>
+    <?php if (isset($error)): ?>
+        <div class="alert alert-danger"><?= $error ?></div>
+    <?php endif; ?>
 
-        <?php if (isset($error)): ?>
-            <div class="message error"><?= $error ?></div>
-        <?php endif; ?>
-
-        <div class="header-actions">
+    <div class="header-actions">
+        <div>
+            <h2>Lista de Pessoas</h2>
             <a href="pessoa.php" class="btn btn-primary">Cadastrar Nova Pessoa</a>
-
-            <form class="search-form" method="get">
-                <input type="text" name="search" placeholder="Buscar por nome ou email" value="<?= htmlspecialchars($search) ?>">
-                <button type="submit">Buscar</button>
-            </form>
         </div>
 
-        <?php if (count($pessoas) > 0): ?>
-            <table>
+        <form class="search-form" method="get">
+            <div class="form-row">
+                <div class="form-col">
+                    <input type="text" name="search" placeholder="Buscar por nome ou email" class="form-control" value="<?= htmlspecialchars($search) ?>">
+                    <?php if ($filter_grupo > 0): ?>
+                        <input type="hidden" name="grupo" value="<?= $filter_grupo ?>">
+                    <?php endif; ?>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <?php if (!empty($search) || $filter_grupo > 0): ?>
+                        <a href="list_pessoas.php" class="btn btn-outline-secondary">Limpar</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <?php if (count($pessoas) > 0): ?>
+        <div class="table-container">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -225,54 +119,67 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
                             <td><?= $pessoa['id'] ?></td>
                             <td><?= htmlspecialchars($pessoa['nome']) ?></td>
                             <td><?= htmlspecialchars($pessoa['email'] ?? '-') ?></td>
-                            <td><?= htmlspecialchars($pessoa['grupo_nome'] ?? 'Não atribuído') ?></td>
+                            <td>
+                                <?php if (!empty($pessoa['grupo_nome'])): ?>
+                                    <a href="list_pessoas.php?grupo=<?= $pessoa['grupo_id'] ?>"><?= htmlspecialchars($pessoa['grupo_nome']) ?></a>
+                                <?php else: ?>
+                                    <span class="text-muted">Não atribuído</span>
+                                <?php endif; ?>
+                            </td>
                             <td class="actions">
-                                <a href="pessoa.php?id=<?= $pessoa['id'] ?>" class="btn btn-warning">Editar</a>
+                                <a href="pessoa.php?id=<?= $pessoa['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
                                 <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta pessoa?');" style="display: inline;">
                                     <input type="hidden" name="id" value="<?= $pessoa['id'] ?>">
-                                    <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
+                                    <button type="submit" name="delete" class="btn btn-sm btn-danger">Excluir</button>
                                 </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
+        </div>
 
-            <?php if ($total_pages > 1): ?>
-                <div class="pagination">
-                    <?php if ($page > 1): ?>
-                        <a href="?page=1<?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Primeira</a>
-                        <a href="?page=<?= ($page - 1) . (!empty($search) ? '&search=' . urlencode($search) : '') ?>">Anterior</a>
+        <?php if ($total_pages > 1): ?>
+            <ul class="pagination">
+                <?php if ($page > 1): ?>
+                    <li><a href="?page=1<?= !empty($search) ? '&search=' . urlencode($search) : '' ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?>">Primeira</a></li>
+                    <li><a href="?page=<?= ($page - 1) ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?>">Anterior</a></li>
+                <?php else: ?>
+                    <li class="disabled"><span>Primeira</span></li>
+                    <li class="disabled"><span>Anterior</span></li>
+                <?php endif; ?>
+
+                <?php
+                $start_page = max(1, $page - 2);
+                $end_page = min($start_page + 4, $total_pages);
+                for ($i = $start_page; $i <= $end_page; $i++): ?>
+                    <?php if ($i == $page): ?>
+                        <li class="active"><span><?= $i ?></span></li>
                     <?php else: ?>
-                        <span class="disabled">Primeira</span>
-                        <span class="disabled">Anterior</span>
+                        <li><a href="?page=<?= $i ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?>"><?= $i ?></a></li>
                     <?php endif; ?>
+                <?php endfor; ?>
 
-                    <?php
-                    $start_page = max(1, $page - 2);
-                    $end_page = min($start_page + 4, $total_pages);
-                    for ($i = $start_page; $i <= $end_page; $i++): ?>
-                        <?php if ($i == $page): ?>
-                            <span class="active"><?= $i ?></span>
-                        <?php else: ?>
-                            <a href="?page=<?= $i . (!empty($search) ? '&search=' . urlencode($search) : '') ?>"><?= $i ?></a>
-                        <?php endif; ?>
-                    <?php endfor; ?>
-
-                    <?php if ($page < $total_pages): ?>
-                        <a href="?page=<?= ($page + 1) . (!empty($search) ? '&search=' . urlencode($search) : '') ?>">Próxima</a>
-                        <a href="?page=<?= $total_pages . (!empty($search) ? '&search=' . urlencode($search) : '') ?>">Última</a>
-                    <?php else: ?>
-                        <span class="disabled">Próxima</span>
-                        <span class="disabled">Última</span>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-        <?php else: ?>
-            <p>Nenhuma pessoa encontrada.</p>
+                <?php if ($page < $total_pages): ?>
+                    <li><a href="?page=<?= ($page + 1) ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?>">Próxima</a></li>
+                    <li><a href="?page=<?= $total_pages ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?>">Última</a></li>
+                <?php else: ?>
+                    <li class="disabled"><span>Próxima</span></li>
+                    <li class="disabled"><span>Última</span></li>
+                <?php endif; ?>
+            </ul>
         <?php endif; ?>
+    <?php else: ?>
+        <div class="alert alert-info">
+            <?php if (!empty($search) || $filter_grupo > 0): ?>
+                Nenhuma pessoa encontrada com os filtros selecionados.
+                <p><a href="list_pessoas.php" class="btn btn-outline-primary mt-2">Limpar filtros</a></p>
+            <?php else: ?>
+                Nenhuma pessoa cadastrada.
+                <p><a href="pessoa.php" class="btn btn-primary mt-2">Cadastrar Pessoa</a></p>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+</div>
 
-        <p><a href="../index.php" class="btn">Voltar para a Página Inicial</a></p>
-    </div>
-</body>
-</html>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

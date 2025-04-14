@@ -2,6 +2,9 @@
 // relatorios/movimentacao_produtos.php
 require_once __DIR__ . '/../config/db.php';
 
+// Set page title for the header
+$pageTitle = 'Movimentação de Produtos';
+
 // Initialize variables
 $selected_product = null;
 $movimentos = [];
@@ -76,183 +79,26 @@ if (empty($produtos) && empty($selected_product)) {
     $stmt = $pdo->query("SELECT id, nome FROM produtos ORDER BY nome LIMIT 100");
     $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Include header
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .product-search {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .product-search form {
-            display: flex;
-            gap: 10px;
-        }
-        .product-search input[type="text"] {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .product-search button {
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .product-search button:hover {
-            background-color: #0056b3;
-        }
-        .product-list {
-            margin-top: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-        }
-        .product-list table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .product-list th, .product-list td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        .product-list th {
-            background-color: #f2f2f2;
-        }
-        .product-list tr:hover {
-            background-color: #f5f5f5;
-        }
-        .product-list a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .product-list a:hover {
-            text-decoration: underline;
-        }
-        .product-details {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #f0f7ff;
-            border-radius: 5px;
-            border-left: 4px solid #007bff;
-        }
-        .product-details h2 {
-            margin-top: 0;
-            color: #007bff;
-        }
-        .product-details p {
-            margin: 5px 0;
-        }
-        .summary {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-        }
-        .summary-item {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .summary-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-        }
-        .entrada {
-            color: #28a745;
-        }
-        .saida {
-            color: #dc3545;
-        }
-        .saldo {
-            color: <?php echo $saldo_atual >= 0 ? '#28a745' : '#dc3545'; ?>;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .text-right {
-            text-align: right;
-        }
-        .links {
-            margin-top: 20px;
-        }
-        .links a {
-            display: inline-block;
-            margin-right: 10px;
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 3px;
-        }
-        .links a:hover {
-            background-color: #0056b3;
-        }
-        .no-data {
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            text-align: center;
-            color: #6c757d;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Produtos</h1>
+<div class="content">
+    <h2 class="section-title">Movimentação de Produtos</h2>
 
-        <div class="product-search">
-            <form method="get" action="">
-                <input type="text" name="search" placeholder="Buscar produto por nome..." value="<?= htmlspecialchars($search_term) ?>">
-                <button type="submit">Buscar</button>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="" class="mb-0">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar produto por nome..." value="<?= htmlspecialchars($search_term) ?>">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
             </form>
 
             <?php if (!empty($produtos) && empty($selected_product)): ?>
-                <div class="product-list">
-                    <table>
+                <div class="table-responsive mt-3">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>Produto</th>
@@ -276,7 +122,7 @@ if (empty($produtos) && empty($selected_product)) {
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <a href="?produto_id=<?= $produto['id'] ?>&search=<?= urlencode($search_term) ?>">
+                                    <a href="?produto_id=<?= $produto['id'] ?>&search=<?= urlencode($search_term) ?>" class="btn btn-sm btn-primary">
                                         Selecionar
                                     </a>
                                 </td>
@@ -287,47 +133,61 @@ if (empty($produtos) && empty($selected_product)) {
                 </div>
             <?php endif; ?>
         </div>
+    </div>
 
-        <?php if ($selected_product): ?>
-            <div class="product-details">
-                <h2><?= htmlspecialchars($selected_product['nome']) ?></h2>
-                <p><strong>Grupo:</strong> <?= htmlspecialchars($selected_product['grupo'] ?? 'Sem grupo') ?></p>
-                <p><strong>Fabricante:</strong> <?= htmlspecialchars($selected_product['fabricante'] ?? 'Não especificado') ?></p>
-                <?php if (!empty($selected_product['tipo']) || !empty($selected_product['volume'])): ?>
-                    <p>
-                        <strong>Detalhes:</strong>
-                        <?= htmlspecialchars($selected_product['tipo'] ?? '') ?>
-                        <?php if (!empty($selected_product['volume'])): ?>
-                            <?= htmlspecialchars($selected_product['volume']) ?>
-                            <?= htmlspecialchars($selected_product['unidade_medida'] ?? '') ?>
+    <?php if ($selected_product): ?>
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="h5 mb-0"><?= htmlspecialchars($selected_product['nome']) ?></h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>Grupo:</strong> <?= htmlspecialchars($selected_product['grupo'] ?? 'Sem grupo') ?></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Fabricante:</strong> <?= htmlspecialchars($selected_product['fabricante'] ?? 'Não especificado') ?></p>
+                    </div>
+                    <div class="col-md-4">
+                        <?php if (!empty($selected_product['tipo']) || !empty($selected_product['volume'])): ?>
+                            <p>
+                                <strong>Detalhes:</strong>
+                                <?= htmlspecialchars($selected_product['tipo'] ?? '') ?>
+                                <?php if (!empty($selected_product['volume'])): ?>
+                                    <?= htmlspecialchars($selected_product['volume']) ?>
+                                    <?= htmlspecialchars($selected_product['unidade_medida'] ?? '') ?>
+                                <?php endif; ?>
+                            </p>
                         <?php endif; ?>
-                    </p>
-                <?php endif; ?>
-                <p><a href="?search=<?= urlencode($search_term) ?>">« Selecionar outro produto</a></p>
+                    </div>
+                </div>
+                <p><a href="?search=<?= urlencode($search_term) ?>" class="btn btn-sm btn-outline-primary">« Selecionar outro produto</a></p>
             </div>
+        </div>
 
-            <div class="summary">
-                <div class="summary-item">
-                    <div>Total de Movimentações</div>
-                    <div class="summary-number"><?= $total_movements ?></div>
-                </div>
-                <div class="summary-item">
-                    <div>Total de Entradas</div>
-                    <div class="summary-number entrada"><?= $total_entrada ?></div>
-                </div>
-                <div class="summary-item">
-                    <div>Total de Saídas</div>
-                    <div class="summary-number saida"><?= $total_saida ?></div>
-                </div>
-                <div class="summary-item">
-                    <div>Saldo Atual</div>
-                    <div class="summary-number saldo"><?= $saldo_atual ?></div>
-                </div>
+        <div class="dashboard-cards">
+            <div class="dashboard-card">
+                <div>Total de Movimentações</div>
+                <div class="dashboard-number"><?= $total_movements ?></div>
             </div>
+            <div class="dashboard-card">
+                <div>Total de Entradas</div>
+                <div class="dashboard-number text-success"><?= $total_entrada ?></div>
+            </div>
+            <div class="dashboard-card">
+                <div>Total de Saídas</div>
+                <div class="dashboard-number text-danger"><?= $total_saida ?></div>
+            </div>
+            <div class="dashboard-card">
+                <div>Saldo Atual</div>
+                <div class="dashboard-number <?= $saldo_atual >= 0 ? 'text-success' : 'text-danger' ?>"><?= $saldo_atual ?></div>
+            </div>
+        </div>
 
-            <?php if (!empty($movimentos)): ?>
-                <h2>Movimentações do Produto</h2>
-                <table>
+        <?php if (!empty($movimentos)): ?>
+            <h3 class="mt-4">Movimentações do Produto</h3>
+            <div class="table-responsive">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Data</th>
@@ -344,9 +204,9 @@ if (empty($produtos) && empty($selected_product)) {
                                 <td><?= date('d/m/Y H:i', strtotime($movimento['data_movimento'])) ?></td>
                                 <td>
                                     <?php if ($movimento['tipo'] == 'entrada'): ?>
-                                        <span class="entrada"><strong>Entrada</strong></span>
+                                        <span class="text-success"><strong>Entrada</strong></span>
                                     <?php else: ?>
-                                        <span class="saida"><strong>Saída</strong></span>
+                                        <span class="text-danger"><strong>Saída</strong></span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-right"><?= $movimento['quantidade'] ?></td>
@@ -357,23 +217,24 @@ if (empty($produtos) && empty($selected_product)) {
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-            <?php else: ?>
-                <div class="no-data">
-                    <p>Não há movimentações registradas para este produto.</p>
-                </div>
-            <?php endif; ?>
-        <?php elseif (isset($_GET['produto_id'])): ?>
-            <div class="no-data">
-                <p>Produto não encontrado.</p>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-info mt-4">
+                <p>Não há movimentações registradas para este produto.</p>
             </div>
         <?php endif; ?>
-
-        <div class="links">
-            <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
-            <a href="relatorio_estoque.php" class="btn">Estoque</a>
-            <a href="relatorio_movimentos.php" class="btn">Movimentações</a>
-            <a href="produtos_por_local.php" class="btn">Produtos por Almoxarifado</a>
+    <?php elseif (isset($_GET['produto_id'])): ?>
+        <div class="alert alert-danger mt-4">
+            <p>Produto não encontrado.</p>
         </div>
+    <?php endif; ?>
+
+    <div class="btn-group mt-4">
+        <a href="relatorio_estoque.php" class="btn btn-outline-primary">Ver Estoque</a>
+        <a href="relatorio_movimentos.php" class="btn btn-outline-primary">Ver Movimentações</a>
+        <a href="produtos_por_local.php" class="btn btn-outline-primary">Produtos por Almoxarifado</a>
+        <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
     </div>
-</body>
-</html>
+</div>
+
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
