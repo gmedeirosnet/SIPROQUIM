@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title for the header
-$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Grupo de Pessoas' : 'Cadastrar Grupo de Pessoas';
+$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Grupo de Pessoas' : '';
 
 // Check if editing existing record
 $grupo = null;
