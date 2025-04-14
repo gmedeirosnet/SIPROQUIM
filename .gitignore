@@ -56,3 +56,6 @@ temp/
 # Database dumps and backups
 *.dump
 *.backup
+
+# Remove the Private Key from the Public Repository
+scripts/siproquim
