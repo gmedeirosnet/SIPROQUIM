@@ -381,7 +381,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                 <!-- Lugares -->
                 <div class="record-card">
-                    <h3>Lugares</h3>
+                    <h3>Almoxarifado</h3>
                     <?php if (!empty($lugares)): ?>
                         <table>
                             <thead>
@@ -400,7 +400,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             </tbody>
                         </table>
                     <?php else: ?>
-                        <p>Nenhum lugar cadastrado</p>
+                        <p>Nenhum Almoxarifado cadastrado</p>
                     <?php endif; ?>
                     <a href="cadastros/list_lugares.php" class="see-all">Ver todos</a>
                 </div>
