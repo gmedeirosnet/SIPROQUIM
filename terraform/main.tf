@@ -90,10 +90,24 @@ resource "aws_instance" "siproquim_server" {
     destination = "/tmp/clone_github_repo.sh"
   }
 
+  provisioner "file" {
+    source      = "scripts/docker.sh"
+    destination = "/tmp/docker.sh"
+  }
+
+  provisioner "file" {
+    source      = "scripts/psql_client.sh"
+    destination = "/tmp/psql_client.sh"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/clone_github_repo.sh",
-      "/tmp/clone_github_repo.sh"
+      "chmod +x /tmp/docker.sh",
+      "chmod +x /tmp/psql_client.sh",
+      "/tmp/clone_github_repo.sh",
+      "/tmp/docker.sh",
+      "/tmp/psql_client.sh"
     ]
   }
 
