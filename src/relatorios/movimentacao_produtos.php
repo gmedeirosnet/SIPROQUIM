@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title for the header
-$pageTitle = 'Movimentação de Produtos';
+// $pageTitle = 'Movimentação de Produtos';
 
 // Initialize variables
 $selected_product = null;
@@ -96,6 +96,7 @@ include_once __DIR__ . '/../includes/header.php';
                 </div>
             </form>
 
+            <br>
             <?php if (!empty($produtos) && empty($selected_product)): ?>
                 <div class="table-responsive mt-3">
                     <table class="table table-hover">

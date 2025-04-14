@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title for the header
-$pageTitle = 'Produtos Disponíveis por Almoxarifado';
+// $pageTitle = 'Produtos Disponíveis por Almoxarifado';
 
 // Get inventory by location
 $stmt = $pdo->query("
@@ -59,19 +59,17 @@ include_once __DIR__ . '/../includes/header.php';
 
     <div class="dashboard-cards">
         <div class="dashboard-card">
-            <div>Total de Locais</div>
-            <div class="dashboard-number"><?= $total_lugares ?></div>
+            <div>Total de Locais: <strong><?= $total_lugares ?></div></strong>
         </div>
         <div class="dashboard-card">
-            <div>Total de Produtos</div>
-            <div class="dashboard-number"><?= $total_produtos ?></div>
+            <div>Total de Produtos: <strong><?= $total_produtos ?></div></strong>
         </div>
         <div class="dashboard-card">
-            <div>Total de Itens em Estoque</div>
-            <div class="dashboard-number"><?= $total_itens ?></div>
+            <div>Total de Itens em Estoque: <strong><?= $total_itens ?></div></strong>
         </div>
     </div>
 
+    <br></br>
     <?php if (!empty($produtos_por_lugar)): ?>
         <div class="accordion mt-4">
             <?php foreach ($produtos_por_lugar as $lugar): ?>
