@@ -189,7 +189,7 @@ foreach ($estoques as $estoque) {
 
         <div class="links">
             <a href="../../../index.php">Voltar para a Página Inicial</a>
-            <a href="relatorio_movimentos.php">Ver Relatório de Movimentações</a>
+            <a href="relatorio_movimentos.php">Movimentações</a>
         </div>
     </div>
 </body>

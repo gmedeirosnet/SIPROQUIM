@@ -83,7 +83,7 @@ if (empty($produtos) && empty($selected_product)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movimentação de Produtos</title>
+    <title>Produtos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -242,7 +242,7 @@ if (empty($produtos) && empty($selected_product)) {
 </head>
 <body>
     <div class="container">
-        <h1>Movimentação de Produtos</h1>
+        <h1>Produtos</h1>
 
         <div class="product-search">
             <form method="get" action="">
@@ -370,9 +370,9 @@ if (empty($produtos) && empty($selected_product)) {
 
         <div class="links">
             <a href="../index.php">Voltar para a Página Inicial</a>
-            <a href="relatorio_estoque.php">Ver Relatório de Estoque</a>
-            <a href="relatorio_movimentos.php">Ver Relatório de Movimentações</a>
-            <a href="produtos_por_local.php">Ver Produtos por Local</a>
+            <a href="relatorio_estoque.php">Estoque</a>
+            <a href="relatorio_movimentos.php">Movimentações</a>
+            <a href="produtos_por_local.php">Produtos por Almoxarifado</a>
         </div>
     </div>
 </body>

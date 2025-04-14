@@ -55,7 +55,7 @@ foreach ($estoques as $estoque) {
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Relatório de Estoque</title>
+    <title>Estoque</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -133,7 +133,7 @@ foreach ($estoques as $estoque) {
 </head>
 <body>
     <div class="container">
-        <h1>Relatório de Estoque</h1>
+        <h1>Estoque</h1>
 
         <div class="summary">
             <div class="summary-item">
@@ -166,13 +166,13 @@ foreach ($estoques as $estoque) {
         </table>
         <?php endif; ?>
 
-        <h2>Saldo por Produto e Local</h2>
+        <h2>Saldo por Produto e Almoxarifado</h2>
         <table>
             <thead>
                 <tr>
                     <th>Produto</th>
                     <th>Grupo</th>
-                    <th>Local</th>
+                    <th>Almoxarifado</th>
                     <th class="text-right">Saldo</th>
                 </tr>
             </thead>
@@ -190,7 +190,7 @@ foreach ($estoques as $estoque) {
 
         <div class="links">
             <a href="../index.php">Voltar para a Página Inicial</a>
-            <a href="relatorio_movimentos.php">Ver Relatório de Movimentações</a>
+            <a href="relatorio_movimentos.php">Movimentações</a>
         </div>
     </div>
 </body>

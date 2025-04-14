@@ -53,7 +53,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos Disponíveis por Local</title>
+    <title>Produtos Disponíveis por Almoxarifado</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -164,7 +164,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 </head>
 <body>
     <div class="container">
-        <h1>Produtos Disponíveis por Local</h1>
+        <h1>Produtos Disponíveis por Almoxarifado</h1>
 
         <div class="summary">
             <div class="summary-item">
@@ -222,8 +222,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
         <div class="links">
             <a href="../index.php">Voltar para a Página Inicial</a>
-            <a href="relatorio_estoque.php">Ver Relatório de Estoque</a>
-            <a href="relatorio_movimentos.php">Ver Relatório de Movimentações</a>
+            <a href="relatorio_estoque.php">Estoque</a>
+            <a href="relatorio_movimentos.php">Movimentações</a>
         </div>
     </div>
 

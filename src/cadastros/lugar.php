@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $editing ? 'Editar' : 'Cadastro de' ?> Lugar de Estoque</title>
+    <title><?= $editing ? 'Editar' : 'Cadastro de' ?> Lugar de Almoxarifado</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="container">
-        <h1><?= $editing ? 'Editar' : 'Cadastro de' ?> Lugar de Estoque</h1>
+        <h1><?= $editing ? 'Editar' : 'Cadastro de' ?> Almoxarifado</h1>
 
         <?php if (isset($message)): ?>
             <div class="message <?= $messageType ?>">
@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <form method="post">
             <div class="form-group">
-                <label for="nome">Nome do Lugar: <span style="color: red;">*</span></label>
+                <label for="nome">Nome do Almoxarifado: <span style="color: red;">*</span></label>
                 <input type="text" name="nome" id="nome" required
                        value="<?= $editing ? htmlspecialchars($lugar['nome']) : (isset($nome) ? htmlspecialchars($nome) : '') ?>">
             </div>
@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php if ($editing): ?>
                 <a href="list_lugares.php">Cancelar</a>
             <?php else: ?>
-                <a href="list_lugares.php">Ver Lista de Lugares</a> |
+                <a href="list_lugares.php">Ver Lista de Almoxarifados</a> |
                 <a href="../index.php">Voltar para a Página Inicial</a>
             <?php endif; ?>
         </div>

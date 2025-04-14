@@ -339,8 +339,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
 
         <div class="buttons" style="margin-top: 30px;">
-            <a href="../relatorios/relatorio_movimentos.php" class="btn">Ver Relatório de Movimentações</a>
-            <a href="../relatorios/relatorio_estoque.php" class="btn">Ver Relatório de Estoque</a>
+            <a href="../relatorios/relatorio_movimentos.php" class="btn">Movimentações</a>
+            <a href="../relatorios/relatorio_estoque.php" class="btn">Estoque</a>
         </div>
     </div>
 

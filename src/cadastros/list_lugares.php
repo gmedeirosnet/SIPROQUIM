@@ -64,7 +64,7 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Lugares de Estoque</title>
+    <title>Lista de Almoxarifados</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -193,7 +193,7 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
 </head>
 <body>
     <div class="container">
-        <h1>Lista de Lugares de Estoque</h1>
+        <h1>Lista de Almoxarifados</h1>
 
         <?php if (isset($_GET['deleted'])): ?>
             <div class="message success">Lugar excluído com sucesso!</div>
@@ -204,7 +204,7 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
         <?php endif; ?>
 
         <div class="header-actions">
-            <a href="lugar.php" class="btn btn-primary">Cadastrar Novo Lugar</a>
+            <a href="lugar.php" class="btn btn-primary">Cadastrar Novo Almoxarifado</a>
 
             <form class="search-form" method="get">
                 <input type="text" name="search" placeholder="Buscar por nome ou descrição" value="<?= htmlspecialchars($search) ?>">

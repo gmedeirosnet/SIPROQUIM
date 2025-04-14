@@ -192,7 +192,7 @@ foreach ($movimentos as $mov) {
 
         <div class="links">
             <a href="../index.php">Voltar para a Página Inicial</a>
-            <a href="relatorio_estoque.php">Ver Relatório de Estoque</a>
+            <a href="relatorio_estoque.php">Estoque</a>
         </div>
     </div>
 </body>

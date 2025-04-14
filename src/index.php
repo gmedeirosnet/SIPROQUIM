@@ -222,22 +222,22 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             <h2>Cadastros</h2>
             <div class="menu-grid">
                 <div class="menu-item">
-                    <a href="cadastros/pessoa.php">Cadastro de Pessoas</a>
+                    <a href="cadastros/lugar.php">Almoxarifado</a>
                 </div>
                 <div class="menu-item">
-                    <a href="cadastros/grupo_pessoa.php">Cadastro de Grupos de Pessoas</a>
+                    <a href="cadastros/fabricante.php">Fabricantes</a>
                 </div>
                 <div class="menu-item">
-                    <a href="cadastros/grupo.php">Cadastro de Grupos de Produtos</a>
+                    <a href="cadastros/pessoa.php">Pessoas</a>
                 </div>
                 <div class="menu-item">
-                    <a href="cadastros/produto.php">Cadastro de Produtos</a>
+                    <a href="cadastros/produto.php">Produtos</a>
                 </div>
                 <div class="menu-item">
-                    <a href="cadastros/fabricante.php">Cadastro de Fabricantes</a>
+                    <a href="cadastros/grupo.php">Grupos de Produtos</a>
                 </div>
                 <div class="menu-item">
-                    <a href="cadastros/lugar.php">Cadastro de Lugares</a>
+                    <a href="cadastros/grupo_pessoa.php">Grupos de Pessoas</a>
                 </div>
             </div>
         </div>
@@ -254,17 +254,17 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div class="menu-section">
             <h2>Relatórios</h2>
             <div class="menu-grid">
-                <div class="menu-item">
-                    <a href="relatorios/relatorio_movimentos.php">Relatório de Movimentações</a>
+            <div class="menu-item">
+                    <a href="relatorios/produtos_por_local.php">Almoxarifados</a>
+                </div>
+            <div class="menu-item">
+                    <a href="relatorios/relatorio_estoque.php">Estoque</a>
                 </div>
                 <div class="menu-item">
-                    <a href="relatorios/relatorio_estoque.php">Relatório de Estoque</a>
+                    <a href="relatorios/movimentacao_produtos.php">Produtos</a>
                 </div>
                 <div class="menu-item">
-                    <a href="relatorios/produtos_por_local.php">Produtos Disponíveis por Local</a>
-                </div>
-                <div class="menu-item">
-                    <a href="relatorios/movimentacao_produtos.php">Movimentação de Produtos</a>
+                    <a href="relatorios/relatorio_movimentos.php">Movimentações</a>
                 </div>
             </div>
         </div>
