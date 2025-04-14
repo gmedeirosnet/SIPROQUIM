@@ -2,8 +2,8 @@
 // cadastros/movimento.php
 require_once __DIR__ . '/../config/db.php';
 
-// Set page title
-$pageTitle = 'Movimentação de Produtos';
+// // Set page title
+// $pageTitle = 'Movimentação de Produtos';
 
 // Buscar produtos, pessoas e lugares para preencher os selects
 $produtos = $pdo->query("SELECT id, nome FROM produtos ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
@@ -212,10 +212,14 @@ include_once __DIR__ . '/../includes/header.php';
         // Update visual selection
         if (tipo === 'entrada') {
             document.querySelector('.tipo-card.entrada').classList.add('selected');
+            document.querySelector('.tipo-card.entrada').style.backgroundColor = '#4CAF50'; // Green
             document.querySelector('.tipo-card.saida').classList.remove('selected');
+            document.querySelector('.tipo-card.saida').style.backgroundColor = '#f5f5f5'; // Reset to grey
         } else {
             document.querySelector('.tipo-card.entrada').classList.remove('selected');
+            document.querySelector('.tipo-card.entrada').style.backgroundColor = '#f5f5f5'; // Reset to grey
             document.querySelector('.tipo-card.saida').classList.add('selected');
+            document.querySelector('.tipo-card.saida').style.backgroundColor = '#f44336'; // Red
         }
     }
 
@@ -230,6 +234,17 @@ include_once __DIR__ . '/../includes/header.php';
 
         var formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
         document.getElementById('data_movimento').value = formattedDateTime;
+
+        // Initialize the card backgrounds to grey
+        document.querySelector('.tipo-card.entrada').style.backgroundColor = '#f5f5f5';
+        document.querySelector('.tipo-card.saida').style.backgroundColor = '#f5f5f5';
+
+        // Set the color for the initially selected card (usually Entrada)
+        if (document.querySelector('.tipo-card.entrada').classList.contains('selected')) {
+            document.querySelector('.tipo-card.entrada').style.backgroundColor = '#4CAF50'; // Green
+        } else if (document.querySelector('.tipo-card.saida').classList.contains('selected')) {
+            document.querySelector('.tipo-card.saida').style.backgroundColor = '#f44336'; // Red
+        }
     });
 </script>
 

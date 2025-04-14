@@ -51,8 +51,8 @@ function isActive($page, $current_page = null, $current_dir = null) {
                             <a href="/cadastros/produto.php">Produtos</a>
                             <a href="/cadastros/pessoa.php">Pessoas</a>
                             <a href="/cadastros/lugar.php">Almoxarifados</a>
-                            <a href="/cadastros/grupo.php">Grupos</a>
                             <a href="/cadastros/fabricante.php">Fabricantes</a>
+                            <a href="/cadastros/grupo.php">Grupos de produtos</a>
                             <a href="/cadastros/grupo_pessoa.php">Grupos de Pessoas</a>
                         </div>
                     </div>
@@ -60,11 +60,11 @@ function isActive($page, $current_page = null, $current_dir = null) {
                     <div class="nav-item dropdown">
                         <a href="#">Listas</a>
                         <div class="dropdown-content">
-                            <a href="/cadastros/list_produtos.php">Lista de Produtos</a>
-                            <a href="/cadastros/list_pessoas.php">Lista de Pessoas</a>
-                            <a href="/cadastros/list_lugares.php">Lista de Almoxarifados</a>
-                            <a href="/cadastros/list_grupos.php">Lista de Grupos</a>
-                            <a href="/cadastros/list_grupos_pessoas.php">Lista de Grupos de Pessoas</a>
+                            <a href="/cadastros/list_produtos.php">Produtos</a>
+                            <a href="/cadastros/list_pessoas.php">Pessoas</a>
+                            <a href="/cadastros/list_lugares.php">Almoxarifados</a>
+                            <a href="/cadastros/list_grupos.php">Grupos de produtos</a>
+                            <a href="/cadastros/list_grupos_pessoas.php">Grupos de Pessoas</a>
                             <a href="/cadastros/list_fabricantes.php">Lista de Fabricantes</a>
                         </div>
                     </div>

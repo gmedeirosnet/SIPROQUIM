@@ -2,6 +2,9 @@
 // relatorios/produtos_por_local.php
 require_once __DIR__ . '/../config/db.php';
 
+// Set page title for the header
+$pageTitle = 'Produtos Disponíveis por Almoxarifado';
+
 // Get inventory by location
 $stmt = $pdo->query("
     SELECT
@@ -46,151 +49,40 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $total_produtos++;
     }
 }
+
+// Include header
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos Disponíveis por Almoxarifado</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .summary {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-        }
-        .summary-item {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .summary-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-        }
-        .accordion-item {
-            border: 1px solid #ddd;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .accordion-header {
-            background-color: #f8f9fa;
-            padding: 12px 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .accordion-header h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-        .accordion-content {
-            display: none;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-        }
-        .accordion-item.active .accordion-content {
-            display: block;
-        }
-        .badge {
-            background-color: #007bff;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .text-right {
-            text-align: right;
-        }
-        .links {
-            margin-top: 20px;
-        }
-        .links a {
-            display: inline-block;
-            margin-right: 10px;
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 3px;
-        }
-        .links a:hover {
-            background-color: #0056b3;
-        }
-        .no-data {
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            text-align: center;
-            color: #6c757d;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Produtos Disponíveis por Almoxarifado</h1>
+<div class="content">
+    <h2 class="section-title">Produtos Disponíveis por Almoxarifado</h2>
 
-        <div class="summary">
-            <div class="summary-item">
-                <div>Total de Locais</div>
-                <div class="summary-number"><?= $total_lugares ?></div>
-            </div>
-            <div class="summary-item">
-                <div>Total de Produtos</div>
-                <div class="summary-number"><?= $total_produtos ?></div>
-            </div>
-            <div class="summary-item">
-                <div>Total de Itens em Estoque</div>
-                <div class="summary-number"><?= $total_itens ?></div>
-            </div>
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <div>Total de Locais</div>
+            <div class="dashboard-number"><?= $total_lugares ?></div>
         </div>
+        <div class="dashboard-card">
+            <div>Total de Produtos</div>
+            <div class="dashboard-number"><?= $total_produtos ?></div>
+        </div>
+        <div class="dashboard-card">
+            <div>Total de Itens em Estoque</div>
+            <div class="dashboard-number"><?= $total_itens ?></div>
+        </div>
+    </div>
 
-        <?php if (!empty($produtos_por_lugar)): ?>
-            <div class="accordion">
-                <?php foreach ($produtos_por_lugar as $lugar): ?>
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3><?= htmlspecialchars($lugar['nome']) ?></h3>
-                        <span class="badge"><?= count($lugar['produtos']) ?></span>
-                    </div>
-                    <div class="accordion-content">
-                        <table>
+    <?php if (!empty($produtos_por_lugar)): ?>
+        <div class="accordion mt-4">
+            <?php foreach ($produtos_por_lugar as $lugar): ?>
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3><?= htmlspecialchars($lugar['nome']) ?></h3>
+                    <span class="badge badge-primary"><?= count($lugar['produtos']) ?></span>
+                </div>
+                <div class="accordion-content">
+                    <div class="table-responsive">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>Produto</th>
@@ -212,52 +104,53 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         </table>
                     </div>
                 </div>
-                <?php endforeach; ?>
             </div>
-        <?php else: ?>
-            <div class="no-data">
-                <p>Não há produtos em estoque no momento.</p>
-            </div>
-        <?php endif; ?>
-
-        <div class="links">
-            <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
-            <a href="relatorio_estoque.php" class="btn">Estoque</a>
-            <a href="relatorio_movimentos.php" class="btn">Movimentações</a>
+            <?php endforeach; ?>
         </div>
+    <?php else: ?>
+        <div class="alert alert-info mt-4">
+            <p>Não há produtos em estoque no momento.</p>
+        </div>
+    <?php endif; ?>
+
+    <div class="btn-group mt-4">
+        <a href="relatorio_estoque.php" class="btn btn-outline-primary">Ver Estoque</a>
+        <a href="relatorio_movimentos.php" class="btn btn-outline-primary">Ver Movimentações</a>
+        <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle accordion functionality
-            const accordionHeaders = document.querySelectorAll('.accordion-header');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle accordion functionality
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
 
-            accordionHeaders.forEach(header => {
-                header.addEventListener('click', function() {
-                    // Get the parent accordion item
-                    const accordionItem = this.parentNode;
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                // Get the parent accordion item
+                const accordionItem = this.parentNode;
 
-                    // Toggle active class
-                    const wasActive = accordionItem.classList.contains('active');
+                // Toggle active class
+                const wasActive = accordionItem.classList.contains('active');
 
-                    // Close all accordion items
-                    document.querySelectorAll('.accordion-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-
-                    // If it wasn't active before, make it active now
-                    if (!wasActive) {
-                        accordionItem.classList.add('active');
-                    }
+                // Close all accordion items
+                document.querySelectorAll('.accordion-item').forEach(item => {
+                    item.classList.remove('active');
                 });
-            });
 
-            // Open the first accordion item by default
-            const firstAccordionItem = document.querySelector('.accordion-item');
-            if (firstAccordionItem) {
-                firstAccordionItem.classList.add('active');
-            }
+                // If it wasn't active before, make it active now
+                if (!wasActive) {
+                    accordionItem.classList.add('active');
+                }
+            });
         });
-    </script>
-</body>
-</html>
+
+        // Open the first accordion item by default
+        const firstAccordionItem = document.querySelector('.accordion-item');
+        if (firstAccordionItem) {
+            firstAccordionItem.classList.add('active');
+        }
+    });
+</script>
+
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

@@ -3,7 +3,7 @@
 require_once __DIR__ . '/config/db.php';
 
 // Set the page title
-$pageTitle = 'Dashboard';
+// $pageTitle = 'Dashboard';
 
 // Fetch limited number of records for each entity
 function fetchLimit($pdo, $table, $limit = 5, $orderBy = 'id DESC') {
