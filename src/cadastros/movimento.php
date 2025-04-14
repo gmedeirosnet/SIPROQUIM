@@ -333,7 +333,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
 
             <div class="buttons">
-                <a href="../index.php" class="btn">Cancelar</a>
+                <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
                 <input type="submit" value="Registrar Movimentação" class="btn-primary">
             </div>
         </form>

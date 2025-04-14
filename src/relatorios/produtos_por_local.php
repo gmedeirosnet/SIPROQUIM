@@ -221,9 +221,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <?php endif; ?>
 
         <div class="links">
-            <a href="../index.php">Voltar para a Página Inicial</a>
-            <a href="relatorio_estoque.php">Estoque</a>
-            <a href="relatorio_movimentos.php">Movimentações</a>
+            <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
+            <a href="relatorio_estoque.php" class="btn">Estoque</a>
+            <a href="relatorio_movimentos.php" class="btn">Movimentações</a>
         </div>
     </div>
 

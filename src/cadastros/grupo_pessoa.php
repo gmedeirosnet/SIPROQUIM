@@ -189,20 +189,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
 
             <div class="buttons">
-                <input type="submit" value="<?= $editing ? 'Atualizar' : 'Cadastrar' ?>">
+                <input type="submit" value="<?= $editing ? 'Atualizar' : 'Cadastrar' ?>" class="btn-primary">
+
                 <?php if ($editing): ?>
                     <a href="list_grupos_pessoas.php" class="btn">Cancelar</a>
                 <?php else: ?>
-                    <a href="list_grupos_pessoas.php" class="btn">Ver Todos os Grupos</a>
+                    <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
+                    <a href="list_grupos_pessoas.php" class="btn-link">Ver Todos os Grupos</a>
                 <?php endif; ?>
             </div>
         </form>
-
-        <?php if (!$editing): ?>
-            <p>
-                <a href="../index.php">Voltar para a Página Inicial</a>
-            </p>
-        <?php endif; ?>
     </div>
 </body>
 </html>

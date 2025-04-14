@@ -179,6 +179,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: red;
             margin-left: 3px;
         }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-link {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .btn-link:hover {
+            background-color: #5a6268;
+        }
     </style>
     <script>
         // CNPJ formatting
@@ -270,10 +293,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="submit" value="<?= $editing ? 'Atualizar' : 'Cadastrar' ?>">
         </form>
 
-        <p>
-            <a href="list_fabricantes.php">Ver Lista de Fabricantes</a> |
-            <a href="../index.php">Voltar para a Página Inicial</a>
-        </p>
+        <div>
+            <?php if ($editing): ?>
+                <a href="list_fabricantes.php" class="btn">Cancelar</a>
+            <?php else: ?>
+                <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
+                <a href="list_fabricantes.php" class="btn-link">Ver Lista de Fabricantes</a>
+            <?php endif; ?>
+        </div>
     </div>
 </body>
 </html>

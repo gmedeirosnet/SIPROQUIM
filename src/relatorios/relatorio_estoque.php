@@ -189,8 +189,9 @@ foreach ($estoques as $estoque) {
         </table>
 
         <div class="links">
-            <a href="../index.php">Voltar para a Página Inicial</a>
-            <a href="relatorio_movimentos.php">Movimentações</a>
+            <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
+            <a href="relatorio_movimentos.php" class="btn">Movimentações</a>
+            <a href="produtos_por_local.php" class="btn">Produtos por Almoxarifado</a>
         </div>
     </div>
 </body>

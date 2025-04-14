@@ -310,10 +310,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="submit" value="<?= $editing ? 'Atualizar' : 'Cadastrar' ?>">
         </form>
 
-        <p>
-            <a href="list_produtos.php">Ver Lista de Produtos</a> |
-            <a href="../index.php">Voltar para a Página Inicial</a>
-        </p>
+        <div>
+            <?php if ($editing): ?>
+                <a href="list_produtos.php" class="btn">Cancelar</a>
+            <?php else: ?>
+                <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
+                <a href="list_produtos.php" class="btn-link">Ver Lista de Produtos</a>
+            <?php endif; ?>
+        </div>
     </div>
 </body>
 </html>

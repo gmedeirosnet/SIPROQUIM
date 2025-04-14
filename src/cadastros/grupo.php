@@ -197,12 +197,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="submit" value="<?= $editing ? 'Atualizar' : 'Cadastrar' ?>">
         </form>
 
-        <div class="navigation">
+        <div>
             <?php if ($editing): ?>
-                <a href="list_grupos.php">Cancelar</a>
+                <a href="list_grupos.php" class="btn">Cancelar</a>
             <?php else: ?>
-                <a href="list_grupos.php">Ver Lista de Grupos</a> |
-                <a href="../index.php">Voltar para a Página Inicial</a>
+                <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
+                <a href="list_grupos.php" class="btn-link">Ver Lista de Grupos</a>
             <?php endif; ?>
         </div>
     </div>
