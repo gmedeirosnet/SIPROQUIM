@@ -54,6 +54,5 @@ tmp/
 temp/
 
 # Database dumps and backups
-*.sql
 *.dump
 *.backup
