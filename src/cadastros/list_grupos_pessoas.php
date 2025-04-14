@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title for the header
-$pageTitle = 'Lista de Grupos de Pessoas';
+// $pageTitle = 'Lista de Grupos de Pessoas';
 
 // Pagination setup
 $per_page = 10;
@@ -83,6 +83,7 @@ include_once __DIR__ . '/../includes/header.php';
     <div class="header-actions">
         <a href="grupo_pessoa.php" class="btn btn-primary">Cadastrar Novo Grupo</a>
 
+        <br></br>
         <form class="search-form" method="get">
             <div class="input-group">
                 <input type="text" name="search" class="form-control" placeholder="Buscar por nome ou descrição" value="<?= htmlspecialchars($search) ?>">
@@ -91,6 +92,7 @@ include_once __DIR__ . '/../includes/header.php';
         </form>
     </div>
 
+    <br>
     <?php if (count($grupos) > 0): ?>
         <div class="table-responsive">
             <table class="table">
@@ -128,6 +130,7 @@ include_once __DIR__ . '/../includes/header.php';
             </table>
         </div>
 
+        <br>
         <?php if ($total_pages > 1): ?>
             <ul class="pagination">
                 <?php if ($page > 1): ?>

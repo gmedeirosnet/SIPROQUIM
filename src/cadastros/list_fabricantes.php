@@ -80,8 +80,8 @@ include_once __DIR__ . '/../includes/header.php';
         <br></br>
         <form class="search-form" method="get">
             <div class="input-group">
-            <button type="submit" class="btn btn-primary">Buscar Fabricante</button></br>
             <input type="text" name="search" class="form-control" placeholder="Buscar por nome, CNPJ ou email" value="<?= htmlspecialchars($search) ?>">
+            <button type="submit" class="btn btn-primary">Buscar Fabricante</button></br>
             </div>
         </form>
     </div>

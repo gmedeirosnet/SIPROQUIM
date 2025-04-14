@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title for the header
-$pageTitle = 'Lista de Pessoas';
+// $pageTitle = 'Lista de Pessoas';
 
 // Pagination setup
 $per_page = 10;
@@ -83,6 +83,7 @@ include_once __DIR__ . '/../includes/header.php';
             <a href="pessoa.php" class="btn btn-primary">Cadastrar Nova Pessoa</a>
         </div>
 
+        <br>
         <form class="search-form" method="get">
             <div class="form-row">
                 <div class="form-col">
@@ -101,6 +102,7 @@ include_once __DIR__ . '/../includes/header.php';
         </form>
     </div>
 
+    <br>
     <?php if (count($pessoas) > 0): ?>
         <div class="table-container">
             <table class="table">
