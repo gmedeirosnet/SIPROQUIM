@@ -102,26 +102,9 @@ resource "aws_instance" "siproquim_server" {
 
   user_data = <<-EOF
     #!/bin/bash
-    yum update -y
-    yum install -y httpd
-    yum install -y php
-    amazon-linux-extras enable php8.0
-    yum clean metadata
-    yum install -y php-cli php-pdo php-fpm php-json php-mysqlnd php-pgsql
-
-    # Install PostgreSQL 15
-    amazon-linux-extras install -y postgresql15
-
-    # Start and enable services
-    systemctl start httpd
-    systemctl enable httpd
-
-    # Set up the web directory
-    mkdir -p /var/www/html/siproquim
-    echo "<html><body><h1>${var.project_name} System</h1><p>Server is running!</p></body></html>" > /var/www/html/index.html
-
-    # Tag to indicate setup completion
-    echo "Setup completed on $(date)" > /var/www/html/setup_complete.txt
+    apt update
+    apt upgrade -y
+    apt install vim curl zsh git -y
   EOF
 
   depends_on = [aws_internet_gateway.siproquim_igw]
