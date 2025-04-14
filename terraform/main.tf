@@ -85,6 +85,25 @@ resource "aws_instance" "siproquim_server" {
     }
   }
 
+  provisioner "file" {
+    source      = "scripts/clone_github_repo.sh"
+    destination = "/tmp/clone_github_repo.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/clone_github_repo.sh",
+      "/tmp/clone_github_repo.sh"
+    ]
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("~/.ssh/siproquim")
+    host        = self.public_ip
+  }
+
   tags = {
     Name        = "${lower(var.project_name)}-server"
     Environment = var.environment
