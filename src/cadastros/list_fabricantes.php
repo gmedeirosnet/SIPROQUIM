@@ -74,7 +74,6 @@ include_once __DIR__ . '/../includes/header.php';
         <div class="alert alert-danger"><?= $error ?></div>
     <?php endif; ?>
 
-    </br>
     <div class="header-actions">
         <a href="fabricante.php" class="btn btn-primary">Cadastrar Novo Fabricante</a>
         <br></br>

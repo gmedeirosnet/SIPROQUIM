@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title for the header
-$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Fabricante' : 'Cadastrar Fabricante';
+$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Fabricante' : '';
 
 // Check if editing existing record
 $fabricante = null;
