@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title for the header
-$pageTitle = 'Relatório de Estoque';
+// $pageTitle = 'Relatório de Estoque';
 
 // Consulta SQL para calcular o saldo atual em estoque por produto e lugar
 $sql = "SELECT
@@ -62,15 +62,14 @@ include_once __DIR__ . '/../includes/header.php';
 
     <div class="dashboard-cards">
         <div class="dashboard-card">
-            <div>Total de Produtos</div>
-            <div class="dashboard-number"><?= $total_produtos ?></div>
+            <div>Total de Produtos: <strong><?= $total_produtos ?></div></strong>
         </div>
         <div class="dashboard-card">
-            <div>Total de Itens em Estoque</div>
-            <div class="dashboard-number"><?= $total_itens ?></div>
+            <div>Total de Itens em Estoque: <strong><?= $total_itens ?></div></strong>
         </div>
     </div>
 
+    <br>
     <?php if (count($produtos_por_grupo) > 0): ?>
     <h3 class="mt-4">Produtos por Grupo</h3>
     <div class="table-responsive">

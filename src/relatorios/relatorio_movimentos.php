@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title for the header
-$pageTitle = 'Relatório de Movimentações';
+// $pageTitle = 'Relatório de Movimentações';
 
 // Consulta que junta movimentos com produtos e pessoas
 $sql = "SELECT m.id,
@@ -66,6 +66,7 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
     </div>
 
+    <br>
     <h3 class="mt-4">Lista de Movimentações</h3>
     <div class="table-responsive">
         <table class="table">
