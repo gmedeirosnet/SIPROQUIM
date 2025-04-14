@@ -5,6 +5,16 @@ Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/spec/v2.0.0.html).
 
+## [0.5.1] - 2025-04-14
+
+### Adicionado
+- Configuração de chave SSH (aws@gmedeiros.net) no Terraform para acesso à instância EC2
+- Documentação atualizada sobre a configuração SSH no processo de provisioning
+
+### Alterado
+- Atualizado AMI da instância EC2 para Ubuntu 24.04 TLS (ami-084568db4383264d4)
+- Ajustes no script de inicialização da instância para compatibilidade com Ubuntu
+
 ## [0.5.0] - 2025-04-12
 
 ### Adicionado

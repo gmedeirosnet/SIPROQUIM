@@ -61,28 +61,19 @@ resource "aws_security_group" "siproquim_sg" {
   }
 }
 
-# Get the latest Amazon Linux 2 AMI
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
+# AWS key pair for SSH access
+resource "aws_key_pair" "gmedeiros_key" {
+  key_name   = "aws-gmedeiros-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDADbJOQmChqxmmgCTQF2v8gUGhiINSS0n16/3N5vUSvk3/NJ8E5oqa+eZCwzN1j7JV1VHZwFuyKRBaXEu9e08Dm6a9CAALDrEl/q0HscD7UcnfIA4py4LWx1Km27vJMyJm2BKNpVd7BKuxNUvw7TQLQlhWiZ58V7tlvDSCU3jpZ+B5UNR8UtoiYLB0picyWWvJOK32dZqOLDNntIjbMOJLRbJy6DsIu0Ti43ltk/CPqfqbvEOXCQY6InRN4lDwEEhGsaXXyKw16GkDfSrqmcOymTW2wlJjOHRJtCwNBxW0Sr7aVzzGJ7sd67txrOArXInwzbyis+jg8R3LjdTI6lN7UntZ4pFELHv/MfXcT/ArNVCwkqc603L4ba6Azor5xzORLYH2CQ0x6X0fmRAzC8D7heftSh/Cvh83DlIQTu1k1t2ahTQ7x9zF1xgFq++U0luUMhilNCAcYSXj4x/vZIrX8kFmGrpsvSIA7FHKD+5PbBVi1i5uLU66G8QEvvOwPd/cjtKuTFC2M7JvdI6urPR5A6rLlUkfbRPtUqPpVqkOzdp8b8AxSBRK3RC/bGmdMlMGWKiSNd193P4iwQGwM15gFzA5ioOapmxPOc++3f+J3GopuTA43C9yIbMY88fJefPw6ljuEHZobL2EffUlq8DcRz8VCTRQSkgjz5Y/1uSyxQ== aws@gmedeiros.net"
 }
 
 # EC2 instance
 resource "aws_instance" "siproquim_server" {
-  ami                    = data.aws_ami.amazon_linux.id
+  ami                    = "ami-084568db4383264d4" # Ubuntu 24.04 TLS
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.public_subnet_a.id
   vpc_security_group_ids = [aws_security_group.siproquim_sg.id]
+  key_name               = aws_key_pair.gmedeiros_key.key_name
 
   # Root volume
   root_block_device {
