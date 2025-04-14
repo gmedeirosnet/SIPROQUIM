@@ -2,262 +2,211 @@
 // relatorios/produtos_por_local.php
 require_once __DIR__ . '/../config/db.php';
 
-// Get inventory by location
-$stmt = $pdo->query("
-    SELECT
-        l.id as lugar_id,
-        l.nome as lugar,
-        p.id as produto_id,
-        p.nome as produto,
-        g.nome as grupo,
-        f.nome as fabricante,
-        COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) as saldo
-    FROM lugares l
-    LEFT JOIN movimentos m ON l.id = m.id_lugar
-    LEFT JOIN produtos p ON m.id_produto = p.id
-    LEFT JOIN grupos g ON p.id_grupo = g.id
-    LEFT JOIN fabricantes f ON p.id_fabricante = f.id
-    GROUP BY l.id, l.nome, p.id, p.nome, g.nome, f.nome
-    HAVING COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) > 0
-    ORDER BY l.nome, p.nome
-");
+// Set page title for header
+$pageTitle = "Produtos por Almoxarifado";
 
-$produtos_por_lugar = [];
-$total_lugares = 0;
-$total_produtos = 0;
-$total_itens = 0;
-$produtos_unicos = [];
+// Get all lugares (warehouses/storage locations)
+try {
+    $stmt = $pdo->query("SELECT id, nome FROM lugares ORDER BY nome");
+    $lugares = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    $lugar_id = $row['lugar_id'];
-    if (!isset($produtos_por_lugar[$lugar_id])) {
-        $produtos_por_lugar[$lugar_id] = [
-            'nome' => $row['lugar'],
-            'produtos' => []
+    // Count total produtos
+    $stmt = $pdo->query("SELECT COUNT(DISTINCT id) as total FROM produtos");
+    $total_produtos = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Count total lugares
+    $total_lugares = count($lugares);
+
+    // Get stock counts by lugar
+    $produtos_por_lugar = [];
+    foreach ($lugares as $lugar) {
+        $stmt = $pdo->prepare("
+            SELECT
+                COUNT(DISTINCT p.id) as total_produtos,
+                COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) as total_itens
+            FROM produtos p
+            LEFT JOIN movimentos m ON p.id = m.id_produto AND m.id_lugar = ?
+            WHERE m.id IS NOT NULL
+        ");
+        $stmt->execute([$lugar['id']]);
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $produtos_por_lugar[$lugar['id']] = [
+            'nome' => $lugar['nome'],
+            'total_produtos' => $resultado['total_produtos'],
+            'total_itens' => $resultado['total_itens']
         ];
-        $total_lugares++;
-    }
 
-    $produtos_por_lugar[$lugar_id]['produtos'][] = $row;
-    $total_itens += $row['saldo'];
+        // Get products in this location
+        $stmt = $pdo->prepare("
+            SELECT
+                p.id,
+                p.nome,
+                p.codigo,
+                g.nome as grupo,
+                COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) as saldo
+            FROM produtos p
+            LEFT JOIN grupos g ON p.id_grupo = g.id
+            LEFT JOIN movimentos m ON p.id = m.id_produto AND m.id_lugar = ?
+            WHERE m.id IS NOT NULL
+            GROUP BY p.id, p.nome, p.codigo, g.nome
+            HAVING saldo != 0
+            ORDER BY p.nome
+        ");
+        $stmt->execute([$lugar['id']]);
+        $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if (!isset($produtos_unicos[$row['produto_id']])) {
-        $produtos_unicos[$row['produto_id']] = true;
-        $total_produtos++;
+        $produtos_por_lugar[$lugar['id']]['produtos'] = $produtos;
     }
+} catch (PDOException $e) {
+    echo "Erro ao gerar relatório: " . $e->getMessage();
+    exit;
 }
+
+// Include the header
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos Disponíveis por Almoxarifado</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .summary {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-        }
-        .summary-item {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .summary-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-        }
-        .accordion-item {
-            border: 1px solid #ddd;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .accordion-header {
-            background-color: #f8f9fa;
-            padding: 12px 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .accordion-header h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-        .accordion-content {
-            display: none;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-        }
-        .accordion-item.active .accordion-content {
-            display: block;
-        }
-        .badge {
-            background-color: #007bff;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .text-right {
-            text-align: right;
-        }
-        .links {
-            margin-top: 20px;
-        }
-        .links a {
-            display: inline-block;
-            margin-right: 10px;
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 3px;
-        }
-        .links a:hover {
-            background-color: #0056b3;
-        }
-        .no-data {
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            text-align: center;
-            color: #6c757d;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Produtos Disponíveis por Almoxarifado</h1>
+<div class="content">
+    <div class="widget">
+        <div class="widget-header">
+            <h3 class="widget-title">Produtos por Almoxarifado</h3>
+        </div>
 
-        <div class="summary">
-            <div class="summary-item">
-                <div>Total de Locais</div>
-                <div class="summary-number"><?= $total_lugares ?></div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value"><?= $total_produtos ?></div>
+                <div class="stat-label">Produtos Cadastrados</div>
             </div>
-            <div class="summary-item">
-                <div>Total de Produtos</div>
-                <div class="summary-number"><?= $total_produtos ?></div>
-            </div>
-            <div class="summary-item">
-                <div>Total de Itens em Estoque</div>
-                <div class="summary-number"><?= $total_itens ?></div>
+            <div class="stat-card">
+                <div class="stat-value"><?= $total_lugares ?></div>
+                <div class="stat-label">Almoxarifados</div>
             </div>
         </div>
 
-        <?php if (!empty($produtos_por_lugar)): ?>
-            <div class="accordion">
-                <?php foreach ($produtos_por_lugar as $lugar): ?>
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3><?= htmlspecialchars($lugar['nome']) ?></h3>
-                        <span class="badge"><?= count($lugar['produtos']) ?></span>
-                    </div>
-                    <div class="accordion-content">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Produto</th>
-                                    <th>Grupo</th>
-                                    <th>Fabricante</th>
-                                    <th class="text-right">Quantidade</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($lugar['produtos'] as $item): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($item['produto']) ?></td>
-                                    <td><?= htmlspecialchars($item['grupo'] ?? 'Sem grupo') ?></td>
-                                    <td><?= htmlspecialchars($item['fabricante'] ?? 'Não especificado') ?></td>
-                                    <td class="text-right"><?= $item['saldo'] ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <?php if (count($produtos_por_lugar) > 0): ?>
+            <div class="accordion-container">
+                <?php foreach ($produtos_por_lugar as $lugar_id => $lugar): ?>
+                    <?php if (!empty($lugar['produtos'])): ?>
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(<?= $lugar_id ?>)">
+                                <h3><?= htmlspecialchars($lugar['nome']) ?></h3>
+                                <div class="accordion-meta">
+                                    <span class="badge badge-primary"><?= count($lugar['produtos']) ?> produtos</span>
+                                    <span class="accordion-toggle-icon">
+                                        <i class="fa fa-chevron-down"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="accordion-content" id="accordion-<?= $lugar_id ?>">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Código</th>
+                                                <th>Produto</th>
+                                                <th>Grupo</th>
+                                                <th class="text-right">Quantidade</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($lugar['produtos'] as $produto): ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($produto['codigo'] ?? '-') ?></td>
+                                                    <td><?= htmlspecialchars($produto['nome']) ?></td>
+                                                    <td><?= htmlspecialchars($produto['grupo'] ?? 'Não definido') ?></td>
+                                                    <td class="text-right"><?= $produto['saldo'] ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
-            <div class="no-data">
-                <p>Não há produtos em estoque no momento.</p>
+            <div class="alert alert-info">
+                <p>Nenhum produto está atualmente alocado em almoxarifados.</p>
             </div>
         <?php endif; ?>
 
-        <div class="links">
-            <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
-            <a href="relatorio_estoque.php" class="btn">Estoque</a>
-            <a href="relatorio_movimentos.php" class="btn">Movimentações</a>
+        <div class="btn-group mt-4">
+            <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
+            <a href="relatorio_estoque.php" class="btn btn-outline-primary">Ver Estoque Total</a>
+            <a href="relatorio_movimentos.php" class="btn btn-outline-primary">Ver Movimentações</a>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle accordion functionality
-            const accordionHeaders = document.querySelectorAll('.accordion-header');
+<script>
+function toggleAccordion(id) {
+    const content = document.getElementById('accordion-' + id);
+    content.classList.toggle('active');
 
-            accordionHeaders.forEach(header => {
-                header.addEventListener('click', function() {
-                    // Get the parent accordion item
-                    const accordionItem = this.parentNode;
+    // Close other accordion items (optional)
+    /*
+    const allContents = document.querySelectorAll('.accordion-content');
+    allContents.forEach(item => {
+        if (item.id !== 'accordion-' + id && item.classList.contains('active')) {
+            item.classList.remove('active');
+        }
+    });
+    */
+}
 
-                    // Toggle active class
-                    const wasActive = accordionItem.classList.contains('active');
+// Open the first accordion by default
+document.addEventListener('DOMContentLoaded', function() {
+    const firstAccordion = document.querySelector('.accordion-item');
+    if (firstAccordion) {
+        const firstContent = firstAccordion.querySelector('.accordion-content');
+        firstContent.classList.add('active');
+    }
+});
+</script>
 
-                    // Close all accordion items
-                    document.querySelectorAll('.accordion-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
+<style>
+/* Additional styles specific to this page */
+.accordion-container {
+    margin-top: 20px;
+}
+.accordion-item {
+    border: 1px solid var(--mid-gray);
+    margin-bottom: 15px;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+.accordion-header {
+    background-color: var(--light-gray);
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.accordion-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+.accordion-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.accordion-content {
+    display: none;
+    padding: 0;
+}
+.accordion-content.active {
+    display: block;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+</style>
 
-                    // If it wasn't active before, make it active now
-                    if (!wasActive) {
-                        accordionItem.classList.add('active');
-                    }
-                });
-            });
-
-            // Open the first accordion item by default
-            const firstAccordionItem = document.querySelector('.accordion-item');
-            if (firstAccordionItem) {
-                firstAccordionItem.classList.add('active');
-            }
-        });
-    </script>
-</body>
-</html>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
