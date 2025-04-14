@@ -2,234 +2,199 @@
 // relatorios/relatorio_movimentos.php
 require_once __DIR__ . '/../config/db.php';
 
-// Set page title for header
-$pageTitle = "Histórico de Movimentações";
-
-// Initialize filters
-$data_inicio = isset($_GET['data_inicio']) ? $_GET['data_inicio'] : date('Y-m-d', strtotime('-30 days'));
-$data_fim = isset($_GET['data_fim']) ? $_GET['data_fim'] : date('Y-m-d');
-$tipo = isset($_GET['tipo']) ? $_GET['tipo'] : '';
-
-// Build query
-$where_conditions = [];
-$params = [];
-
-$where_conditions[] = "m.data BETWEEN ? AND ?";
-$params[] = $data_inicio . ' 00:00:00';
-$params[] = $data_fim . ' 23:59:59';
-
-if (!empty($tipo)) {
-    $where_conditions[] = "m.tipo = ?";
-    $params[] = $tipo;
-}
-
-$where_clause = !empty($where_conditions) ? "WHERE " . implode(" AND ", $where_conditions) : "";
-
-// Query for movements
-$sql = "SELECT
-            m.id,
-            m.data,
-            m.tipo,
-            m.quantidade,
-            m.observacao,
-            p.nome as produto_nome,
-            p.codigo as produto_codigo,
-            l.nome as lugar_nome,
-            pe.nome as pessoa_nome
-        FROM
-            movimentos m
-        LEFT JOIN
-            produtos p ON m.id_produto = p.id
-        LEFT JOIN
-            lugares l ON m.id_lugar = l.id
-        LEFT JOIN
-            pessoas pe ON m.id_pessoa = pe.id
-        $where_clause
-        ORDER BY
-            m.data DESC
-        LIMIT 500";
+// Consulta que junta movimentos com produtos e pessoas
+$sql = "SELECT m.id,
+               p.nome AS produto,
+               pe.nome AS pessoa,
+               l.nome AS lugar,
+               m.tipo,
+               m.quantidade,
+               m.observacao,
+               m.data_movimento
+        FROM movimentos m
+        JOIN produtos p ON p.id = m.id_produto
+        JOIN pessoas pe ON pe.id = m.id_pessoa
+        LEFT JOIN lugares l ON l.id = m.id_lugar
+        ORDER BY m.data_movimento DESC";
 
 try {
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+    $stmt = $pdo->query($sql);
     $movimentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Calculate totals for summary
-    $stmt = $pdo->prepare("
-        SELECT
-            COUNT(*) as total_movimentos,
-            SUM(CASE WHEN tipo = 'entrada' THEN 1 ELSE 0 END) as total_entradas,
-            SUM(CASE WHEN tipo = 'saida' THEN 1 ELSE 0 END) as total_saidas,
-            SUM(CASE WHEN tipo = 'entrada' THEN quantidade ELSE 0 END) as qtd_entradas,
-            SUM(CASE WHEN tipo = 'saida' THEN quantidade ELSE 0 END) as qtd_saidas
-        FROM
-            movimentos m
-        $where_clause
-    ");
-    $stmt->execute($params);
-    $summary = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Erro ao gerar relatório: " . $e->getMessage();
     exit;
 }
 
-// Include the header
-include_once __DIR__ . '/../includes/header.php';
+// Calcular totais e estatísticas
+$total_movimentos = count($movimentos);
+$total_entradas = 0;
+$total_saidas = 0;
+$quantidade_entrada = 0;
+$quantidade_saida = 0;
+
+foreach ($movimentos as $mov) {
+    if ($mov['tipo'] == 'entrada') {
+        $total_entradas++;
+        $quantidade_entrada += $mov['quantidade'];
+    } else {
+        $total_saidas++;
+        $quantidade_saida += $mov['quantidade'];
+    }
+}
 ?>
 
-<div class="content">
-    <div class="widget">
-        <div class="widget-header">
-            <h3 class="widget-title">Histórico de Movimentações</h3>
-        </div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Movimentações</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .summary {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .summary-item {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .summary-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .entrada {
+            color: #28a745;
+        }
+        .saida {
+            color: #dc3545;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .links {
+            margin-top: 20px;
+        }
+        .links a {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+        .links a:hover {
+            background-color: #0056b3;
+        }
+        .filtro {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Relatório de Movimentações</h1>
 
-        <!-- Filter Form -->
-        <div class="filtro mb-4">
-            <form method="get" action="" class="filter-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="data_inicio">Data Início:</label>
-                        <input type="date" id="data_inicio" name="data_inicio" value="<?= $data_inicio ?>" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="data_fim">Data Fim:</label>
-                        <input type="date" id="data_fim" name="data_fim" value="<?= $data_fim ?>" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="tipo">Tipo:</label>
-                        <select id="tipo" name="tipo" class="form-control">
-                            <option value="">Todos</option>
-                            <option value="entrada" <?= $tipo == 'entrada' ? 'selected' : '' ?>>Entradas</option>
-                            <option value="saida" <?= $tipo == 'saida' ? 'selected' : '' ?>>Saídas</option>
-                        </select>
-                    </div>
-                    <div class="form-group align-self-end">
-                        <button type="submit" class="btn btn-primary">Filtrar</button>
-                        <a href="?data_inicio=<?= date('Y-m-d', strtotime('-30 days')) ?>&data_fim=<?= date('Y-m-d') ?>" class="btn btn-outline-secondary">Limpar</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Summary -->
-        <div class="summary mb-4">
+        <div class="summary">
             <div class="summary-item">
                 <div>Total de Movimentações</div>
-                <div class="summary-number"><?= $summary['total_movimentos'] ?></div>
+                <div class="summary-number"><?= $total_movimentos ?></div>
             </div>
             <div class="summary-item">
                 <div>Entradas</div>
-                <div class="summary-number entrada"><?= $summary['total_entradas'] ?></div>
-                <div class="summary-detail"><?= number_format($summary['qtd_entradas'], 0, ',', '.') ?> unidades</div>
+                <div class="summary-number entrada"><?= $total_entradas ?></div>
+                <div><strong>Quantidade:</strong> <?= $quantidade_entrada ?> itens</div>
             </div>
             <div class="summary-item">
                 <div>Saídas</div>
-                <div class="summary-number saida"><?= $summary['total_saidas'] ?></div>
-                <div class="summary-detail"><?= number_format($summary['qtd_saidas'], 0, ',', '.') ?> unidades</div>
+                <div class="summary-number saida"><?= $total_saidas ?></div>
+                <div><strong>Quantidade:</strong> <?= $quantidade_saida ?> itens</div>
             </div>
         </div>
 
-        <!-- Results Table -->
-        <?php if (count($movimentos) > 0): ?>
-            <div class="table-container">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Tipo</th>
-                            <th>Produto</th>
-                            <th>Qtd</th>
-                            <th>Local</th>
-                            <th>Pessoa</th>
-                            <th>Observação</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($movimentos as $movimento): ?>
-                            <tr>
-                                <td><?= date('d/m/Y H:i', strtotime($movimento['data'])) ?></td>
-                                <td>
-                                    <span class="badge badge-<?= $movimento['tipo'] == 'entrada' ? 'success' : 'danger' ?>">
-                                        <?= $movimento['tipo'] == 'entrada' ? 'Entrada' : 'Saída' ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?= htmlspecialchars($movimento['produto_nome']) ?>
-                                    <?php if (!empty($movimento['produto_codigo'])): ?>
-                                        <small class="text-muted"><?= htmlspecialchars($movimento['produto_codigo']) ?></small>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="text-right"><?= $movimento['quantidade'] ?></td>
-                                <td><?= htmlspecialchars($movimento['lugar_nome'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($movimento['pessoa_nome'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($movimento['observacao'] ?? '') ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php else: ?>
-            <div class="alert alert-info">Nenhum movimento encontrado para o período selecionado.</div>
-        <?php endif; ?>
+        <h2>Lista de Movimentações</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Produto</th>
+                    <th>Pessoa</th>
+                    <th>Local</th>
+                    <th>Tipo</th>
+                    <th>Quantidade</th>
+                    <th>Data do Movimento</th>
+                    <th>Observação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($movimentos as $mov): ?>
+                <tr>
+                    <td><?= $mov['id'] ?></td>
+                    <td><?= htmlspecialchars($mov['produto']) ?></td>
+                    <td><?= htmlspecialchars($mov['pessoa']) ?></td>
+                    <td><?= htmlspecialchars($mov['lugar'] ?: 'Não especificado') ?></td>
+                    <td>
+                        <?php if ($mov['tipo'] == 'entrada'): ?>
+                            <span class="entrada"><strong>Entrada</strong></span>
+                        <?php else: ?>
+                            <span class="saida"><strong>Saída</strong></span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="text-right"><?= $mov['quantidade'] ?></td>
+                    <td><?= date("d/m/Y H:i", strtotime($mov['data_movimento'])) ?></td>
+                    <td><?= htmlspecialchars($mov['observacao'] ?: '') ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
 
-        <div class="btn-group mt-4">
-            <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
-            <a href="relatorio_estoque.php" class="btn btn-outline-primary">Ver Estoque</a>
-            <a href="produtos_por_local.php" class="btn btn-outline-primary">Produtos por Almoxarifado</a>
+        <div class="links">
+            <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
+            <a href="relatorio_estoque.php" class="btn">Estoque</a>
+            <a href="produtos_por_local.php" class="btn">Produtos por Almoxarifado</a>
         </div>
     </div>
-</div>
-
-<style>
-/* Minimal additional custom styles */
-.entrada { color: var(--success); }
-.saida { color: var(--danger); }
-
-.filter-form {
-    background-color: var(--light-gray);
-    padding: 15px;
-    border-radius: var(--radius);
-}
-
-.summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.summary-item {
-    padding: 15px;
-    background-color: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
-
-.summary-number {
-    font-size: 24px;
-    font-weight: 600;
-    margin: 5px 0;
-}
-
-.summary-detail {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-}
-
-.form-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.form-group {
-    flex: 1;
-    min-width: 200px;
-}
-
-.align-self-end {
-    align-self: flex-end;
-}
-</style>
-
-<?php include_once __DIR__ . '/../includes/footer.php'; ?>
+</body>
+</html>
