@@ -74,17 +74,19 @@ include_once __DIR__ . '/../includes/header.php';
         <div class="alert alert-danger"><?= $error ?></div>
     <?php endif; ?>
 
+    </br>
     <div class="header-actions">
         <a href="fabricante.php" class="btn btn-primary">Cadastrar Novo Fabricante</a>
-
+        <br></br>
         <form class="search-form" method="get">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Buscar por nome, CNPJ ou email" value="<?= htmlspecialchars($search) ?>">
-                <button type="submit" class="btn btn-primary">Buscar</button>
+            <button type="submit" class="btn btn-primary">Buscar Fabricante</button></br>
+            <input type="text" name="search" class="form-control" placeholder="Buscar por nome, CNPJ ou email" value="<?= htmlspecialchars($search) ?>">
             </div>
         </form>
     </div>
 
+    </br>
     <?php if (count($fabricantes) > 0): ?>
         <div class="table-responsive">
             <table class="table">

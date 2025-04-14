@@ -163,6 +163,7 @@ include_once __DIR__ . '/../includes/header.php';
                 </div>
             </div>
 
+            </br>
             <div class="form-group">
                 <label for="tipo" class="form-label">Tipo:</label>
                 <input type="text" name="tipo" id="tipo" class="form-control"
@@ -182,6 +183,7 @@ include_once __DIR__ . '/../includes/header.php';
                 </div>
             </div>
 
+            </br>
             <div class="form-group">
                 <label for="preco" class="form-label">Preço (R$):</label>
                 <input type="text" name="preco" id="preco" class="form-control"
@@ -189,11 +191,13 @@ include_once __DIR__ . '/../includes/header.php';
                        placeholder="Ex: 10,50" onblur="formatCurrency(this)">
             </div>
 
+            </br>
             <div class="form-group">
                 <label for="descricao" class="form-label">Descrição:</label>
                 <textarea name="descricao" id="descricao" class="form-control"><?= $editing ? htmlspecialchars($produto['descricao'] ?? '') : (isset($descricao) ? htmlspecialchars($descricao) : '') ?></textarea>
             </div>
 
+            </br>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary"><?= $editing ? 'Atualizar' : 'Cadastrar' ?></button>
 

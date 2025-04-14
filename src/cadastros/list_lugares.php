@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title
-$pageTitle = 'Lista de Almoxarifados';
+// $pageTitle = 'Lista de Almoxarifados';
 
 // Pagination setup
 $per_page = 10;
@@ -80,6 +80,7 @@ include_once __DIR__ . '/../includes/header.php';
             <a href="lugar.php" class="btn btn-primary">Cadastrar Novo Almoxarifado</a>
         </div>
 
+        </br>
         <form class="search-form" method="get">
             <div class="form-row">
                 <div class="form-col">
@@ -92,6 +93,7 @@ include_once __DIR__ . '/../includes/header.php';
         </form>
     </div>
 
+    </br>
     <?php if (count($lugares) > 0): ?>
         <div class="table-container">
             <table class="table">

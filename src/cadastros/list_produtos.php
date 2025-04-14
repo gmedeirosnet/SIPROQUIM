@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 // Set page title
-$pageTitle = 'Lista de Produtos';
+// $pageTitle = 'Lista de Produtos';
 
 // Pagination setup
 $per_page = 10;
@@ -120,7 +120,7 @@ include_once __DIR__ . '/../includes/header.php';
             <h2>Lista de Produtos</h2>
             <a href="produto.php" class="btn btn-primary">Cadastrar Novo Produto</a>
         </div>
-
+        </br>
         <form class="search-form" method="get">
             <div class="form-row">
                 <div class="form-col">
@@ -132,6 +132,7 @@ include_once __DIR__ . '/../includes/header.php';
                         <input type="hidden" name="fabricante" value="<?= $filter_fabricante ?>">
                     <?php endif; ?>
                 </div>
+                <br>
                 <div>
                     <button type="submit" class="btn btn-primary">Buscar</button>
                 </div>
@@ -139,6 +140,7 @@ include_once __DIR__ . '/../includes/header.php';
         </form>
     </div>
 
+    </br>
     <div class="filter-row">
         <div class="filter-item">
             <label for="filter_grupo">Filtrar por Grupo:</label>
@@ -163,7 +165,8 @@ include_once __DIR__ . '/../includes/header.php';
                 <?php endforeach; ?>
             </select>
         </div>
-
+        </br>
+        
         <?php if ($filter_grupo > 0 || $filter_fabricante > 0 || !empty($search)): ?>
             <a href="list_produtos.php" class="btn btn-outline-secondary">Limpar Filtros</a>
         <?php endif; ?>
