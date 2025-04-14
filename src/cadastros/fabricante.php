@@ -2,15 +2,17 @@
 // cadastros/fabricante.php
 require_once __DIR__ . '/../config/db.php';
 
+// Set page title for the header
+$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Fabricante' : 'Cadastrar Fabricante';
+
 // Check if editing existing record
-$editing = false;
 $fabricante = null;
-if (isset($_GET['id'])) {
+if ($editing) {
     $stmt = $pdo->prepare("SELECT * FROM fabricantes WHERE id = :id");
     $stmt->execute(['id' => $_GET['id']]);
     $fabricante = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($fabricante) {
-        $editing = true;
+    if (!$fabricante) {
+        $editing = false;
     }
 }
 
@@ -97,210 +99,83 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $messageType = "error";
     }
 }
+
+// Include the header
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $editing ? 'Editar' : 'Cadastro de' ?> Fabricante</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            margin-top: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        textarea {
-            height: 100px;
-            resize: vertical;
-        }
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .message {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .required-indicator {
-            color: red;
-            margin-left: 3px;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        .btn-link {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .btn-link:hover {
-            background-color: #5a6268;
-        }
-    </style>
-    <script>
-        // CNPJ formatting
-        function formatCNPJ(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value.length > 14) {
-                value = value.slice(0, 14);
-            }
+<div class="content">
+    <h2 class="section-title"><?= $editing ? 'Editar' : 'Cadastro de' ?> Fabricante</h2>
 
-            if (value.length > 12) {
-                value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2}).*/, '$1.$2.$3/$4-$5');
-            } else if (value.length > 8) {
-                value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d*).*/, '$1.$2.$3/$4');
-            } else if (value.length > 5) {
-                value = value.replace(/^(\d{2})(\d{3})(\d*).*/, '$1.$2.$3');
-            } else if (value.length > 2) {
-                value = value.replace(/^(\d{2})(\d*).*/, '$1.$2');
-            }
+    <?php if (isset($message)): ?>
+        <div class="alert <?= $messageType === 'success' ? 'alert-success' : 'alert-danger' ?>">
+            <?= $message ?>
+        </div>
+    <?php endif; ?>
 
-            input.value = value;
-        }
+    <form method="post" id="fabricante-form" class="form">
+        <div class="form-group">
+            <label for="nome" class="form-label">Fabricante: <span class="text-danger">*</span></label>
+            <input type="text" name="nome" id="nome" class="form-control" required
+                   value="<?= $editing ? htmlspecialchars($fabricante['nome']) : (isset($nome) ? htmlspecialchars($nome) : '') ?>">
+        </div>
 
-        // Form validation
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('fabricante-form');
-            form.addEventListener('submit', function(event) {
-                const nomeField = document.getElementById('nome');
-                const cnpjField = document.getElementById('cnpj');
+        <div class="form-group">
+            <label for="cnpj" class="form-label">CNPJ: <span class="text-danger">*</span></label>
+            <input type="text" name="cnpj" id="cnpj" class="form-control" oninput="formatCNPJ(this)" required maxlength="18"
+                   value="<?= $editing ? htmlspecialchars($fabricante['cnpj']) : (isset($cnpj) ? htmlspecialchars($cnpj) : '') ?>">
+        </div>
 
-                let isValid = true;
+        <div class="form-group">
+            <label for="endereco" class="form-label">Endereço:</label>
+            <input type="text" name="endereco" id="endereco" class="form-control"
+                   value="<?= $editing ? htmlspecialchars($fabricante['endereco'] ?? '') : (isset($endereco) ? htmlspecialchars($endereco) : '') ?>">
+        </div>
 
-                if (!nomeField.value.trim()) {
-                    isValid = false;
-                    alert('O nome do fabricante é obrigatório');
-                    nomeField.focus();
-                } else if (!cnpjField.value.trim()) {
-                    isValid = false;
-                    alert('O CNPJ é obrigatório');
-                    cnpjField.focus();
-                }
+        <div class="form-group">
+            <label for="email" class="form-label">E-mail:</label>
+            <input type="email" name="email" id="email" class="form-control"
+                   value="<?= $editing ? htmlspecialchars($fabricante['email'] ?? '') : (isset($email) ? htmlspecialchars($email) : '') ?>">
+        </div>
 
-                if (!isValid) {
-                    event.preventDefault();
-                }
-            });
-        });
-    </script>
-</head>
-<body>
-    <div class="container">
-        <h1><?= $editing ? 'Editar' : 'Cadastro de' ?> Fabricante</h1>
+        <div class="form-group">
+            <label for="observacao" class="form-label">Observação:</label>
+            <textarea name="observacao" id="observacao" class="form-control"><?= $editing ? htmlspecialchars($fabricante['observacao'] ?? '') : (isset($observacao) ? htmlspecialchars($observacao) : '') ?></textarea>
+        </div>
 
-        <?php if (isset($message)): ?>
-            <div class="message <?= $messageType ?>">
-                <?= $message ?>
-            </div>
-        <?php endif; ?>
+        <div class="btn-group mt-4">
+            <button type="submit" class="btn btn-primary"><?= $editing ? 'Atualizar' : 'Cadastrar' ?></button>
 
-        <form method="post" id="fabricante-form">
-            <div class="form-group">
-                <label for="nome">Fabricante: <span class="required-indicator">*</span></label>
-                <input type="text" name="nome" id="nome" required
-                       value="<?= $editing ? htmlspecialchars($fabricante['nome']) : (isset($nome) ? htmlspecialchars($nome) : '') ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="cnpj">CNPJ: <span class="required-indicator">*</span></label>
-                <input type="text" name="cnpj" id="cnpj" oninput="formatCNPJ(this)" required maxlength="18"
-                       value="<?= $editing ? htmlspecialchars($fabricante['cnpj']) : (isset($cnpj) ? htmlspecialchars($cnpj) : '') ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="endereco">Endereço:</label>
-                <input type="text" name="endereco" id="endereco"
-                       value="<?= $editing ? htmlspecialchars($fabricante['endereco'] ?? '') : (isset($endereco) ? htmlspecialchars($endereco) : '') ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="email">E-mail:</label>
-                <input type="email" name="email" id="email"
-                       value="<?= $editing ? htmlspecialchars($fabricante['email'] ?? '') : (isset($email) ? htmlspecialchars($email) : '') ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="observacao">Observação:</label>
-                <textarea name="observacao" id="observacao"><?= $editing ? htmlspecialchars($fabricante['observacao'] ?? '') : (isset($observacao) ? htmlspecialchars($observacao) : '') ?></textarea>
-            </div>
-
-            <input type="submit" value="<?= $editing ? 'Atualizar' : 'Cadastrar' ?>">
-        </form>
-
-        <div>
             <?php if ($editing): ?>
-                <a href="list_fabricantes.php" class="btn">Cancelar</a>
+                <a href="list_fabricantes.php" class="btn btn-secondary">Cancelar</a>
             <?php else: ?>
-                <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
-                <a href="list_fabricantes.php" class="btn-link">Ver Lista de Fabricantes</a>
+                <a href="list_fabricantes.php" class="btn btn-outline-primary">Ver Lista de Fabricantes</a>
+                <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
             <?php endif; ?>
         </div>
-    </div>
-</body>
-</html>
+    </form>
+</div>
+
+<script>
+    // CNPJ formatting
+    function formatCNPJ(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 14) {
+            value = value.slice(0, 14);
+        }
+
+        if (value.length > 12) {
+            value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2}).*/, '$1.$2.$3/$4-$5');
+        } else if (value.length > 8) {
+            value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d*).*/, '$1.$2.$3/$4');
+        } else if (value.length > 5) {
+            value = value.replace(/^(\d{2})(\d{3})(\d*).*/, '$1.$2.$3');
+        } else if (value.length > 2) {
+            value = value.replace(/^(\d{2})(\d*).*/, '$1.$2');
+        }
+
+        input.value = value;
+    }
+</script>
+
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

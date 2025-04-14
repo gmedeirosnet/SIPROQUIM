@@ -2,6 +2,9 @@
 // index.php
 require_once __DIR__ . '/config/db.php';
 
+// Set the page title
+// $pageTitle = 'Dashboard';
+
 // Fetch limited number of records for each entity
 function fetchLimit($pdo, $table, $limit = 5, $orderBy = 'id DESC') {
     $stmt = $pdo->query("SELECT * FROM $table ORDER BY $orderBy LIMIT $limit");
@@ -25,7 +28,7 @@ $stmt = $pdo->query("
     JOIN pessoas pe ON m.id_pessoa = pe.id
     JOIN lugares l ON m.id_lugar = l.id
     ORDER BY m.data_movimento DESC
-    LIMIT 5
+    LIMIT 8
 ");
 $movimentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -57,452 +60,301 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     }
     $produtos_por_lugar[$lugar_id]['produtos'][] = $row;
 }
+
+// Count total items
+$total_produtos = $pdo->query("SELECT COUNT(*) FROM produtos")->fetchColumn();
+$total_movimentos = $pdo->query("SELECT COUNT(*) FROM movimentos")->fetchColumn();
+$total_pessoas = $pdo->query("SELECT COUNT(*) FROM pessoas")->fetchColumn();
+$total_lugares = $pdo->query("SELECT COUNT(*) FROM lugares")->fetchColumn();
+
+// Get low stock items
+$stmt = $pdo->query("
+    SELECT
+        p.id,
+        p.nome as produto,
+        g.nome as grupo,
+        l.nome as lugar,
+        COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) as saldo
+    FROM produtos p
+    LEFT JOIN grupos g ON p.id_grupo = g.id
+    LEFT JOIN movimentos m ON p.id = m.id_produto
+    LEFT JOIN lugares l ON m.id_lugar = l.id
+    GROUP BY p.id, p.nome, g.nome, l.nome
+    HAVING COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) < 5
+    AND COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) > 0
+    ORDER BY saldo ASC
+    LIMIT 5
+");
+$baixo_estoque = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Include the header template
+include_once __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIPROQUIM</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .menu-section {
-            margin-bottom: 20px;
-        }
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-        }
-        .menu-item {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-            border-radius: 5px;
-        }
-        .menu-item a {
-            color: #fff;
-            text-decoration: none;
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        .menu-item:hover {
-            background-color: #0056b3;
-        }
-        footer {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .records-section {
-            margin-top: 40px;
-        }
-        .records-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .record-card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .record-card h3 {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        th, td {
-            text-align: left;
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .see-all {
-            display: block;
-            text-align: right;
-            margin-top: 10px;
-            color: #007bff;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .see-all:hover {
-            text-decoration: underline;
-        }
 
-        /* Accordion Styles */
-        .produtos-por-lugar {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            background-color: #fff;
-        }
-        .produtos-por-lugar h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            color: #333;
-        }
-        .accordion-item {
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .accordion-header {
-            background-color: #f8f9fa;
-            padding: 10px 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .accordion-header h4 {
-            margin: 0;
-            font-size: 16px;
-        }
-        .accordion-content {
-            display: none;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-        }
-        .accordion-item.active .accordion-content {
-            display: block;
-        }
-        .badge {
-            background-color: #007bff;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
-        .text-right {
-            text-align: right;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>SIPROQUIM</h1>
-            <p>Gestão de produtos, usuários e movimentações</p>
-        </header>
-
-        <div class="menu-section">
-            <h2>Cadastros</h2>
-            <div class="menu-grid">
-                <div class="menu-item">
-                    <a href="cadastros/lugar.php">Almoxarifado</a>
-                </div>
-                <div class="menu-item">
-                    <a href="cadastros/fabricante.php">Fabricantes</a>
-                </div>
-                <div class="menu-item">
-                    <a href="cadastros/pessoa.php">Pessoas</a>
-                </div>
-                <div class="menu-item">
-                    <a href="cadastros/produto.php">Produtos</a>
-                </div>
-                <div class="menu-item">
-                    <a href="cadastros/grupo.php">Grupos de Produtos</a>
-                </div>
-                <div class="menu-item">
-                    <a href="cadastros/grupo_pessoa.php">Grupos de Pessoas</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-section">
-            <h2>Movimentação</h2>
-            <div class="menu-grid">
-                <div class="menu-item">
-                    <a href="cadastros/movimento.php">Registrar Movimentação</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-section">
-            <h2>Relatórios</h2>
-            <div class="menu-grid">
-            <div class="menu-item">
-                    <a href="relatorios/produtos_por_local.php">Almoxarifados</a>
-                </div>
-            <div class="menu-item">
-                    <a href="relatorios/relatorio_estoque.php">Estoque</a>
-                </div>
-                <div class="menu-item">
-                    <a href="relatorios/movimentacao_produtos.php">Produtos</a>
-                </div>
-                <div class="menu-item">
-                    <a href="relatorios/relatorio_movimentos.php">Movimentações</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="records-section">
-            <h2>Últimos Registros</h2>
-
-            <div class="records-grid">
-                <!-- Pessoas -->
-                <div class="record-card">
-                    <h3>Pessoas</h3>
-                    <?php if (!empty($pessoas)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Email</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($pessoas as $pessoa): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($pessoa['nome']) ?></td>
-                                    <td><?= htmlspecialchars($pessoa['email'] ?? '-') ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <p>Nenhuma pessoa cadastrada</p>
-                    <?php endif; ?>
-                    <a href="cadastros/list_pessoas.php" class="see-all">Ver todos</a>
-                </div>
-
-                <!-- Grupos de Pessoas -->
-                <div class="record-card">
-                    <h3>Grupos de Pessoas</h3>
-                    <?php if (!empty($grupos_pessoas)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Descrição</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($grupos_pessoas as $grupo): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($grupo['nome']) ?></td>
-                                    <td><?= htmlspecialchars(substr($grupo['descricao'] ?? '', 0, 30)) . (strlen($grupo['descricao'] ?? '') > 30 ? '...' : '') ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <p>Nenhum grupo de pessoas cadastrado</p>
-                    <?php endif; ?>
-                    <a href="cadastros/list_grupos_pessoas.php" class="see-all">Ver todos</a>
-                </div>
-
-                <!-- Grupos de Produtos -->
-                <div class="record-card">
-                    <h3>Grupos de Produtos</h3>
-                    <?php if (!empty($grupos)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Descrição</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($grupos as $grupo): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($grupo['nome']) ?></td>
-                                    <td><?= htmlspecialchars(substr($grupo['descricao'] ?? '', 0, 30)) . (strlen($grupo['descricao'] ?? '') > 30 ? '...' : '') ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <p>Nenhum grupo de produtos cadastrado</p>
-                    <?php endif; ?>
-                    <a href="cadastros/list_grupos.php" class="see-all">Ver todos</a>
-                </div>
-
-                <!-- Produtos -->
-                <div class="record-card">
-                    <h3>Produtos</h3>
-                    <?php if (!empty($produtos)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Fabricante</th>
-                                    <th>Preço</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($produtos as $produto): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($produto['nome']) ?></td>
-                                    <td><?= htmlspecialchars($produto['fabricante'] ?? '-') ?></td>
-                                    <td>R$ <?= number_format($produto['preco'] ?? 0, 2, ',', '.') ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <p>Nenhum produto cadastrado</p>
-                    <?php endif; ?>
-                    <a href="cadastros/list_produtos.php" class="see-all">Ver todos</a>
-                </div>
-
-                <!-- Lugares -->
-                <div class="record-card">
-                    <h3>Almoxarifado</h3>
-                    <?php if (!empty($lugares)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Descrição</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($lugares as $lugar): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($lugar['nome']) ?></td>
-                                    <td><?= htmlspecialchars(substr($lugar['descricao'] ?? '', 0, 30)) . (strlen($lugar['descricao'] ?? '') > 30 ? '...' : '') ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <p>Nenhum Almoxarifado cadastrado</p>
-                    <?php endif; ?>
-                    <a href="cadastros/list_lugares.php" class="see-all">Ver todos</a>
-                </div>
-
-                <!-- Fabricantes -->
-                <div class="record-card">
-                    <h3>Fabricantes</h3>
-                    <?php if (!empty($fabricantes)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>CNPJ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($fabricantes as $fabricante): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($fabricante['nome']) ?></td>
-                                    <td><?= htmlspecialchars($fabricante['cnpj']) ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <p>Nenhum fabricante cadastrado</p>
-                    <?php endif; ?>
-                    <a href="cadastros/list_fabricantes.php" class="see-all">Ver todos</a>
-                </div>
-
-                <!-- Movimentos -->
-                <div class="record-card" style="grid-column: 1 / -1;">
-                    <h3>Últimas Movimentações</h3>
-                    <?php if (!empty($movimentos)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Produto</th>
-                                    <th>Tipo</th>
-                                    <th>Qtd</th>
-                                    <th>Pessoa</th>
-                                    <th>Lugar</th>
-                                    <th>Data</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($movimentos as $movimento): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($movimento['produto']) ?></td>
-                                    <td><?= $movimento['tipo'] == 'entrada' ? '<span style="color:green">Entrada</span>' : '<span style="color:red">Saída</span>' ?></td>
-                                    <td><?= htmlspecialchars($movimento['quantidade']) ?></td>
-                                    <td><?= htmlspecialchars($movimento['pessoa']) ?></td>
-                                    <td><?= htmlspecialchars($movimento['lugar']) ?></td>
-                                    <td><?= date('d/m/Y H:i', strtotime($movimento['data_movimento'])) ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <p>Nenhuma movimentação registrada</p>
-                    <?php endif; ?>
-                    <a href="relatorios/relatorio_movimentos.php" class="see-all">Ver relatório completo</a>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            <p>SIPROQUIM &copy; <?= date('Y') ?></p>
-        </footer>
+<div class="content">
+    <div class="welcome-message">
+        <h1>Bem-vindo ao SIPROQUIM</h1>
+        <p>Sistema de controle de produtos químicos.</p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle accordion functionality
-            const accordionHeaders = document.querySelectorAll('.accordion-header');
+    <!-- Summary Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value"><?= $total_produtos ?></div>
+            <div class="stat-label">Produtos</div>
+            <div class="stat-action"><a href="cadastros/list_produtos.php" class="btn btn-sm btn-outline-primary">Ver todos</a></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value"><?= $total_pessoas ?></div>
+            <div class="stat-label">Pessoas</div>
+            <div class="stat-action"><a href="cadastros/list_pessoas.php" class="btn btn-sm btn-outline-primary">Ver todos</a></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value"><?= $total_lugares ?></div>
+            <div class="stat-label">Almoxarifados</div>
+            <div class="stat-action"><a href="cadastros/list_lugares.php" class="btn btn-sm btn-outline-primary">Ver todos</a></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value"><?= $total_movimentos ?></div>
+            <div class="stat-label">Movimentações</div>
+            <div class="stat-action"><a href="relatorios/relatorio_movimentos.php" class="btn btn-sm btn-outline-primary">Ver todos</a></div>
+        </div>
+    </div>
 
-            accordionHeaders.forEach(header => {
-                header.addEventListener('click', function() {
-                    // Get the parent accordion item
-                    const accordionItem = this.parentNode;
+    <!-- Quick Actions -->
+    <section class="widget">
+        <div class="widget-header">
+            <h3 class="widget-title">Ações Rápidas</h3>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Nova Entrada</h3>
+                </div>
+                <div class="card-body">
+                    <p>Registrar entrada de produtos no estoque</p>
+                </div>
+                <div class="card-footer">
+                    <a href="cadastros/movimento.php" class="btn btn-primary">Registrar</a>
+                </div>
+            </div>
 
-                    // Toggle active class
-                    const wasActive = accordionItem.classList.contains('active');
+            <div class="card">
+                <div class="card-header">
+                    <h3>Nova Saída</h3>
+                </div>
+                <div class="card-body">
+                    <p>Registrar saída de produtos do estoque</p>
+                </div>
+                <div class="card-footer">
+                    <a href="cadastros/movimento.php" class="btn btn-danger">Registrar</a>
+                </div>
+            </div>
 
-                    // Close all accordion items
-                    document.querySelectorAll('.accordion-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
+            <div class="card">
+                <div class="card-header">
+                    <h3>Novo Produto</h3>
+                </div>
+                <div class="card-body">
+                    <p>Cadastrar um novo produto no sistema</p>
+                </div>
+                <div class="card-footer">
+                    <a href="cadastros/produto.php" class="btn btn-primary">Cadastrar</a>
+                </div>
+            </div>
 
-                    // If it wasn't active before, make it active now
-                    if (!wasActive) {
-                        accordionItem.classList.add('active');
-                    }
-                });
-            });
+            <div class="card">
+                <div class="card-header">
+                    <h3>Relatório</h3>
+                </div>
+                <div class="card-body">
+                    <p>Visualizar relatório de estoque atual</p>
+                </div>
+                <div class="card-footer">
+                    <a href="relatorios/relatorio_estoque.php" class="btn btn-primary">Visualizar</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            // Open the first accordion item by default
-            const firstAccordionItem = document.querySelector('.accordion-item');
-            if (firstAccordionItem) {
-                firstAccordionItem.classList.add('active');
-            }
-        });
-    </script>
-</body>
-</html>
+    <div class="row">
+        <!-- Recent Movements -->
+        <div class="widget" style="flex: 2;">
+            <div class="widget-header">
+                <h3 class="widget-title">Últimas Movimentações</h3>
+                <a href="relatorios/relatorio_movimentos.php" class="btn btn-sm btn-outline-primary">Ver Todos</a>
+            </div>
+
+            <?php if (!empty($movimentos)): ?>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Tipo</th>
+                                <th>Qtd</th>
+                                <th>Local</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($movimentos as $movimento): ?>
+                            <tr>
+                                <td>
+                                    <strong><?= htmlspecialchars($movimento['produto']) ?></strong><br>
+                                    <small class="text-muted"><?= htmlspecialchars($movimento['pessoa']) ?></small>
+                                </td>
+                                <td>
+                                    <?php if ($movimento['tipo'] == 'entrada'): ?>
+                                        <span class="badge badge-success">Entrada</span>
+                                    <?php else: ?>
+                                        <span class="badge badge-danger">Saída</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= htmlspecialchars($movimento['quantidade']) ?></td>
+                                <td><?= htmlspecialchars($movimento['lugar']) ?></td>
+                                <td><?= date('d/m/Y H:i', strtotime($movimento['data_movimento'])) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-info">
+                    <p>Nenhuma movimentação registrada</p>
+                    <a href="cadastros/movimento.php" class="btn btn-primary mt-2">Registrar Movimentação</a>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Low Stock Alert -->
+        <div class="widget" style="flex: 1;">
+            <div class="widget-header">
+                <h3 class="widget-title">Estoque Baixo</h3>
+                <a href="relatorios/relatorio_estoque.php" class="btn btn-sm btn-outline-primary">Ver Estoque</a>
+            </div>
+
+            <?php if (!empty($baixo_estoque)): ?>
+                <div class="alert alert-warning mb-3">
+                    <strong>Atenção!</strong> Produtos com estoque abaixo de 5 unidades.
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Local</th>
+                                <th>Qtd</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($baixo_estoque as $item): ?>
+                            <tr>
+                                <td>
+                                    <strong><?= htmlspecialchars($item['produto']) ?></strong>
+                                    <?php if (!empty($item['grupo'])): ?>
+                                    <br><small class="text-muted"><?= htmlspecialchars($item['grupo']) ?></small>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= htmlspecialchars($item['lugar'] ?? 'N/A') ?></td>
+                                <td>
+                                    <span class="badge badge-warning"><?= $item['saldo'] ?></span>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-success">
+                    <p>Todos os produtos estão com estoque adequado.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Recent Products -->
+    <div class="widget">
+        <div class="widget-header">
+            <h3 class="widget-title">Produtos Recentes</h3>
+            <a href="cadastros/list_produtos.php" class="btn btn-sm btn-outline-primary">Ver Todos</a>
+        </div>
+
+        <?php if (!empty($produtos)): ?>
+            <div class="card-grid">
+                <?php foreach ($produtos as $produto): ?>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><?= htmlspecialchars($produto['nome']) ?></h3>
+                    </div>
+                    <div class="card-body">
+                        <?php if (!empty($produto['tipo'])): ?>
+                            <p><strong>Tipo:</strong> <?= htmlspecialchars($produto['tipo']) ?></p>
+                        <?php endif; ?>
+
+                        <?php if (!empty($produto['preco'])): ?>
+                            <p><strong>Preço:</strong> R$ <?= number_format($produto['preco'], 2, ',', '.') ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group">
+                            <a href="cadastros/produto.php?id=<?= $produto['id'] ?>" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a href="relatorios/movimentacao_produtos.php?produto_id=<?= $produto['id'] ?>" class="btn btn-sm btn-outline-primary">Movimentos</a>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-info text-center">
+                <p>Nenhum produto cadastrado</p>
+                <a href="cadastros/produto.php" class="btn btn-primary mt-2">Cadastrar Produto</a>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<style>
+/* Additional page-specific styles */
+.welcome-message {
+    background-color: var(--light-gray);
+    padding: 20px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary);
+}
+
+.welcome-message h1 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 1.8rem;
+}
+
+.welcome-message p {
+    margin-top: 5px;
+    color: var(--text-secondary);
+}
+
+.row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.text-muted {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+}
+
+.stat-action {
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+    }
+}
+</style>
+
+<?php include_once __DIR__ . '/includes/footer.php'; ?>
