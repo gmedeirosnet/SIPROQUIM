@@ -2,6 +2,9 @@
 // cadastros/pessoa.php
 require_once __DIR__ . '/../config/db.php';
 
+// Set page title for the header
+$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Pessoa' : 'Cadastrar Pessoa';
+
 // Fetch person groups for dropdown
 $stmt_grupos = $pdo->query("SELECT id, nome FROM grupos_pessoas ORDER BY nome");
 $grupos = $stmt_grupos->fetchAll(PDO::FETCH_ASSOC);
@@ -16,14 +19,13 @@ foreach ($grupos as $grupo) {
 }
 
 // Check if editing existing record
-$editing = false;
 $pessoa = null;
-if (isset($_GET['id'])) {
+if ($editing) {
     $stmt = $pdo->prepare("SELECT * FROM pessoas WHERE id = :id");
     $stmt->execute(['id' => $_GET['id']]);
     $pessoa = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($pessoa) {
-        $editing = true;
+    if (!$pessoa) {
+        $editing = false;
     }
 }
 
@@ -65,140 +67,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+
+// Include the header
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $editing ? 'Editar' : 'Cadastro de' ?> Pessoa</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            margin-top: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            margin-top: 10px;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .btn {
-            display: inline-block;
-            padding: 8px 12px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .btn-link {
-            background: none;
-            color: #007bff;
-            text-decoration: underline;
-            border: none;
-            padding: 0;
-        }
-        .message {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1><?= $editing ? 'Editar' : 'Cadastro de' ?> Pessoa</h1>
+<div class="content">
+    <h2 class="section-title"><?= $editing ? 'Editar' : 'Cadastro de' ?> Pessoa</h2>
 
-        <?php if (isset($message)): ?>
-            <div class="message <?= $messageType ?>">
-                <?= $message ?>
-            </div>
-        <?php endif; ?>
+    <?php if (isset($message)): ?>
+        <div class="alert <?= $messageType === 'success' ? 'alert-success' : 'alert-danger' ?>">
+            <?= $message ?>
+        </div>
+    <?php endif; ?>
 
-        <form method="post">
-            <div class="form-group">
-                <label for="nome">Nome:</label>
-                <input type="text" name="nome" id="nome" required value="<?= $editing ? htmlspecialchars($pessoa['nome']) : '' ?>">
-            </div>
+    <form method="post" class="form">
+        <div class="form-group">
+            <label for="nome" class="form-label">Nome: <span class="text-danger">*</span></label>
+            <input type="text" name="nome" id="nome" class="form-control" required
+                   value="<?= $editing ? htmlspecialchars($pessoa['nome']) : '' ?>">
+        </div>
 
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" name="email" id="email" value="<?= $editing ? htmlspecialchars($pessoa['email'] ?? '') : '' ?>">
-            </div>
+        <div class="form-group">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" name="email" id="email" class="form-control"
+                   value="<?= $editing ? htmlspecialchars($pessoa['email'] ?? '') : '' ?>">
+        </div>
 
-            <div class="form-group">
-                <label for="id_grupo_pessoa">Grupo:</label>
-                <select name="id_grupo_pessoa" id="id_grupo_pessoa" required>
-                    <option value="">Selecione um grupo</option>
-                    <?php foreach ($grupos as $grupo): ?>
-                        <option value="<?= $grupo['id'] ?>" <?=
-                            ($editing && $pessoa['id_grupo_pessoa'] == $grupo['id']) ||
-                            (!$editing && $default_grupo_id == $grupo['id'])
-                                ? 'selected' : ''
-                        ?>>
-                            <?= htmlspecialchars($grupo['nome']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="id_grupo_pessoa" class="form-label">Grupo: <span class="text-danger">*</span></label>
+            <select name="id_grupo_pessoa" id="id_grupo_pessoa" class="form-control" required>
+                <option value="">Selecione um grupo</option>
+                <?php foreach ($grupos as $grupo): ?>
+                    <option value="<?= $grupo['id'] ?>" <?=
+                        ($editing && $pessoa['id_grupo_pessoa'] == $grupo['id']) ||
+                        (!$editing && $default_grupo_id == $grupo['id'])
+                            ? 'selected' : ''
+                    ?>>
+                        <?= htmlspecialchars($grupo['nome']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-            <input type="submit" value="<?= $editing ? 'Atualizar' : 'Cadastrar' ?>">
-        </form>
+        <div class="btn-group mt-4">
+            <button type="submit" class="btn btn-primary"><?= $editing ? 'Atualizar' : 'Cadastrar' ?></button>
 
-        <div>
             <?php if ($editing): ?>
-                <a href="list_pessoas.php" class="btn">Cancelar</a>
+                <a href="list_pessoas.php" class="btn btn-secondary">Cancelar</a>
             <?php else: ?>
-                <a href="../index.php" class="btn">Voltar para a Página Inicial</a>
-                <a href="list_pessoas.php" class="btn btn-link">Ver todas as pessoas</a>
+                <a href="list_pessoas.php" class="btn btn-outline-primary">Ver todas as pessoas</a>
+                <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
             <?php endif; ?>
         </div>
-    </div>
-</body>
-</html>
+    </form>
+</div>
+
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
