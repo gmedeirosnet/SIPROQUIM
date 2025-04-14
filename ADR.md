@@ -165,7 +165,7 @@ Estas mudanças estão alinhadas com a arquitetura modular inicialmente adotada 
 
 # ADR-003: Implementação de Infraestrutura como Código com Terraform
 
-**Data:** 2025-04-12
+**Data:** 2025-04-12 (Atualizado em 2025-04-14)
 **Status:** Aceito
 **Responsáveis:** Equipe de DevOps e Infraestrutura
 
@@ -206,6 +206,8 @@ Implementar uma solução de Infraestrutura como Código (IaC) utilizando Terraf
 
 - Implementar armazenamento seguro de credenciais e segredos
 - Utilizar variáveis de ambiente e backends seguros para armazenamento de estado
+- Utilizar chaves SSH dedicadas e com permissões restritas para acesso seguro às instâncias EC2
+- Configurar grupos de segurança específicos para limitar o acesso SSH apenas a IPs autorizados
 
 ## Alternativas Consideradas
 
@@ -237,5 +239,18 @@ Soluções de orquestração de contêineres como Kubernetes poderiam oferecer r
 A implementação de Infraestrutura como Código com Terraform representa um passo importante na maturação do sistema de estoque, permitindo um gerenciamento mais consistente, documentado e automatizado da infraestrutura. Embora exista uma curva inicial de aprendizado, os benefícios de longo prazo em termos de confiabilidade, reprodutibilidade e eficiência superam os custos.
 
 Esta decisão se alinha com as práticas modernas de DevOps e fornece uma base sólida para futuros crescimentos e melhorias na infraestrutura do sistema, enquanto mantém as opções abertas para diferentes estratégias de hospedagem.
+
+## Atualizações
+
+### Abril 14, 2025: Implementação de Acesso SSH Seguro
+
+Foi implementada uma configuração segura para acesso SSH às instâncias EC2 utilizando uma chave dedicada (aws@gmedeiros.net). Esta abordagem:
+
+- Melhora a rastreabilidade e auditoria de acessos às instâncias
+- Reduz a superfície de ataque ao limitar os métodos de autenticação
+- Facilita a revogação de acesso quando necessário
+- Permite uma integração mais segura com ferramentas de automação
+
+A implementação também inclui a atualização das AMIs para Ubuntu 24.04 TLS, proporcionando uma base mais segura e atualizada para o ambiente de produção, além de ajustes no script de inicialização para garantir compatibilidade com a nova versão do sistema operacional.
 
 > **Revisão:** Este ADR deve ser revisado após 6 meses de implementação ou quando houver mudanças significativas na estratégia de infraestrutura.

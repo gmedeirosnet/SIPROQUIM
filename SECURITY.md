@@ -18,7 +18,7 @@ As seguintes versões do Sistema de Estoque recebem atualizações de segurança
 Caso você encontre uma vulnerabilidade de segurança neste projeto, siga estas etapas para reportá-la:
 
 1. **Não divulgue publicamente** a vulnerabilidade encontrada
-2. Envie um e-mail para [security@exemplo.com.br](mailto:security@exemplo.com.br) com detalhes sobre:
+2. Envie um e-mail para [security@gmedeiros.net](mailto:security@gmedeiros.net) com detalhes sobre:
    - O tipo de vulnerabilidade
    - Os passos para reproduzir o problema
    - Possível impacto da vulnerabilidade
@@ -142,4 +142,4 @@ Em caso de incidente de segurança, seguimos este processo:
 
 Última atualização: 12 de abril de 2025
 
-Contato para questões de segurança: [security@exemplo.com.br](mailto:security@exemplo.com.br)
+Contato para questões de segurança: [security@gmedeiros.net](mailto:security@gmedeiros.net)
