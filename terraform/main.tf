@@ -85,6 +85,8 @@ resource "aws_instance" "siproquim_server" {
     }
   }
 
+  # The specific Elastic IP will be attached to this instance
+
   provisioner "file" {
     source      = "scripts/clone_github_repo.sh"
     destination = "/tmp/clone_github_repo.sh"
@@ -132,4 +134,22 @@ resource "aws_instance" "siproquim_server" {
   EOF
 
   depends_on = [aws_internet_gateway.siproquim_igw]
+}
+
+# Elastic IP for EC2 instance
+resource "aws_eip" "siproquim_eip" {
+  domain = "vpc"
+  address = "54.81.122.223"
+
+  tags = {
+    Name        = "${lower(var.project_name)}-eip"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# EIP Association
+resource "aws_eip_association" "siproquim_eip_assoc" {
+  instance_id   = aws_instance.siproquim_server.id
+  allocation_id = aws_eip.siproquim_eip.id
 }
