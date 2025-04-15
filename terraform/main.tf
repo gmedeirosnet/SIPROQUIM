@@ -74,7 +74,8 @@ resource "aws_instance" "siproquim_server" {
   subnet_id              = aws_subnet.public_subnet_a.id
   vpc_security_group_ids = [aws_security_group.siproquim_sg.id]
   key_name               = aws_key_pair.gmedeiros_key.key_name
-
+  associate_public_ip_address = true
+  
   # Root volume
   root_block_device {
     volume_size           = var.volume_size
@@ -84,8 +85,6 @@ resource "aws_instance" "siproquim_server" {
       Name = "${lower(var.project_name)}-root-volume"
     }
   }
-
-  # The specific Elastic IP will be attached to this instance
 
   provisioner "file" {
     source      = "scripts/clone_github_repo.sh"
@@ -139,7 +138,8 @@ resource "aws_instance" "siproquim_server" {
 # Elastic IP for EC2 instance
 resource "aws_eip" "siproquim_eip" {
   domain = "vpc"
-  address = "54.81.122.223"
+  address = "44.206.88.47"
+  instance = aws_instance.siproquim_server.id
 
   tags = {
     Name        = "${lower(var.project_name)}-eip"
