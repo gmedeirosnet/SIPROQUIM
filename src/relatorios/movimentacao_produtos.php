@@ -177,7 +177,7 @@ include_once __DIR__ . '/../includes/header.php';
             <div class="dashboard-card">
                 <div>Total de Saídas: <strong><?= $total_saida ?></strong></div>
             </div>
-            <div class="dashboard-card">
+            <div class="dashboard-card"></div>
                 <div>Saldo Atual: </strong><?= $saldo_atual >= 0 ? 'text-success' : 'text-danger' ?>"><?= $saldo_atual ?></strong></div>
             </div>
         </div>
