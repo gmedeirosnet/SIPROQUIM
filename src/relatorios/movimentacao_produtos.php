@@ -166,6 +166,7 @@ include_once __DIR__ . '/../includes/header.php';
             </div>
         </div>
 
+        <br>
         <div class="dashboard-cards">
             <div class="dashboard-card">
                 <div>Total de Movimentações: <strong><?= $total_movements ?></strong></div>
