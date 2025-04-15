@@ -168,23 +168,20 @@ include_once __DIR__ . '/../includes/header.php';
 
         <div class="dashboard-cards">
             <div class="dashboard-card">
-                <div>Total de Movimentações</div>
-                <div class="dashboard-number"><?= $total_movements ?></div>
+                <div>Total de Movimentações: <strong><?= $total_movements ?></strong></div>
             </div>
             <div class="dashboard-card">
-                <div>Total de Entradas</div>
-                <div class="dashboard-number text-success"><?= $total_entrada ?></div>
+                <div>Total de Entradas: <strong><?= $total_entrada ?></strong></div>
             </div>
             <div class="dashboard-card">
-                <div>Total de Saídas</div>
-                <div class="dashboard-number text-danger"><?= $total_saida ?></div>
+                <div>Total de Saídas: <strong><?= $total_saida ?></strong></div>
             </div>
             <div class="dashboard-card">
-                <div>Saldo Atual</div>
-                <div class="dashboard-number <?= $saldo_atual >= 0 ? 'text-success' : 'text-danger' ?>"><?= $saldo_atual ?></div>
+                <div>Saldo Atual: </strong><?= $saldo_atual >= 0 ? 'text-success' : 'text-danger' ?>"><?= $saldo_atual ?></strong></div>
             </div>
         </div>
 
+        <br>
         <?php if (!empty($movimentos)): ?>
             <h3 class="mt-4">Movimentações do Produto</h3>
             <div class="table-responsive">
