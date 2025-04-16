@@ -150,7 +150,7 @@ Para provisionamento em ambientes de produção:
    terraform init
    ```
 4. Personalize as variáveis em `variables.tf` ou crie um arquivo `terraform.tfvars`
-5. O sistema já está configurado com uma chave SSH dedicada (aws@gmedeiros.net) para acesso à instância EC2. Se necessário, você pode modificar ou adicionar chaves SSH no arquivo `main.tf`
+5. O sistema já está configurado com uma chave SSH dedicada para acesso à instância EC2. Se necessário, você pode modificar ou adicionar chaves SSH no arquivo `main.tf`
 6. Valide o plano de execução:
    ```bash
    terraform plan -out=tfplan.out
