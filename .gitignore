@@ -1,6 +1,3 @@
-# Run the project
-run.sh
-
 # Docker volumes
 postgres_data/
 
@@ -58,4 +55,4 @@ temp/
 *.backup
 
 # Remove the Private Key from the Public Repository
-scripts/siproquim
+scripts/siproquim*
