@@ -10,6 +10,10 @@ data_path="./certbot"
 email="security@gmedeiros.net"  # Using the email from SECURITY.md
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
+# Check if root directories exist, create them if not
+mkdir -p "$data_path/conf"
+mkdir -p "$data_path/www"
+
 # Check if we're running in staging or production mode
 if [ $staging != "0" ]; then
   staging_arg="--staging"
@@ -18,6 +22,7 @@ else
 fi
 
 echo "### Creating dummy certificate for $domains ..."
+path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
 
 # Create a temporary self-signed certificate for initial setup
@@ -25,16 +30,24 @@ docker-compose run --rm --entrypoint "\
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1\
     -keyout '/etc/letsencrypt/live/$domains/privkey.pem' \
     -out '/etc/letsencrypt/live/$domains/fullchain.pem' \
-    -subj '/CN=localhost'" certbot
+    -subj '/CN=localhost'" certbot || {
+  echo "Failed to create dummy certificate. Exiting."
+  exit 1
+}
 
 echo "### Starting nginx ..."
-docker-compose up --force-recreate -d nginx
+docker-compose up --force-recreate -d nginx || {
+  echo "Failed to start Nginx container. Exiting."
+  exit 1
+}
 
 echo "### Deleting dummy certificate for $domains ..."
 docker-compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/$domains && \
   rm -Rf /etc/letsencrypt/archive/$domains && \
-  rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
+  rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot || {
+  echo "Warning: Failed to delete dummy certificate. Continuing anyway."
+}
 
 echo "### Requesting Let's Encrypt certificate for $domains ..."
 # Join domains to -d args
@@ -57,7 +70,23 @@ docker-compose run --rm --entrypoint "\
     $domain_args \
     --rsa-key-size $rsa_key_size \
     --agree-tos \
-    --force-renewal" certbot
+    --force-renewal" certbot || {
+  echo "Failed to obtain Let's Encrypt certificate. Using self-signed certificates for now."
+  echo "Make sure your domain is pointed to this server and ports 80/443 are accessible."
+  echo "You can run this script again later to retry."
+}
+
+echo "### Checking for certificates..."
+docker-compose run --rm --entrypoint "\
+  [ -d /etc/letsencrypt/live/$domains ] && echo 'Certificates exist. Updating Nginx configuration.' || echo 'No certificates found. Keeping self-signed configuration.'" certbot
 
 echo "### Reloading nginx ..."
-docker-compose exec nginx nginx -s reload
+docker-compose exec nginx nginx -s reload || {
+  echo "Failed to reload Nginx. Please restart the container manually."
+}
+
+echo "### Instructions for switching to Let's Encrypt certificates:"
+echo "1. If certificates were successfully obtained, edit nginx/default.conf"
+echo "2. Comment out the self-signed certificate lines"
+echo "3. Uncomment the Let's Encrypt certificate lines"
+echo "4. Run 'docker-compose restart nginx' to apply changes"
