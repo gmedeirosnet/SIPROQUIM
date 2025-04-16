@@ -8,7 +8,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ## [0.5.1] - 2025-04-14
 
 ### Adicionado
-- Configuração de chave SSH (aws@gmedeiros.net) no Terraform para acesso à instância EC2
+- Configuração de chave SSH no Terraform para acesso à instância EC2
 - Documentação atualizada sobre a configuração SSH no processo de provisioning
 
 ### Alterado

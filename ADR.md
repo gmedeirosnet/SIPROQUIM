@@ -244,7 +244,7 @@ Esta decisão se alinha com as práticas modernas de DevOps e fornece uma base s
 
 ### Abril 14, 2025: Implementação de Acesso SSH Seguro
 
-Foi implementada uma configuração segura para acesso SSH às instâncias EC2 utilizando uma chave dedicada (aws@gmedeiros.net). Esta abordagem:
+Foi implementada uma configuração segura para acesso SSH às instâncias EC2 utilizando uma chave dedicada. Esta abordagem:
 
 - Melhora a rastreabilidade e auditoria de acessos às instâncias
 - Reduz a superfície de ataque ao limitar os métodos de autenticação
