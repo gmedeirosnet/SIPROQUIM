@@ -8,7 +8,7 @@ domains=(siproquim.gmedeiros.net)
 rsa_key_size=4096
 data_path="./certbot"
 email="security@gmedeiros.net"  # Using the email from SECURITY.md
-staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
+staging=1
 
 # Check if root directories exist, create them if not
 mkdir -p "$data_path/conf"

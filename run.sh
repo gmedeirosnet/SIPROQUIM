@@ -42,7 +42,7 @@ mkdir -p ./certbot/conf
 mkdir -p ./certbot/www
 
 echo "Stopping any running containers..."
-docker-compose down
+docker compose down
 
 echo "Removing persistent database data..."
 docker volume rm estoque_postgres_data 2>/dev/null || true
@@ -99,7 +99,7 @@ if [ $USE_SSL -eq 1 ]; then
 fi
 
 echo "Starting containers with new configuration..."
-docker-compose up -d --build
+docker compose up -d --build
 
 echo "Waiting for services to initialize..."
 sleep 5
