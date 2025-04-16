@@ -24,6 +24,15 @@ function isActive($page, $current_page = null, $current_dir = null) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' | SIPROQUIM' : 'SIPROQUIM - Sistema de Gerenciamento'; ?></title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-534LVNS137"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-534LVNS137');
+    </script>
     <link rel="stylesheet" href="/assets/css/main.css">
     <!-- Add favicon if available -->
     <!-- <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon"> -->
