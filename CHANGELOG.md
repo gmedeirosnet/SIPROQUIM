@@ -5,6 +5,23 @@ Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/spec/v2.0.0.html).
 
+## [0.5.2] - 2025-04-19
+
+### Adicionado
+- Verificação aprimorada da integridade do banco de dados durante a inicialização
+- Novo utilitário `test_search.php` para diagnóstico avançado de consultas SQL
+- Integração expandida com serviços de monitoramento na infraestrutura Terraform
+
+### Alterado
+- Atualização da documentação do projeto com informações mais detalhadas
+- Refinamento do processo de deploy para ambientes de produção
+- Melhorias na interface dos relatórios de movimentação de produtos
+
+### Segurança
+- Implementação de headers de segurança HTTP adicionais
+- Restrição adicional de permissões nos volumes Docker
+- Ajustes na política de acesso SSH para instâncias EC2
+
 ## [0.5.1] - 2025-04-14
 
 ### Adicionado

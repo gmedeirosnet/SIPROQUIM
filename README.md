@@ -225,4 +225,4 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para d
 
 ## Última Atualização
 
-16 de abril de 2025
+19 de abril de 2025
