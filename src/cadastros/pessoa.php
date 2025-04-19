@@ -33,17 +33,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
     $id_grupo_pessoa = $_POST['id_grupo_pessoa'];
+    $enable = isset($_POST['enable']) ? true : false;
+    $password = $_POST['password'] ?? '';
+
+    // Se estiver editando e a senha estiver vazia, mantenha a senha atual
+    $passwordSql = '';
+    $params = [
+        'nome' => $nome,
+        'email' => $email,
+        'id_grupo_pessoa' => $id_grupo_pessoa,
+        'enable' => $enable
+    ];
+
+    if (!empty($password)) {
+        // Hash da senha
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $passwordSql = ', password = :password';
+        $params['password'] = $passwordHash;
+    }
 
     if ($editing) {
         // Update existing person
-        $sql = "UPDATE pessoas SET nome = :nome, email = :email, id_grupo_pessoa = :id_grupo_pessoa WHERE id = :id";
+        $sql = "UPDATE pessoas SET nome = :nome, email = :email, id_grupo_pessoa = :id_grupo_pessoa, enable = :enable$passwordSql WHERE id = :id";
+        $params['id'] = $_GET['id'];
         $stmt = $pdo->prepare($sql);
-        if ($stmt->execute([
-            'nome' => $nome,
-            'email' => $email,
-            'id_grupo_pessoa' => $id_grupo_pessoa,
-            'id' => $_GET['id']
-        ])) {
+        if ($stmt->execute($params)) {
             $message = "Pessoa atualizada com sucesso!";
             $messageType = "success";
         } else {
@@ -52,12 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         // Insert new person
-        $sql = "INSERT INTO pessoas (nome, email, id_grupo_pessoa) VALUES (:nome, :email, :id_grupo_pessoa)";
+        $sql = "INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable, password) VALUES (:nome, :email, :id_grupo_pessoa, :enable, :password)";
         $stmt = $pdo->prepare($sql);
         if ($stmt->execute([
             'nome' => $nome,
             'email' => $email,
-            'id_grupo_pessoa' => $id_grupo_pessoa
+            'id_grupo_pessoa' => $id_grupo_pessoa,
+            'enable' => $enable,
+            'password' => $passwordHash
         ])) {
             $message = "Pessoa cadastrada com sucesso!";
             $messageType = "success";
@@ -108,6 +124,17 @@ include_once __DIR__ . '/../includes/header.php';
                     </option>
                 <?php endforeach; ?>
             </select>
+        </div>
+
+        <div class="form-group">
+            <label for="enable" class="form-label">Enable:</label>
+            <input type="checkbox" name="enable" id="enable" class="form-check-input"
+                   <?= $editing && $pessoa['enable'] ? 'checked' : '' ?>>
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="form-label">Senha:</label>
+            <input type="password" name="password" id="password" class="form-control">
         </div>
 
         <div class="btn-group mt-4">

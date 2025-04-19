@@ -41,11 +41,8 @@ echo "Setting up directories for Certbot..."
 mkdir -p ./certbot/conf
 mkdir -p ./certbot/www
 
-echo "Stopping any running containers..."
-docker compose down
-
-echo "Removing persistent database data..."
-docker volume rm estoque_postgres_data 2>/dev/null || true
+echo "Stopping any running containers and Removing volumes..."
+docker compose down && docker volume rm estoque_postgres_data
 
 # Create SSL certificates directory if it doesn't exist
 mkdir -p ./nginx/ssl
