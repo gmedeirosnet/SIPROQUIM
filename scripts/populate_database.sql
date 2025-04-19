@@ -27,54 +27,54 @@ INSERT INTO grupos_pessoas (nome, descricao) VALUES
 ('Pesquisadores', 'Pesquisadores e cientistas da instituição'),
 ('Auditores', 'Responsáveis pela auditoria e controle de estoque');
 
--- 2. Insert Persons (pessoas)
+-- 2. Insert Persons (pessoas) with enable=true
 -- Alunos (20)
-INSERT INTO pessoas (nome, email, id_grupo_pessoa) VALUES
-('João Silva', 'joao.silva@aluno.edu.br', 1),
-('Maria Santos', 'maria.santos@aluno.edu.br', 1),
-('Pedro Oliveira', 'pedro.oliveira@aluno.edu.br', 1),
-('Ana Souza', 'ana.souza@aluno.edu.br', 1),
-('Lucas Costa', 'lucas.costa@aluno.edu.br', 1),
-('Juliana Lima', 'juliana.lima@aluno.edu.br', 1),
-('Matheus Ferreira', 'matheus.ferreira@aluno.edu.br', 1),
-('Camila Rodrigues', 'camila.rodrigues@aluno.edu.br', 1),
-('Gabriel Almeida', 'gabriel.almeida@aluno.edu.br', 1),
-('Laura Martins', 'laura.martins@aluno.edu.br', 1),
-('Bruno Pereira', 'bruno.pereira@aluno.edu.br', 1),
-('Fernanda Gomes', 'fernanda.gomes@aluno.edu.br', 1),
-('Rafael Carvalho', 'rafael.carvalho@aluno.edu.br', 1),
-('Isabella Ribeiro', 'isabella.ribeiro@aluno.edu.br', 1),
-('Thiago Machado', 'thiago.machado@aluno.edu.br', 1),
-('Carolina Castro', 'carolina.castro@aluno.edu.br', 1),
-('Felipe Barbosa', 'felipe.barbosa@aluno.edu.br', 1),
-('Beatriz Cardoso', 'beatriz.cardoso@aluno.edu.br', 1),
-('Vitor Correia', 'vitor.correia@aluno.edu.br', 1),
-('Mariana Nunes', 'mariana.nunes@aluno.edu.br', 1);
+INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable) VALUES
+('João Silva', 'joao.silva@aluno.edu.br', 1, true),
+('Maria Santos', 'maria.santos@aluno.edu.br', 1, true),
+('Pedro Oliveira', 'pedro.oliveira@aluno.edu.br', 1, true),
+('Ana Souza', 'ana.souza@aluno.edu.br', 1, true),
+('Lucas Costa', 'lucas.costa@aluno.edu.br', 1, true),
+('Juliana Lima', 'juliana.lima@aluno.edu.br', 1, true),
+('Matheus Ferreira', 'matheus.ferreira@aluno.edu.br', 1, true),
+('Camila Rodrigues', 'camila.rodrigues@aluno.edu.br', 1, true),
+('Gabriel Almeida', 'gabriel.almeida@aluno.edu.br', 1, true),
+('Laura Martins', 'laura.martins@aluno.edu.br', 1, true),
+('Bruno Pereira', 'bruno.pereira@aluno.edu.br', 1, true),
+('Fernanda Gomes', 'fernanda.gomes@aluno.edu.br', 1, true),
+('Rafael Carvalho', 'rafael.carvalho@aluno.edu.br', 1, true),
+('Isabella Ribeiro', 'isabella.ribeiro@aluno.edu.br', 1, true),
+('Thiago Machado', 'thiago.machado@aluno.edu.br', 1, true),
+('Carolina Castro', 'carolina.castro@aluno.edu.br', 1, true),
+('Felipe Barbosa', 'felipe.barbosa@aluno.edu.br', 1, true),
+('Beatriz Cardoso', 'beatriz.cardoso@aluno.edu.br', 1, true),
+('Vitor Correia', 'vitor.correia@aluno.edu.br', 1, true),
+('Mariana Nunes', 'mariana.nunes@aluno.edu.br', 1, true);
 
 -- Professores (8)
-INSERT INTO pessoas (nome, email, id_grupo_pessoa) VALUES
-('Dr. Roberto Mendes', 'roberto.mendes@professor.edu.br', 2),
-('Dra. Claudia Fernandes', 'claudia.fernandes@professor.edu.br', 2),
-('Dr. Marcelo Gonçalves', 'marcelo.goncalves@professor.edu.br', 2),
-('Dra. Patricia Andrade', 'patricia.andrade@professor.edu.br', 2),
-('Dr. Ricardo Sousa', 'ricardo.sousa@professor.edu.br', 2),
-('Dra. Silvia Oliveira', 'silvia.oliveira@professor.edu.br', 2),
-('Dr. Eduardo Monteiro', 'eduardo.monteiro@professor.edu.br', 2),
-('Dra. Luciana Cavalcanti', 'luciana.cavalcanti@professor.edu.br', 2);
+INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable) VALUES
+('Dr. Roberto Mendes', 'roberto.mendes@professor.edu.br', 2, true),
+('Dra. Claudia Fernandes', 'claudia.fernandes@professor.edu.br', 2, true),
+('Dr. Marcelo Gonçalves', 'marcelo.goncalves@professor.edu.br', 2, true),
+('Dra. Patricia Andrade', 'patricia.andrade@professor.edu.br', 2, true),
+('Dr. Ricardo Sousa', 'ricardo.sousa@professor.edu.br', 2, true),
+('Dra. Silvia Oliveira', 'silvia.oliveira@professor.edu.br', 2, true),
+('Dr. Eduardo Monteiro', 'eduardo.monteiro@professor.edu.br', 2, true),
+('Dra. Luciana Cavalcanti', 'luciana.cavalcanti@professor.edu.br', 2, true);
 
 -- Pesquisadores (4)
-INSERT INTO pessoas (nome, email, id_grupo_pessoa) VALUES
-('Dr. Fernando Silva', 'fernando.silva@pesquisador.edu.br', 3),
-('Dra. Amanda Costa', 'amanda.costa@pesquisador.edu.br', 3),
-('Dr. Rodrigo Lima', 'rodrigo.lima@pesquisador.edu.br', 3),
-('Dra. Cristina Santos', 'cristina.santos@pesquisador.edu.br', 3);
+INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable) VALUES
+('Dr. Fernando Silva', 'fernando.silva@pesquisador.edu.br', 3, true),
+('Dra. Amanda Costa', 'amanda.costa@pesquisador.edu.br', 3, true),
+('Dr. Rodrigo Lima', 'rodrigo.lima@pesquisador.edu.br', 3, true),
+('Dra. Cristina Santos', 'cristina.santos@pesquisador.edu.br', 3, true);
 
 -- Auditores (4)
-INSERT INTO pessoas (nome, email, id_grupo_pessoa) VALUES
-('Carlos Mendonça', 'carlos.mendonca@auditor.edu.br', 4),
-('Sandra Vieira', 'sandra.vieira@auditor.edu.br', 4),
-('Marcos Teixeira', 'marcos.teixeira@auditor.edu.br', 4),
-('Renata Cruz', 'renata.cruz@auditor.edu.br', 4);
+INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable) VALUES
+('Carlos Mendonça', 'carlos.mendonca@auditor.edu.br', 4, true),
+('Sandra Vieira', 'sandra.vieira@auditor.edu.br', 4, true),
+('Marcos Teixeira', 'marcos.teixeira@auditor.edu.br', 4, true),
+('Renata Cruz', 'renata.cruz@auditor.edu.br', 4, true);
 
 -- 3. Insert Product Groups (grupos)
 INSERT INTO grupos (nome, descricao) VALUES

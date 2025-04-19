@@ -33,7 +33,7 @@ if ($filter_grupo > 0) {
 }
 
 // Get persons with pagination and search
-$sql = "SELECT p.id, p.nome, p.email, p.data_cadastro, gp.nome AS grupo_nome, gp.id AS grupo_id
+$sql = "SELECT p.id, p.nome, p.email, p.data_cadastro, p.enable, gp.nome AS grupo_nome, gp.id AS grupo_id
         FROM pessoas p
         LEFT JOIN grupos_pessoas gp ON p.id_grupo_pessoa = gp.id
         {$where_clause}
@@ -64,6 +64,25 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
     }
 }
 
+// Handle enable/disable action
+if (isset($_POST['toggle_enable']) && isset($_POST['id'])) {
+    $id = (int)$_POST['id'];
+    $enable = (int)$_POST['enable'];
+    $new_status = $enable ? 0 : 1; // Toggle the current status
+
+    try {
+        $stmt = $pdo->prepare("UPDATE pessoas SET enable = :enable WHERE id = :id");
+        $stmt->execute([':enable' => $new_status, ':id' => $id]);
+
+        // Redirect to avoid resubmission with status message
+        $status_msg = $new_status ? 'enabled' : 'disabled';
+        header("Location: list_pessoas.php?status_change={$status_msg}");
+        exit;
+    } catch (PDOException $e) {
+        $error = "Não foi possível alterar o status da pessoa.";
+    }
+}
+
 // Include header
 include_once __DIR__ . '/../includes/header.php';
 ?>
@@ -71,6 +90,10 @@ include_once __DIR__ . '/../includes/header.php';
 <div class="content">
     <?php if (isset($_GET['deleted'])): ?>
         <div class="alert alert-success">Pessoa excluída com sucesso!</div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['status_change'])): ?>
+        <div class="alert alert-success">Status da pessoa <?= htmlspecialchars($_GET['status_change']) ?> com sucesso!</div>
     <?php endif; ?>
 
     <?php if (isset($error)): ?>
@@ -112,6 +135,7 @@ include_once __DIR__ . '/../includes/header.php';
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Grupo</th>
+                        <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -127,6 +151,15 @@ include_once __DIR__ . '/../includes/header.php';
                                 <?php else: ?>
                                     <span class="text-muted">Não atribuído</span>
                                 <?php endif; ?>
+                            </td>
+                            <td>
+                                <form method="post" style="display: inline;">
+                                    <input type="hidden" name="id" value="<?= $pessoa['id'] ?>">
+                                    <input type="hidden" name="enable" value="<?= $pessoa['enable'] ?>">
+                                    <button type="submit" name="toggle_enable" class="btn btn-sm <?= $pessoa['enable'] ? 'btn-success' : 'btn-secondary' ?>">
+                                        <?= $pessoa['enable'] ? 'Habilitado' : 'Desabilitado' ?>
+                                    </button>
+                                </form>
                             </td>
                             <td class="actions">
                                 <a href="pessoa.php?id=<?= $pessoa['id'] ?>" class="btn btn-sm btn-warning">Editar</a>

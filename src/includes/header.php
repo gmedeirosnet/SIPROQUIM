@@ -1,4 +1,11 @@
 <?php
+// Verificar autenticação em todas as páginas, exceto a de login
+$current_script = basename($_SERVER['PHP_SELF']);
+if ($current_script !== 'login.php') {
+    // Incluir verificação de autenticação
+    include_once __DIR__ . '/../auth/auth_check.php';
+}
+
 // Get current page for highlighting active navigation items
 $current_page = basename($_SERVER['PHP_SELF']);
 $current_dir = dirname($_SERVER['PHP_SELF']);
@@ -39,6 +46,34 @@ function isActive($page, $current_page = null, $current_dir = null) {
 
     <!-- Include any additional page-specific CSS or scripts in the head -->
     <?php if (isset($additionalHead)) echo $additionalHead; ?>
+
+    <style>
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            color: #fff;
+            font-size: 0.9em;
+        }
+        .user-info .user-name {
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .user-info .logout-link, .user-info .password-link {
+            color: #ff9;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin: 0 5px;
+        }
+        .user-info .logout-link:hover, .user-info .password-link:hover {
+            text-decoration: underline;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <header class="site-header">
@@ -92,6 +127,14 @@ function isActive($page, $current_page = null, $current_dir = null) {
                         </div>
                     </div>
                 </nav>
+
+                <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="user-info">
+                    <span class="user-name"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+                    <a href="auth/change_password.php" class="password-link">Alterar Senha</a> |
+                    <a href="/auth/logout.php" class="logout-link">Sair</a>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </header>

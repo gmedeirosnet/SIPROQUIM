@@ -42,8 +42,21 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
       nome VARCHAR(100) NOT NULL,
       email VARCHAR(100),
       id_grupo_pessoa INTEGER REFERENCES grupos_pessoas(id) ON DELETE SET NULL,
-      data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      enable BOOLEAN DEFAULT TRUE,
+      password VARCHAR(255)
     );
+
+    -- Adicionar o campo enable se a tabela já existir
+    DO \$\$
+    BEGIN
+        IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'pessoas') THEN
+            IF NOT EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'pessoas' AND column_name = 'enable') THEN
+                ALTER TABLE pessoas ADD COLUMN enable BOOLEAN DEFAULT TRUE;
+            END IF;
+        END IF;
+    END
+    \$\$;
 
     -- Atualizar pessoas existentes para usar o grupo padrão, se necessário
     DO \$\$
@@ -151,6 +164,15 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
         END IF;
     END
     \$\$;
+
+    -- Criação da tabela de logs de login
+    CREATE TABLE IF NOT EXISTS login_logs (
+      id SERIAL PRIMARY KEY,
+      id_pessoa INTEGER REFERENCES pessoas(id) ON DELETE CASCADE,
+      data_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ip VARCHAR(45),
+      user_agent TEXT
+    );
 EOSQL
 
 # Grant permissions after table creation
