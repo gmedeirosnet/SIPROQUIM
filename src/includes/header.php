@@ -134,8 +134,8 @@ function isActive($page, $current_page = null, $current_dir = null) {
                 <div class="nav-item dropdown user-dropdown">
                     <a href="#"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
                     <div class="dropdown-content">
-                        <a href="/src/auth/change_password.php">Alterar Senha</a>
-                        <a href="/src/auth/logout.php">Sair</a>
+                        <a href="/auth/change_password.php">Alterar Senha</a>
+                        <a href="/auth/logout.php">Sair</a>
                     </div>
                 </div>
                 <?php endif; ?>

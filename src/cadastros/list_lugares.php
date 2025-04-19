@@ -77,7 +77,6 @@ include_once __DIR__ . '/../includes/header.php';
     <div class="header-actions">
         <div>
             <h2>Lista de Almoxarifados</h2>
-            <a href="lugar.php" class="btn btn-primary">Cadastrar Novo Almoxarifado</a>
         </div>
 
         </br>

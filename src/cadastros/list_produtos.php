@@ -119,10 +119,8 @@ include_once __DIR__ . '/../includes/header.php';
     <div class="header-actions">
         <div>
             <h2>Lista de Produtos</h2>
-            <a href="produto.php" class="btn btn-primary">Cadastrar Novo Produto</a>
         </div>
 
-            
         <form class="search-form" method="get">
             <div class="form-row">
                 <div class="form-col">
@@ -134,9 +132,11 @@ include_once __DIR__ . '/../includes/header.php';
                         <input type="hidden" name="fabricante" value="<?= $filter_fabricante ?>">
                     <?php endif; ?>
                 </div>
-                <br>
                 <div>
                     <button type="submit" class="btn btn-primary">Buscar</button>
+                    <?php if (!empty($search)): ?>
+                        <a href="?<?= $filter_grupo ? 'grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? ($filter_grupo ? '&' : '') . 'fabricante=' . $filter_fabricante : '' ?>" class="btn btn-outline-secondary">Limpar Busca</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </form>
