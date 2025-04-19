@@ -43,7 +43,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
       email VARCHAR(100),
       id_grupo_pessoa INTEGER REFERENCES grupos_pessoas(id) ON DELETE SET NULL,
       data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      enable BOOLEAN DEFAULT TRUE,
+      enable BOOLEAN DEFAULT FALSE,
       password VARCHAR(255)
     );
 
