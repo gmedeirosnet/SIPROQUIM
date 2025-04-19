@@ -103,7 +103,6 @@ include_once __DIR__ . '/../includes/header.php';
     <div class="header-actions">
         <div>
             <h2>Lista de Pessoas</h2>
-            <a href="pessoa.php" class="btn btn-primary">Cadastrar Nova Pessoa</a>
         </div>
 
         <br>

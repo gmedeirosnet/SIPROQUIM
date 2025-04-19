@@ -81,9 +81,7 @@ include_once __DIR__ . '/../includes/header.php';
     <?php endif; ?>
 
     <div class="header-actions">
-        <a href="grupo_pessoa.php" class="btn btn-primary">Cadastrar Novo Grupo</a>
-
-        <br></br>
+        <h2>Lista de Grupos de Pessoas</h2>
         <form class="search-form" method="get">
             <div class="input-group">
                 <input type="text" name="search" class="form-control" placeholder="Buscar por nome ou descrição" value="<?= htmlspecialchars($search) ?>">

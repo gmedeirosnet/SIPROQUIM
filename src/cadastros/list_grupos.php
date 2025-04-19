@@ -82,7 +82,6 @@ include_once __DIR__ . '/../includes/header.php';
     <div class="header-actions">
         <div>
             <h2>Lista de Grupos de Produtos</h2>
-            <a href="grupo.php" class="btn btn-primary">Cadastrar Novo Grupo</a>
         </div>
 
         <br>

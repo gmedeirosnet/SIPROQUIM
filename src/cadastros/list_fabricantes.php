@@ -75,12 +75,21 @@ include_once __DIR__ . '/../includes/header.php';
     <?php endif; ?>
 
     <div class="header-actions">
-        <a href="fabricante.php" class="btn btn-primary">Cadastrar Novo Fabricante</a>
-        <br></br>
+        <div>
+            <h2>Lista de Fabricantes</h2>
+        </div>
+
         <form class="search-form" method="get">
-            <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Buscar por nome, CNPJ ou email" value="<?= htmlspecialchars($search) ?>">
-            <button type="submit" class="btn btn-primary">Buscar Fabricante</button></br>
+            <div class="form-row">
+                <div class="form-col">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar por nome, CNPJ ou email" value="<?= htmlspecialchars($search) ?>">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <?php if (!empty($search)): ?>
+                        <a href="list_fabricantes.php" class="btn btn-outline-secondary">Limpar</a>
+                    <?php endif; ?>
+                </div>
             </div>
         </form>
     </div>
