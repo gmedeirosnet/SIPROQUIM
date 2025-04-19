@@ -48,26 +48,28 @@ function isActive($page, $current_page = null, $current_dir = null) {
     <?php if (isset($additionalHead)) echo $additionalHead; ?>
 
     <style>
-        .user-info {
+        /* Estilos adaptados para o dropdown de usuário seguindo o padrão existente */
+        .user-dropdown {
+            margin-left: 10px;
+        }
+
+        .user-dropdown > a {
             display: flex;
             align-items: center;
-            margin-left: auto;
-            color: #fff;
-            font-size: 0.9em;
         }
-        .user-info .user-name {
-            margin-right: 15px;
-            font-weight: bold;
+
+        .user-dropdown > a::after {
+            content: "▼";
+            font-size: 0.7em;
+            margin-left: 5px;
+            color: var(--primary-light);
         }
-        .user-info .logout-link, .user-info .password-link {
-            color: #ff9;
-            text-decoration: none;
-            font-size: 0.9em;
-            margin: 0 5px;
+
+        .main-nav, .header-actions {
+            display: flex;
+            align-items: center;
         }
-        .user-info .logout-link:hover, .user-info .password-link:hover {
-            text-decoration: underline;
-        }
+
         .header-content {
             display: flex;
             justify-content: space-between;
@@ -129,10 +131,12 @@ function isActive($page, $current_page = null, $current_dir = null) {
                 </nav>
 
                 <?php if (isset($_SESSION['user_id'])): ?>
-                <div class="user-info">
-                    <span class="user-name"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
-                    <a href="auth/change_password.php" class="password-link">Alterar Senha</a> |
-                    <a href="/auth/logout.php" class="logout-link">Sair</a>
+                <div class="nav-item dropdown user-dropdown">
+                    <a href="#"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
+                    <div class="dropdown-content">
+                        <a href="/src/auth/change_password.php">Alterar Senha</a>
+                        <a href="/src/auth/logout.php">Sair</a>
+                    </div>
                 </div>
                 <?php endif; ?>
             </div>

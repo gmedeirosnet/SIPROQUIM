@@ -1,21 +1,21 @@
 /* SIPROQUIM - Main CSS File */
 :root {
-  /* Color palette - based on a blue professional scheme */
-  --primary: #1a5fb4;
-  --primary-light: #3584e4;
-  --primary-dark: #0b3b78;
-  --secondary: #2d3748;
-  --light-gray: #f5f6f8;
-  --mid-gray: #e2e8f0;
-  --dark-gray: #4a5568;
-  --success: #2ecc71;
-  --warning: #f39c12;
-  --danger: #e74c3c;
-  --text-primary: #2d3748;
-  --text-secondary: #718096;
+  /* Color palette - baseada nas cores fornecidas */
+  --primary: #006D77;        /* Verde-azulado escuro */
+  --primary-light: #83C5BE;  /* Verde-azulado claro */
+  --primary-dark: #005A63;   /* Versão mais escura do primary */
+  --secondary: #E29578;      /* Laranja-coral */
+  --light-gray: #EDF6F9;     /* Azul muito claro, quase branco */
+  --mid-gray: #DCE8EB;       /* Versão mais escura do light-gray */
+  --dark-gray: #5C7B80;      /* Tom escuro complementar */
+  --success: #83C5BE;        /* Verde-azulado claro */
+  --warning: #FFDDD2;        /* Rosa claro */
+  --danger: #E29578;         /* Laranja-coral */
+  --text-primary: #2d3748;   /* Mantido para melhor legibilidade */
+  --text-secondary: #718096; /* Mantido para melhor legibilidade */
   --white: #ffffff;
   --black: #000000;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow: 0 4px 6px rgba(0, 109, 119, 0.1); /* Sombra baseada no primary */
   --radius: 4px;
   --transition: all 0.3s ease;
 
@@ -115,7 +115,7 @@ body {
 
 .nav-item.active > a {
   color: var(--primary);
-  background-color: rgba(26, 95, 180, 0.1);
+  background-color: rgba(0, 109, 119, 0.1); /* Ajustado para o novo primary */
 }
 
 /* Dropdown Menu */
@@ -356,7 +356,7 @@ body {
 .form-control:focus {
   border-color: var(--primary);
   outline: 0;
-  box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.25);
+  box-shadow: 0 0 0 3px rgba(0, 109, 119, 0.25); /* Ajustado para o novo primary */
 }
 
 .form-row {
@@ -403,7 +403,7 @@ body {
   background-color: rgba(0,0,0,0.02);
 }
 
-/* Alert Messages */
+/* Alert Messages - Atualizadas para a nova paleta */
 .alert {
   position: relative;
   padding: 0.75rem 1.25rem;
@@ -413,27 +413,27 @@ body {
 }
 
 .alert-success {
-  color: #155724;
-  background-color: #d4edda;
-  border-color: #c3e6cb;
+  color: #005a52;
+  background-color: #e0f0ee;
+  border-color: #b3e0db;
 }
 
 .alert-danger {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
+  color: #883e29;
+  background-color: #f9e6df;
+  border-color: #f5d0c3;
 }
 
 .alert-warning {
-  color: #856404;
-  background-color: #fff3cd;
-  border-color: #ffeeba;
+  color: #85766e;
+  background-color: #fff9f7;
+  border-color: #ffe8e0;
 }
 
 .alert-info {
-  color: #0c5460;
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
+  color: #00565e;
+  background-color: #d0ebee;
+  border-color: #b8e0e4;
 }
 
 /* Badges */

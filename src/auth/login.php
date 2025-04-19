@@ -84,7 +84,7 @@ $pageTitle = 'Login - SIPROQUIM';
     <link rel="stylesheet" href="../assets/css/main.css">
     <style>
         body {
-            background-color: #f5f5f5;
+            background-color: #EDF6F9; /* Light-gray da nova paleta */
             font-family: Arial, sans-serif;
         }
         .login-container {
@@ -93,14 +93,14 @@ $pageTitle = 'Login - SIPROQUIM';
             padding: 30px;
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 15px rgba(0, 109, 119, 0.1); /* Sombra com o novo primary */
         }
         .login-logo {
             text-align: center;
             margin-bottom: 30px;
         }
         .login-logo h1 {
-            color: #004c93;
+            color: #006D77; /* Primary da nova paleta */
             margin-bottom: 10px;
         }
         .alert {
@@ -109,9 +109,9 @@ $pageTitle = 'Login - SIPROQUIM';
             border-radius: 4px;
         }
         .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: #f9e6df; /* Versão clara do danger da nova paleta */
+            color: #883e29; /* Versão escura do danger da nova paleta */
+            border: 1px solid #f5d0c3;
         }
         .form-group {
             margin-bottom: 20px;
@@ -124,23 +124,32 @@ $pageTitle = 'Login - SIPROQUIM';
         .form-control {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #DCE8EB; /* Mid-gray da nova paleta */
             border-radius: 4px;
             box-sizing: border-box;
+        }
+        .form-control:focus {
+            border-color: #83C5BE; /* Primary-light da nova paleta */
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 109, 119, 0.25);
         }
         .btn {
             display: inline-block;
             padding: 12px 20px;
-            background-color: #004c93;
+            background-color: #006D77; /* Primary da nova paleta */
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #005A63; /* Primary-dark da nova paleta */
         }
         .btn-primary {
-            background-color: #004c93;
+            background-color: #006D77; /* Primary da nova paleta */
         }
         .btn-block {
             display: block;
@@ -149,7 +158,7 @@ $pageTitle = 'Login - SIPROQUIM';
         .form-text {
             margin-top: 5px;
             font-size: 0.85em;
-            color: #6c757d;
+            color: #5C7B80; /* Dark-gray da nova paleta */
         }
     </style>
 </head>

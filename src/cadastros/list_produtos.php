@@ -115,12 +115,14 @@ include_once __DIR__ . '/../includes/header.php';
         <div class="alert alert-danger"><?= $error ?></div>
     <?php endif; ?>
 
+    <br>
     <div class="header-actions">
         <div>
             <h2>Lista de Produtos</h2>
             <a href="produto.php" class="btn btn-primary">Cadastrar Novo Produto</a>
         </div>
-        </br>
+
+            
         <form class="search-form" method="get">
             <div class="form-row">
                 <div class="form-col">
@@ -166,7 +168,7 @@ include_once __DIR__ . '/../includes/header.php';
             </select>
         </div>
         </br>
-        
+
         <?php if ($filter_grupo > 0 || $filter_fabricante > 0 || !empty($search)): ?>
             <a href="list_produtos.php" class="btn btn-outline-secondary">Limpar Filtros</a>
         <?php endif; ?>
