@@ -140,6 +140,6 @@ Em caso de incidente de segurança, seguimos este processo:
 
 ---
 
-Última atualização: 14 de abril de 2025
+Última atualização: 19 de abril de 2025
 
 Contato para questões de segurança: [security@gmedeiros.net](mailto:security@gmedeiros.net)

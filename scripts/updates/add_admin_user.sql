@@ -22,7 +22,7 @@ BEGIN
         INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable, password)
         VALUES (
             'Administrador',
-            'admin@admin',
+            'admin@admin.com',
             admin_grupo_id,
             TRUE,
             '$2y$10$Hcv3XtquK6gAQa8zFf2eoeX7mx9Ic4eL.aDYwS7fCm.rSx5WtLVm2'  -- hash de 'password'

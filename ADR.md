@@ -7,6 +7,7 @@ Este documento registra as decisões arquiteturais significativas tomadas durant
 - [ADR-001: Escolha do Stack Tecnológico para o Sistema de Estoque](#adr-001-escolha-do-stack-tecnológico-para-o-sistema-de-estoque)
 - [ADR-002: Melhoria da Conectividade com PostgreSQL e Containerização](#adr-002-melhoria-da-conectividade-com-postgresql-e-containerização)
 - [ADR-003: Implementação de Infraestrutura como Código com Terraform](#adr-003-implementação-de-infraestrutura-como-código-com-terraform)
+- [ADR-004: Estratégia de Segurança e Monitoramento Aprimorado](#adr-004-estratégia-de-segurança-e-monitoramento-aprimorado)
 
 ---
 
@@ -254,3 +255,93 @@ Foi implementada uma configuração segura para acesso SSH às instâncias EC2 u
 A implementação também inclui a atualização das AMIs para Ubuntu 24.04 TLS, proporcionando uma base mais segura e atualizada para o ambiente de produção, além de ajustes no script de inicialização para garantir compatibilidade com a nova versão do sistema operacional.
 
 > **Revisão:** Este ADR deve ser revisado após 6 meses de implementação ou quando houver mudanças significativas na estratégia de infraestrutura.
+
+---
+
+# ADR-004: Estratégia de Segurança e Monitoramento Aprimorado
+
+**Data:** 2025-04-19
+**Status:** Aceito
+**Responsáveis:** Equipe de Segurança e Operações
+
+## Contexto
+
+À medida que o sistema de controle de estoque SIPROQUIM evolui e se torna mais crítico para as operações, aumenta a necessidade de garantir sua segurança e confiabilidade. Incidentes recentes na indústria destacaram a importância de abordagens proativas de segurança, especialmente para sistemas que lidam com produtos químicos e potencialmente perigosos.
+
+As preocupações específicas identificadas incluem:
+
+1. **Ausência de monitoramento abrangente:** Falta de visibilidade em tempo real sobre o estado do sistema e potenciais anomalias
+2. **Proteção de dados insuficiente:** Necessidade de melhorar a proteção de dados sensíveis tanto em trânsito quanto em repouso
+3. **Resposta a incidentes não estruturada:** Ausência de um processo formalizado para lidar com violações de segurança
+4. **Headers HTTP inadequados:** Configurações padrão que não implementam as melhores práticas de segurança
+5. **Vulnerabilidades de acesso remoto:** Políticas de acesso SSH potencialmente muito permissivas
+
+## Decisão
+
+Implementar uma estratégia abrangente de segurança e monitoramento com os seguintes componentes:
+
+### 1. Sistema de Monitoramento Aprimorado
+
+- **Implementar logging estruturado** para facilitar a análise e detecção de anomalias
+- **Configurar monitoramento de integridade** para componentes críticos do sistema
+- **Estabelecer alertas automatizados** para condições que possam indicar comprometimento
+- **Integrar com serviços de monitoramento** na infraestrutura Terraform para visualização centralizada
+
+### 2. Reforço da Segurança da Aplicação
+
+- **Implementar headers de segurança HTTP adicionais:**
+  - Content-Security-Policy (CSP)
+  - Strict-Transport-Security (HSTS)
+  - X-Content-Type-Options
+  - X-Frame-Options
+  - Referrer-Policy
+- **Melhorar a proteção contra Cross-Site Scripting (XSS)** com validação mais rigorosa
+- **Reforçar a sanitização de entrada de dados** em todos os pontos de entrada
+
+### 3. Segurança da Infraestrutura
+
+- **Restringir permissões nos volumes Docker** para princípio de menor privilégio
+- **Ajustar políticas de acesso SSH** limitando o acesso apenas a IPs autorizados
+- **Implementar rotação automática de credenciais** para serviços críticos
+- **Configurar backups criptografados** com testes regulares de restauração
+
+### 4. Processos e Documentação
+
+- **Criar um plano formal de resposta a incidentes** com papéis e responsabilidades claros
+- **Estabelecer revisões periódicas de segurança** para identificar novas vulnerabilidades
+- **Documentar procedimentos de recuperação** para diferentes cenários de falha
+- **Implementar treinamento de segurança** para a equipe de desenvolvimento
+
+## Alternativas Consideradas
+
+### Solução de Segurança Terceirizada
+A contratação de uma solução completa de segurança gerenciada por terceiros foi considerada, mas rejeitada devido aos custos elevados e à falta de personalização para as necessidades específicas do sistema SIPROQUIM.
+
+### Framework de Segurança Completo
+A implementação de um framework de segurança abrangente como OWASP ModSecurity Core Rule Set foi avaliada, mas considerada excessivamente complexa para o estágio atual do projeto. Elementos específicos foram incorporados em vez da solução completa.
+
+### Sistema de Monitoramento Especializado
+Soluções especializadas como Elastic Stack (ELK) ou Prometheus + Grafana foram consideradas, mas decidiu-se por uma abordagem mais integrada com a infraestrutura Terraform existente para minimizar a sobrecarga operacional.
+
+## Consequências
+
+### Positivas
+- **Detecção precoce** de problemas de segurança e anomalias de desempenho
+- **Redução da superfície de ataque** através de configurações mais seguras
+- **Maior confiança** dos usuários no sistema e nos dados armazenados
+- **Conformidade aprimorada** com regulamentações de segurança de dados
+- **Processo estruturado** para lidar com incidentes de segurança
+
+### Negativas
+- **Aumento da complexidade operacional** devido aos novos sistemas de monitoramento
+- **Sobrecarga adicional de desempenho** devido ao logging e verificações de segurança
+- **Necessidade de manutenção contínua** das políticas e configurações de segurança
+- **Possíveis falsos positivos** nos sistemas de detecção de anomalias
+
+## Conclusão
+
+A implementação da estratégia de segurança e monitoramento aprimorado representa um passo crítico na maturação do SIPROQUIM, transformando-o de um simples sistema de controle de estoque para uma plataforma robusta e segura. Os benefícios em termos de proteção de dados, detecção precoce de problemas e conformidade regulatória justificam amplamente os custos de implementação e manutenção.
+
+Esta abordagem proativa à segurança alinha-se com as decisões arquiteturais anteriores e fornece uma base sólida para o crescimento futuro do sistema, garantindo que a segurança seja tratada como um aspecto fundamental da arquitetura e não como uma consideração posterior.
+
+> **Revisão:** Este ADR deve ser revisado a cada 3 meses ou após qualquer incidente de segurança significativo.
