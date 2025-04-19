@@ -1,13 +1,14 @@
--- Database Population Script for Estoque System
--- Created on April 12, 2025
+-- Database Population Script for SIPROQUIM
+-- Atualizado em 19 de Abril de 2025
 
 -- Clear existing data (if you want to start fresh)
--- Comment these lines if you want to keep existing data
+-- AVISO: Comentar estas linhas se quiser preservar dados existentes
+TRUNCATE TABLE login_logs CASCADE;
 TRUNCATE TABLE movimentos CASCADE;
+TRUNCATE TABLE lugares CASCADE;
 TRUNCATE TABLE produtos CASCADE;
 TRUNCATE TABLE fabricantes CASCADE;
 TRUNCATE TABLE grupos CASCADE;
-TRUNCATE TABLE lugares CASCADE;
 TRUNCATE TABLE pessoas CASCADE;
 TRUNCATE TABLE grupos_pessoas CASCADE;
 
@@ -19,245 +20,150 @@ ALTER SEQUENCE fabricantes_id_seq RESTART WITH 1;
 ALTER SEQUENCE produtos_id_seq RESTART WITH 1;
 ALTER SEQUENCE lugares_id_seq RESTART WITH 1;
 ALTER SEQUENCE movimentos_id_seq RESTART WITH 1;
+ALTER SEQUENCE login_logs_id_seq RESTART WITH 1;
 
--- 1. Insert Person Groups (grupos_pessoas)
+-- 1. Grupos de Pessoas (grupos_pessoas)
 INSERT INTO grupos_pessoas (nome, descricao) VALUES
-('Alunos', 'Estudantes da instituição'),
-('Professores', 'Docentes da instituição'),
-('Pesquisadores', 'Pesquisadores e cientistas da instituição'),
+('Administradores', 'Grupo com acesso total ao sistema'),
+('Usuários', 'Grupo padrão de usuários'),
+('Técnicos', 'Responsáveis pela manipulação de produtos'),
+('Supervisores', 'Supervisores de departamento'),
 ('Auditores', 'Responsáveis pela auditoria e controle de estoque');
 
--- 2. Insert Persons (pessoas) with enable=true
--- Alunos (20)
-INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable) VALUES
-('João Silva', 'joao.silva@aluno.edu.br', 1, true),
-('Maria Santos', 'maria.santos@aluno.edu.br', 1, true),
-('Pedro Oliveira', 'pedro.oliveira@aluno.edu.br', 1, true),
-('Ana Souza', 'ana.souza@aluno.edu.br', 1, true),
-('Lucas Costa', 'lucas.costa@aluno.edu.br', 1, true),
-('Juliana Lima', 'juliana.lima@aluno.edu.br', 1, true),
-('Matheus Ferreira', 'matheus.ferreira@aluno.edu.br', 1, true),
-('Camila Rodrigues', 'camila.rodrigues@aluno.edu.br', 1, true),
-('Gabriel Almeida', 'gabriel.almeida@aluno.edu.br', 1, true),
-('Laura Martins', 'laura.martins@aluno.edu.br', 1, true),
-('Bruno Pereira', 'bruno.pereira@aluno.edu.br', 1, true),
-('Fernanda Gomes', 'fernanda.gomes@aluno.edu.br', 1, true),
-('Rafael Carvalho', 'rafael.carvalho@aluno.edu.br', 1, true),
-('Isabella Ribeiro', 'isabella.ribeiro@aluno.edu.br', 1, true),
-('Thiago Machado', 'thiago.machado@aluno.edu.br', 1, true),
-('Carolina Castro', 'carolina.castro@aluno.edu.br', 1, true),
-('Felipe Barbosa', 'felipe.barbosa@aluno.edu.br', 1, true),
-('Beatriz Cardoso', 'beatriz.cardoso@aluno.edu.br', 1, true),
-('Vitor Correia', 'vitor.correia@aluno.edu.br', 1, true),
-('Mariana Nunes', 'mariana.nunes@aluno.edu.br', 1, true);
+-- 2. Pessoas (pessoas) - Adicionando o campo enable e password
+INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable, password) VALUES
+-- Administradores (id_grupo_pessoa=1)
+('Admin Sistema', 'admin@siproquim.gov.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'), -- senha: 123456
+('Maria Gerente', 'maria.gerente@siproquim.gov.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
--- Professores (8)
-INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable) VALUES
-('Dr. Roberto Mendes', 'roberto.mendes@professor.edu.br', 2, true),
-('Dra. Claudia Fernandes', 'claudia.fernandes@professor.edu.br', 2, true),
-('Dr. Marcelo Gonçalves', 'marcelo.goncalves@professor.edu.br', 2, true),
-('Dra. Patricia Andrade', 'patricia.andrade@professor.edu.br', 2, true),
-('Dr. Ricardo Sousa', 'ricardo.sousa@professor.edu.br', 2, true),
-('Dra. Silvia Oliveira', 'silvia.oliveira@professor.edu.br', 2, true),
-('Dr. Eduardo Monteiro', 'eduardo.monteiro@professor.edu.br', 2, true),
-('Dra. Luciana Cavalcanti', 'luciana.cavalcanti@professor.edu.br', 2, true);
+-- Usuários (id_grupo_pessoa=2)
+('João Silva', 'joao.silva@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Ana Santos', 'ana.santos@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Carlos Oliveira', 'carlos.oliveira@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Patrícia Lima', 'patricia.lima@siproquim.gov.br', 2, false, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
--- Pesquisadores (4)
-INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable) VALUES
-('Dr. Fernando Silva', 'fernando.silva@pesquisador.edu.br', 3, true),
-('Dra. Amanda Costa', 'amanda.costa@pesquisador.edu.br', 3, true),
-('Dr. Rodrigo Lima', 'rodrigo.lima@pesquisador.edu.br', 3, true),
-('Dra. Cristina Santos', 'cristina.santos@pesquisador.edu.br', 3, true);
+-- Técnicos (id_grupo_pessoa=3)
+('Roberto Queiroz', 'roberto.queiroz@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Lúcia Marques', 'lucia.marques@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Fernando Costa', 'fernando.costa@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
--- Auditores (4)
-INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable) VALUES
-('Carlos Mendonça', 'carlos.mendonca@auditor.edu.br', 4, true),
-('Sandra Vieira', 'sandra.vieira@auditor.edu.br', 4, true),
-('Marcos Teixeira', 'marcos.teixeira@auditor.edu.br', 4, true),
-('Renata Cruz', 'renata.cruz@auditor.edu.br', 4, true);
+-- Supervisores (id_grupo_pessoa=4)
+('Marcelo Pereira', 'marcelo.pereira@siproquim.gov.br', 4, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Regina Campos', 'regina.campos@siproquim.gov.br', 4, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
--- 3. Insert Product Groups (grupos)
+-- Auditores (id_grupo_pessoa=5)
+('Paulo Cardoso', 'paulo.cardoso@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Amanda Vieira', 'amanda.vieira@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+
+-- 3. Grupos de Produtos (grupos)
 INSERT INTO grupos (nome, descricao) VALUES
-('Limpeza', 'Produtos para limpeza e higienização'),
-('Controlados', 'Medicamentos controlados que precisam de receita'),
-('Restritos', 'Medicamentos de acesso restrito'),
-('Uso Geral', 'Materiais de uso geral e consumo'),
-('Embalagens', 'Materiais para embalagem e acondicionamento');
+('Solventes', 'Solventes orgânicos e inorgânicos'),
+('Ácidos', 'Ácidos inorgânicos e orgânicos'),
+('Bases', 'Bases e álcalis'),
+('Sais', 'Compostos iônicos'),
+('Reagentes Analíticos', 'Reagentes para análise química'),
+('Indicadores', 'Indicadores para titulação e análises'),
+('Catalisadores', 'Catalisadores para reações químicas');
 
--- 4. Insert Storage Places (lugares)
+-- 4. Fabricantes (fabricantes)
+INSERT INTO fabricantes (nome, cnpj, endereco, email, observacao) VALUES
+('Sigma-Aldrich', '12.345.678/0001-01', 'Rua das Indústrias, 1000, São Paulo, SP', 'contato@sigmaaldrich.com.br', 'Multinacional de produtos químicos'),
+('Merck', '23.456.789/0001-02', 'Av. dos Químicos, 2000, Rio de Janeiro, RJ', 'atendimento@merck.com.br', 'Empresa alemã de produtos químicos e farmacêuticos'),
+('Synth', '34.567.890/0001-03', 'Rod. Anhanguera, km 120, Diadema, SP', 'vendas@synth.com.br', 'Fabricante nacional de reagentes químicos'),
+('J.T. Baker', '45.678.901/0001-04', 'Av. das Américas, 3000, São Paulo, SP', 'comercial@jtbaker.com.br', 'Especializada em solventes de alta pureza'),
+('Vetec', '56.789.012/0001-05', 'Rua Industrial, 500, Duque de Caxias, RJ', 'atendimento@vetec.com.br', 'Reagentes para análise e pesquisa'),
+('Dinâmica Química', '67.890.123/0001-06', 'Av. Química, 1500, Indaiatuba, SP', 'vendas@dinamicaquimica.com.br', 'Fabricante brasileiro de reagentes');
+
+-- 5. Lugares de Estoque (lugares)
 INSERT INTO lugares (nome, descricao) VALUES
-('Almoxarifado DCCT', 'Almoxarifado para produtos de limpeza'),
-('Sala 10 bloco CD', 'Sala segura para armazenamento de medicamentos controlados'),
-('Sala Gilmar', 'Sala de acesso restrito para medicamentos especiais'),
-('Estante A Laboratório do Bloco CD', 'Estante para produtos de uso geral'),
-('Sala estoque Bloco CD', 'Sala para armazenamento de embalagens e materiais');
+('Almoxarifado Central', 'Depósito principal de reagentes'),
+('Laboratório Análises', 'Estoque do laboratório de análises químicas'),
+('Laboratório Pesquisa', 'Estoque do laboratório de pesquisa'),
+('Sala Controlados', 'Sala com acesso restrito para produtos controlados'),
+('Câmara Refrigerada', 'Local refrigerado para produtos termolábeis');
 
--- 5. Insert Manufacturers (fabricantes)
-INSERT INTO fabricantes (nome, cnpj, endereco, email) VALUES
-('Johnson & Johnson', '12.345.678/0001-01', 'Av. Principal, 100, São Paulo, SP', 'contato@jnj.com.br'),
-('Pfizer', '23.456.789/0001-02', 'Rua Industrial, 200, Rio de Janeiro, RJ', 'vendas@pfizer.com.br'),
-('Roche', '34.567.890/0001-03', 'Av. das Indústrias, 300, Belo Horizonte, MG', 'sac@roche.com.br'),
-('Bayer', '45.678.901/0001-04', 'Rua das Farmácias, 400, Porto Alegre, RS', 'contato@bayer.com.br'),
-('EMS', '56.789.012/0001-05', 'Av. dos Químicos, 500, Recife, PE', 'comercial@ems.com.br'),
-('Novartis', '67.890.123/0001-06', 'Rua dos Laboratórios, 600, Salvador, BA', 'atendimento@novartis.com.br'),
-('Sanofi', '78.901.234/0001-07', 'Av. França, 700, São Paulo, SP', 'vendas@sanofi.com.br'),
-('GSK', '89.012.345/0001-08', 'Rua Inglaterra, 800, Campinas, SP', 'contato@gsk.com.br'),
-('Medley', '90.123.456/0001-09', 'Av. Medicinal, 900, Guarulhos, SP', 'sac@medley.com.br'),
-('Aché', '01.234.567/0001-10', 'Rua das Fórmulas, 1000, São Paulo, SP', 'comercial@ache.com.br'),
-('OM Química', '12.345.678/0002-11', 'Av. dos Limpadores, 100, Rio de Janeiro, RJ', 'vendas@omquimica.com.br'),
-('CleanLife', '23.456.789/0002-12', 'Rua Higiênica, 200, São Paulo, SP', 'contato@cleanlife.com.br'),
-('Asséptica', '34.567.890/0002-13', 'Av. da Limpeza, 300, Belo Horizonte, MG', 'comercial@asseptica.com.br'),
-('Embalamax', '45.678.901/0002-14', 'Rua do Papelão, 400, Curitiba, PR', 'vendas@embalamax.com.br'),
-('PackPro', '56.789.012/0002-15', 'Av. das Caixas, 500, São Paulo, SP', 'atendimento@packpro.com.br');
+-- 6. Produtos (produtos)
+INSERT INTO produtos (nome, id_grupo, id_fabricante, tipo, volume, unidade_medida, preco, descricao) VALUES
+-- Solventes (id_grupo=1)
+('Acetona P.A.', 1, 1, 'Líquido', '1000', 'ml', 45.90, 'Acetona para análise, pureza 99.5%'),
+('Metanol P.A.', 1, 2, 'Líquido', '1000', 'ml', 52.30, 'Metanol grau P.A., pureza 99.8%'),
+('Etanol Absoluto', 1, 3, 'Líquido', '1000', 'ml', 48.75, 'Etanol absoluto, pureza 99.9%'),
+('Hexano P.A.', 1, 4, 'Líquido', '1000', 'ml', 65.40, 'Hexano P.A., pureza 95%'),
+('Clorofórmio P.A.', 1, 5, 'Líquido', '1000', 'ml', 89.90, 'Clorofórmio estabilizado com etanol'),
 
--- 6. Insert Products (produtos)
--- Produtos de Limpeza (8)
-INSERT INTO produtos (nome, id_grupo, id_fabricante, tipo, preco, descricao) VALUES
-('Detergente Multiuso', 1, 11, 'Líquido', 15.90, 'Detergente para limpeza geral'),
-('Álcool 70%', 1, 12, 'Líquido', 9.50, 'Álcool para desinfecção'),
-('Desinfetante', 1, 13, 'Líquido', 12.75, 'Desinfetante para pisos e superfícies'),
-('Sabonete Líquido', 1, 11, 'Líquido', 18.90, 'Sabonete para higienização das mãos'),
-('Limpa Vidros', 1, 12, 'Líquido', 14.50, 'Limpador específico para vidros'),
-('Água sanitária', 1, 13, 'Líquido', 8.25, 'Produto à base de cloro para desinfecção'),
-('Cera Líquida', 1, 11, 'Líquido', 22.90, 'Cera para pisos'),
-('Removedor de Gordura', 1, 12, 'Líquido', 16.75, 'Removedor de gordura para cozinhas');
+-- Ácidos (id_grupo=2)
+('Ácido Clorídrico P.A.', 2, 1, 'Líquido', '1000', 'ml', 38.40, 'HCl 37%, para análise'),
+('Ácido Sulfúrico P.A.', 2, 2, 'Líquido', '1000', 'ml', 45.60, 'H2SO4 98%, para análise'),
+('Ácido Nítrico P.A.', 2, 3, 'Líquido', '1000', 'ml', 52.30, 'HNO3 65%, para análise'),
+('Ácido Acético Glacial', 2, 4, 'Líquido', '1000', 'ml', 41.20, 'Ácido acético glacial 99.7%'),
 
--- Produtos Controlados (30)
-INSERT INTO produtos (nome, id_grupo, id_fabricante, tipo, preco, descricao) VALUES
-('Ritalina 10mg', 2, 1, 'Comprimido', 89.90, 'Metilfenidato para TDAH - caixa com 30'),
-('Rivotril 2mg', 2, 2, 'Comprimido', 45.75, 'Clonazepam para ansiedade - caixa com 30'),
-('Gardenal 100mg', 2, 3, 'Comprimido', 32.50, 'Fenobarbital para convulsões - caixa com 20'),
-('Morfina 10mg', 2, 4, 'Ampola', 120.00, 'Analgésico opioide - caixa com 5 ampolas'),
-('Tramadol 50mg', 2, 5, 'Cápsula', 65.30, 'Analgésico opioide fraco - caixa com 20'),
-('Fentanil 50mcg', 2, 6, 'Adesivo', 210.75, 'Analgésico opioide - caixa com 5 adesivos'),
-('Zolpidem 10mg', 2, 7, 'Comprimido', 55.90, 'Hipnótico para insônia - caixa com 20'),
-('Alprazolam 1mg', 2, 8, 'Comprimido', 42.80, 'Benzodiazepínico para ansiedade - caixa com 30'),
-('Bromazepam 3mg', 2, 9, 'Comprimido', 35.60, 'Benzodiazepínico para ansiedade - caixa com 30'),
-('Diazepam 10mg', 2, 10, 'Comprimido', 29.90, 'Benzodiazepínico para ansiedade - caixa com 30'),
-('Clonazepam 2mg', 2, 1, 'Comprimido', 38.45, 'Antiepilético e ansiolítico - caixa com 30'),
-('Fenobarbital 100mg', 2, 2, 'Comprimido', 34.20, 'Antiepilético - caixa com 20'),
-('Metilfenidato 10mg', 2, 3, 'Comprimido', 82.90, 'Estimulante para TDAH - caixa com 30'),
-('Codeína 30mg', 2, 4, 'Comprimido', 48.75, 'Analgésico opioide fraco - caixa com 20'),
-('Oxicodona 10mg', 2, 5, 'Comprimido', 145.60, 'Analgésico opioide - caixa com 20'),
-('Lorazepam 2mg', 2, 6, 'Comprimido', 36.90, 'Benzodiazepínico para ansiedade - caixa com 30'),
-('Midazolam 15mg', 2, 7, 'Comprimido', 65.30, 'Benzodiazepínico para sedação - caixa com 20'),
-('Zopiclona 7,5mg', 2, 8, 'Comprimido', 52.40, 'Hipnótico para insônia - caixa com 20'),
-('Zaleplon 10mg', 2, 9, 'Cápsula', 54.70, 'Hipnótico para insônia - caixa com 20'),
-('Buprenorfina 5mg', 2, 10, 'Adesivo', 180.30, 'Analgésico opioide - caixa com 4 adesivos'),
-('Metadona 10mg', 2, 1, 'Comprimido', 125.80, 'Analgésico opioide - caixa com 20'),
-('Flunitrazepam 1mg', 2, 2, 'Comprimido', 47.60, 'Benzodiazepínico hipnótico - caixa com 20'),
-('Anfepramona 25mg', 2, 3, 'Cápsula', 75.40, 'Anorexígeno - caixa com 20'),
-('Femproporex 25mg', 2, 4, 'Cápsula', 82.30, 'Anorexígeno - caixa com 20'),
-('Mazindol 1mg', 2, 5, 'Comprimido', 78.90, 'Anorexígeno - caixa com 20'),
-('Sibutramina 15mg', 2, 6, 'Cápsula', 95.60, 'Anorexígeno - caixa com 30'),
-('Tapentadol 50mg', 2, 7, 'Comprimido', 135.70, 'Analgésico opioide - caixa com 20'),
-('Pregabalina 75mg', 2, 8, 'Cápsula', 75.30, 'Antiepilético e analgésico - caixa com 30'),
-('Gabapentina 300mg', 2, 9, 'Cápsula', 68.50, 'Antiepilético e analgésico - caixa com 30'),
-('Selegilina 5mg', 2, 10, 'Comprimido', 45.80, 'Antiparkinsoniano - caixa com 20');
+-- Bases (id_grupo=3)
+('Hidróxido de Sódio P.A.', 3, 5, 'Sólido', '500', 'g', 32.50, 'NaOH em lentilhas, pureza 99%'),
+('Hidróxido de Potássio P.A.', 3, 6, 'Sólido', '500', 'g', 45.80, 'KOH em lentilhas, pureza 85%'),
+('Hidróxido de Amônio P.A.', 3, 1, 'Líquido', '1000', 'ml', 37.90, 'NH4OH 28-30%, para análise'),
 
--- Produtos Restritos (10)
-INSERT INTO produtos (nome, id_grupo, id_fabricante, tipo, preco, descricao) VALUES
-('Cetamina 50mg/ml', 3, 1, 'Injetável', 230.90, 'Anestésico - frasco 10ml'),
-('Propofol 10mg/ml', 3, 2, 'Injetável', 185.75, 'Anestésico - ampola 20ml'),
-('Tiopental 500mg', 3, 3, 'Injetável', 174.30, 'Anestésico - frasco-ampola'),
-('Pancurônio 2mg/ml', 3, 4, 'Injetável', 198.50, 'Bloqueador neuromuscular - ampola 2ml'),
-('Vecurônio 10mg', 3, 5, 'Injetável', 203.40, 'Bloqueador neuromuscular - frasco-ampola'),
-('Midazolam 5mg/ml', 3, 6, 'Injetável', 136.70, 'Sedativo - ampola 3ml'),
-('Fentanila 0,05mg/ml', 3, 7, 'Injetável', 168.90, 'Analgésico opioide - ampola 5ml'),
-('Etomidato 2mg/ml', 3, 8, 'Injetável', 155.80, 'Anestésico - ampola 10ml'),
-('Dexmedetomidina 100mcg/ml', 3, 9, 'Injetável', 245.60, 'Sedativo - frasco 2ml'),
-('Succinilcolina 100mg', 3, 10, 'Injetável', 178.30, 'Bloqueador neuromuscular - frasco-ampola');
+-- Sais (id_grupo=4)
+('Cloreto de Sódio P.A.', 4, 2, 'Sólido', '1000', 'g', 18.60, 'NaCl cristalino, pureza 99.5%'),
+('Sulfato de Cobre P.A.', 4, 3, 'Sólido', '500', 'g', 42.70, 'CuSO4.5H2O cristalino'),
+('Nitrato de Prata P.A.', 4, 4, 'Sólido', '100', 'g', 375.50, 'AgNO3 cristalino, pureza 99.0%'),
 
--- Produtos de Uso Geral (20)
-INSERT INTO produtos (nome, id_grupo, id_fabricante, tipo, preco, descricao) VALUES
-('Paracetamol 500mg', 4, 1, 'Comprimido', 12.90, 'Analgésico e antitérmico - caixa com 20'),
-('Ibuprofeno 600mg', 4, 2, 'Comprimido', 15.75, 'Anti-inflamatório - caixa com 20'),
-('Dipirona 500mg', 4, 3, 'Comprimido', 9.50, 'Analgésico e antitérmico - caixa com 20'),
-('Amoxicilina 500mg', 4, 4, 'Cápsula', 32.80, 'Antibiótico - caixa com 21'),
-('Omeprazol 20mg', 4, 5, 'Cápsula', 18.90, 'Protetor gástrico - caixa com 28'),
-('Losartana 50mg', 4, 6, 'Comprimido', 22.75, 'Anti-hipertensivo - caixa com 30'),
-('Sinvastatina 20mg', 4, 7, 'Comprimido', 24.50, 'Redutor de colesterol - caixa com 30'),
-('Metformina 850mg', 4, 8, 'Comprimido', 19.80, 'Antidiabético - caixa com 30'),
-('Soro fisiológico 100ml', 4, 9, 'Líquido', 5.90, 'Solução salina - frasco'),
-('Água destilada 100ml', 4, 10, 'Líquido', 4.30, 'Água para diluição - frasco'),
-('Algodão hidrófilo 100g', 4, 1, 'Material', 8.75, 'Para uso hospitalar - pacote'),
-('Gaze estéril 10x10cm', 4, 2, 'Material', 12.90, 'Para curativos - pacote com 10'),
-('Atadura elástica 10cm', 4, 3, 'Material', 11.50, 'Para compressão e imobilização - unidade'),
-('Esparadrapo 10cmx4,5m', 4, 4, 'Material', 14.90, 'Fita adesiva - rolo'),
-('Luvas de procedimento M', 4, 5, 'Material', 35.80, 'Luvas de látex - caixa com 100'),
-('Máscara cirúrgica', 4, 6, 'Material', 25.90, 'Tripla camada - caixa com 50'),
-('Micropore 25mmx10m', 4, 7, 'Material', 9.75, 'Fita hipoalergênica - rolo'),
-('Termômetro digital', 4, 8, 'Material', 28.50, 'Para medição de temperatura - unidade'),
-('Seringa descartável 5ml', 4, 9, 'Material', 15.40, 'Com agulha - pacote com 10'),
-('Álcool gel 70% 500ml', 4, 10, 'Líquido', 17.90, 'Para higienização das mãos - frasco');
+-- Reagentes Analíticos (id_grupo=5)
+('Reagente de Benedict', 5, 5, 'Líquido', '1000', 'ml', 58.90, 'Para detecção de açúcares redutores'),
+('Lugol', 5, 6, 'Líquido', '100', 'ml', 28.60, 'Solução iodo-iodetada'),
+('Reagente de Fehling A', 5, 1, 'Líquido', '500', 'ml', 35.40, 'Para detecção de açúcares redutores'),
+('Reagente de Fehling B', 5, 1, 'Líquido', '500', 'ml', 35.40, 'Para detecção de açúcares redutores'),
 
--- Produtos de Embalagens (10)
-INSERT INTO produtos (nome, id_grupo, id_fabricante, tipo, preco, descricao) VALUES
-('Caixa papelão pequena', 5, 14, 'Embalagem', 3.50, 'Caixa para acondicionamento - unidade'),
-('Caixa papelão média', 5, 15, 'Embalagem', 5.75, 'Caixa para acondicionamento - unidade'),
-('Caixa papelão grande', 5, 14, 'Embalagem', 8.90, 'Caixa para acondicionamento - unidade'),
-('Fita adesiva transparente', 5, 15, 'Material', 7.50, 'Para fechamento de embalagens - rolo'),
-('Fita adesiva marrom', 5, 14, 'Material', 8.25, 'Para fechamento de embalagens - rolo'),
-('Saco plástico pequeno', 5, 15, 'Embalagem', 12.90, 'Pacote com 100 unidades'),
-('Saco plástico médio', 5, 14, 'Embalagem', 17.50, 'Pacote com 100 unidades'),
-('Saco plástico grande', 5, 15, 'Embalagem', 22.75, 'Pacote com 100 unidades'),
-('Papel bolha 1,2mx100m', 5, 14, 'Material', 85.90, 'Para proteção de itens frágeis - rolo'),
-('Etiquetas adesivas', 5, 15, 'Material', 14.30, 'Para identificação - folha com 30');
+-- Indicadores (id_grupo=6)
+('Fenolftaleína', 6, 2, 'Líquido', '100', 'ml', 24.90, 'Solução 1%, para titulação ácido-base'),
+('Azul de Bromotimol', 6, 3, 'Líquido', '100', 'ml', 32.40, 'Solução 0.1%, pH 6.0-7.6'),
+('Vermelho de Metila', 6, 4, 'Líquido', '100', 'ml', 26.80, 'Solução 0.1%, pH 4.4-6.2'),
 
--- 7. Insert initial movements (movimentos)
--- Inserir algumas entradas de produtos
-INSERT INTO movimentos (id_produto, id_pessoa, id_lugar, tipo, quantidade, observacao, data_movimento)
-VALUES
--- Entradas de produtos de limpeza no Almoxarifado DCCT
-(1, 33, 1, 'entrada', 50, 'Recebimento inicial', NOW() - INTERVAL '30 days'),
-(2, 33, 1, 'entrada', 100, 'Recebimento inicial', NOW() - INTERVAL '30 days'),
-(3, 33, 1, 'entrada', 40, 'Recebimento inicial', NOW() - INTERVAL '29 days'),
-(4, 33, 1, 'entrada', 30, 'Recebimento inicial', NOW() - INTERVAL '28 days'),
+-- Catalisadores (id_grupo=7)
+('Óxido de Alumínio', 7, 5, 'Sólido', '500', 'g', 68.50, 'Al2O3 ativo, granulometria 70-290 mesh'),
+('Carvão Ativado', 7, 6, 'Sólido', '500', 'g', 42.80, 'Para adsorção, granulometria 12-20 mesh'),
+('Dióxido de Manganês', 7, 1, 'Sólido', '250', 'g', 55.90, 'MnO2 técnico, para catálise');
 
--- Entradas de produtos controlados na Sala 10 bloco CD
-(9, 25, 2, 'entrada', 20, 'Medicamentos controlados', NOW() - INTERVAL '27 days'),
-(10, 25, 2, 'entrada', 15, 'Medicamentos controlados', NOW() - INTERVAL '27 days'),
-(11, 25, 2, 'entrada', 25, 'Medicamentos controlados', NOW() - INTERVAL '26 days'),
-(12, 25, 2, 'entrada', 30, 'Medicamentos controlados', NOW() - INTERVAL '26 days'),
+-- 7. Movimentos (entrada e saída de produtos)
+INSERT INTO movimentos (id_produto, id_pessoa, id_lugar, tipo, quantidade, observacao, data_movimento) VALUES
+-- Entradas iniciais
+(1, 1, 1, 'entrada', 15, 'Compra inicial', '2025-03-10 08:30:00'),
+(2, 1, 1, 'entrada', 10, 'Compra inicial', '2025-03-10 08:35:00'),
+(3, 1, 1, 'entrada', 8, 'Compra inicial', '2025-03-10 08:40:00'),
+(4, 1, 1, 'entrada', 5, 'Compra inicial', '2025-03-10 08:45:00'),
+(5, 1, 1, 'entrada', 3, 'Compra inicial', '2025-03-10 08:50:00'),
+(6, 2, 1, 'entrada', 8, 'Compra inicial', '2025-03-11 09:30:00'),
+(7, 2, 1, 'entrada', 6, 'Compra inicial', '2025-03-11 09:35:00'),
+(8, 2, 1, 'entrada', 5, 'Compra inicial', '2025-03-11 09:40:00'),
+(9, 2, 1, 'entrada', 4, 'Compra inicial', '2025-03-11 09:45:00'),
+(10, 2, 4, 'entrada', 10, 'Compra inicial', '2025-03-12 10:30:00'),
+(11, 2, 4, 'entrada', 8, 'Compra inicial', '2025-03-12 10:35:00'),
+(12, 2, 4, 'entrada', 6, 'Compra inicial', '2025-03-12 10:40:00'),
+(16, 7, 2, 'entrada', 12, 'Compra para laboratório', '2025-03-15 14:30:00'),
+(17, 7, 2, 'entrada', 5, 'Compra para laboratório', '2025-03-15 14:35:00'),
+(18, 7, 2, 'entrada', 3, 'Compra para laboratório', '2025-03-15 14:40:00'),
+(19, 8, 3, 'entrada', 8, 'Compra para pesquisa', '2025-03-18 11:30:00'),
+(20, 8, 3, 'entrada', 7, 'Compra para pesquisa', '2025-03-18 11:35:00'),
+(21, 8, 3, 'entrada', 6, 'Compra para pesquisa', '2025-03-18 11:40:00'),
+(22, 9, 5, 'entrada', 4, 'Material refrigerado', '2025-03-20 09:15:00'),
+(23, 9, 5, 'entrada', 3, 'Material refrigerado', '2025-03-20 09:20:00'),
 
--- Entradas de produtos restritos na Sala Gilmar
-(39, 29, 3, 'entrada', 10, 'Medicamentos restritos', NOW() - INTERVAL '25 days'),
-(40, 29, 3, 'entrada', 8, 'Medicamentos restritos', NOW() - INTERVAL '25 days'),
-(41, 29, 3, 'entrada', 12, 'Medicamentos restritos', NOW() - INTERVAL '24 days'),
+-- Transferências e saídas
+(1, 3, 2, 'saida', 2, 'Uso em análises', '2025-03-25 10:45:00'),
+(2, 4, 2, 'saida', 1, 'Uso em análises', '2025-03-25 11:10:00'),
+(6, 5, 3, 'saida', 1, 'Experimento de laboratório', '2025-03-26 14:20:00'),
+(10, 10, 4, 'saida', 2, 'Material para pesquisa', '2025-03-27 15:30:00'),
+(16, 7, 2, 'saida', 3, 'Uso em análise de água', '2025-03-28 09:45:00'),
+(19, 8, 3, 'saida', 2, 'Pesquisa catalítica', '2025-03-29 11:30:00');
 
--- Entradas de produtos uso geral na Estante A Laboratório
-(49, 21, 4, 'entrada', 100, 'Material uso rotineiro', NOW() - INTERVAL '23 days'),
-(50, 21, 4, 'entrada', 80, 'Material uso rotineiro', NOW() - INTERVAL '23 days'),
-(51, 21, 4, 'entrada', 120, 'Material uso rotineiro', NOW() - INTERVAL '22 days'),
-(52, 21, 4, 'entrada', 50, 'Material uso rotineiro', NOW() - INTERVAL '21 days'),
-
--- Entradas de embalagens na Sala estoque Bloco CD
-(69, 34, 5, 'entrada', 200, 'Estoque inicial embalagens', NOW() - INTERVAL '20 days'),
-(70, 34, 5, 'entrada', 150, 'Estoque inicial embalagens', NOW() - INTERVAL '20 days'),
-(71, 34, 5, 'entrada', 100, 'Estoque inicial embalagens', NOW() - INTERVAL '19 days');
-
--- Inserir algumas saídas de produtos
-INSERT INTO movimentos (id_produto, id_pessoa, id_lugar, tipo, quantidade, observacao, data_movimento)
-VALUES
--- Saídas de produtos de limpeza
-(1, 1, 1, 'saida', 5, 'Limpeza laboratório', NOW() - INTERVAL '15 days'),
-(2, 2, 1, 'saida', 10, 'Desinfecção sala de aula', NOW() - INTERVAL '14 days'),
-(3, 3, 1, 'saida', 3, 'Limpeza banheiro', NOW() - INTERVAL '13 days'),
-
--- Saídas de produtos controlados
-(9, 22, 2, 'saida', 2, 'Prescrição médica', NOW() - INTERVAL '12 days'),
-(10, 23, 2, 'saida', 1, 'Prescrição médica', NOW() - INTERVAL '11 days'),
-(11, 24, 2, 'saida', 3, 'Prescrição médica', NOW() - INTERVAL '10 days'),
-
--- Saídas de produtos restritos
-(39, 29, 3, 'saida', 2, 'Procedimento médico', NOW() - INTERVAL '9 days'),
-(40, 30, 3, 'saida', 1, 'Procedimento médico', NOW() - INTERVAL '8 days'),
-
--- Saídas de produtos uso geral
-(49, 4, 4, 'saida', 10, 'Uso em laboratório', NOW() - INTERVAL '7 days'),
-(50, 5, 4, 'saida', 5, 'Uso em laboratório', NOW() - INTERVAL '6 days'),
-(51, 6, 4, 'saida', 8, 'Uso em laboratório', NOW() - INTERVAL '5 days'),
-
--- Saídas de embalagens
-(69, 7, 5, 'saida', 20, 'Embalagem para transporte', NOW() - INTERVAL '4 days'),
-(70, 8, 5, 'saida', 15, 'Embalagem para armazenamento', NOW() - INTERVAL '3 days');
+-- 8. Logs de login (login_logs)
+INSERT INTO login_logs (id_pessoa, data_login, ip, user_agent) VALUES
+(1, '2025-04-01 08:30:25', '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'),
+(2, '2025-04-01 09:15:10', '192.168.1.101', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'),
+(3, '2025-04-01 10:05:45', '192.168.1.102', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/102.0'),
+(1, '2025-04-02 08:45:32', '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'),
+(5, '2025-04-02 11:22:18', '192.168.1.105', 'Mozilla/5.0 (X11; Linux x86_64) Chrome/101.0'),
+(7, '2025-04-03 09:30:05', '192.168.1.107', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/100.0'),
+(10, '2025-04-03 13:15:40', '192.168.1.110', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605.1.15'),
+(1, '2025-04-04 08:20:15', '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'),
+(11, '2025-04-04 10:45:30', '192.168.1.111', 'Mozilla/5.0 (iPad; CPU OS 15_4 like Mac OS X) Mobile/15E148'),
+(12, '2025-04-04 14:10:22', '192.168.1.112', 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) Mobile/15E148');
