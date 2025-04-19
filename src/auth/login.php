@@ -186,7 +186,6 @@ $pageTitle = 'Login - SIPROQUIM';
                 <label for="password" class="form-label">Senha</label>
                 <input type="password" name="password" id="password" class="form-control"
                        placeholder="Sua senha" required>
-                <small class="form-text">Senha padrão inicial: 123456</small>
             </div>
 
             <div class="form-group">
