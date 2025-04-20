@@ -2,6 +2,10 @@
 // cadastros/movimento.php
 require_once __DIR__ . '/../config/db.php';
 
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+requirePermission(PERMISSION_CREATE, $current_user_grupo);
+
 // // Set page title
 // $pageTitle = 'Movimentação de Produtos';
 

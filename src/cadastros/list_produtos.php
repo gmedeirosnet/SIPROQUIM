@@ -2,6 +2,10 @@
 // cadastros/list_produtos.php
 require_once __DIR__ . '/../config/db.php';
 
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+requirePermission(PERMISSION_READ, $current_user_grupo);
+
 // Set page title
 // $pageTitle = 'Lista de Produtos';
 
@@ -76,6 +80,12 @@ $fabricantes = $stmt_fabricantes->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle delete action
 if (isset($_POST['delete']) && isset($_POST['id'])) {
+    // Verificar se o usuário tem permissão para excluir
+    if (!userCan(PERMISSION_DELETE)) {
+        header('Location: /auth/access_denied.php');
+        exit;
+    }
+
     $id = (int)$_POST['id'];
 
     try {

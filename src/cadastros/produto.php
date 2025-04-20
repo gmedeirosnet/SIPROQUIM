@@ -2,6 +2,9 @@
 // cadastros/produto.php
 require_once __DIR__ . '/../config/db.php';
 
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+
 // Set page title
 $pageTitle = 'Cadastro de Produto';
 
@@ -9,6 +12,9 @@ $pageTitle = 'Cadastro de Produto';
 $editing = false;
 $produto = null;
 if (isset($_GET['id'])) {
+    // Verificar permissão de leitura para edição
+    requirePermission(PERMISSION_READ, $current_user_grupo);
+
     $stmt = $pdo->prepare("SELECT * FROM produtos WHERE id = :id");
     $stmt->execute(['id' => $_GET['id']]);
     $produto = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -16,6 +22,9 @@ if (isset($_GET['id'])) {
         $editing = true;
         $pageTitle = 'Editar Produto';
     }
+} else {
+    // Se não for edição, é criação - verificar permissão
+    requirePermission(PERMISSION_CREATE, $current_user_grupo);
 }
 
 // Get all groups for dropdown
@@ -28,6 +37,13 @@ $fabricantes = $stmt_fabricantes->fetchAll(PDO::FETCH_ASSOC);
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Verificar permissão de escrita/atualização
+    if ($editing) {
+        requirePermission(PERMISSION_UPDATE, $current_user_grupo);
+    } else {
+        requirePermission(PERMISSION_CREATE, $current_user_grupo);
+    }
+
     $nome = trim($_POST['nome']);
     $id_grupo = !empty($_POST['id_grupo']) ? (int)$_POST['id_grupo'] : null;
     $id_fabricante = !empty($_POST['id_fabricante']) ? (int)$_POST['id_fabricante'] : null;
