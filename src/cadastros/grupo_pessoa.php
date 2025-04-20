@@ -2,23 +2,40 @@
 // cadastros/grupo_pessoa.php
 require_once __DIR__ . '/../config/db.php';
 
-// Set page title for the header
-$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Grupo de Pessoas' : '';
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+
+// Set page title
+$pageTitle = 'Cadastro de Grupo de Pessoas';
 
 // Check if editing existing record
+$editing = false;
 $grupo = null;
-if ($editing) {
+if (isset($_GET['id'])) {
+    // Verificar permissão de leitura para edição
+    requirePermission(PERMISSION_READ, $current_user_grupo);
+
     $stmt = $pdo->prepare("SELECT * FROM grupos_pessoas WHERE id = :id");
     $stmt->execute(['id' => $_GET['id']]);
     $grupo = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$grupo) {
-        $editing = false;
+    if ($grupo) {
+        $editing = true;
+        $pageTitle = 'Editar Grupo de Pessoas';
     }
+} else {
+    // Se não for edição, é criação - verificar permissão
+    requirePermission(PERMISSION_CREATE, $current_user_grupo);
 }
 
-// Handle form submission
+// Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Verificar permissão de escrita/atualização
+    if ($editing) {
+        requirePermission(PERMISSION_UPDATE, $current_user_grupo);
+    } else {
+        requirePermission(PERMISSION_CREATE, $current_user_grupo);
+    }
+
     $nome = trim($_POST['nome']);
     $descricao = trim($_POST['descricao']);
 

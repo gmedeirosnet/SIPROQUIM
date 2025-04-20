@@ -2,6 +2,10 @@
 // cadastros/list_fabricantes.php
 require_once __DIR__ . '/../config/db.php';
 
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+requirePermission(PERMISSION_READ, $current_user_grupo);
+
 // Set page title for the header
 $pageTitle = 'Lista de Fabricantes';
 
@@ -38,6 +42,12 @@ $fabricantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle delete action
 if (isset($_POST['delete']) && isset($_POST['id'])) {
+    // Verificar se o usuário tem permissão para excluir
+    if (!userCan(PERMISSION_DELETE)) {
+        header('Location: /auth/access_denied.php');
+        exit;
+    }
+
     $id = (int)$_POST['id'];
 
     try {
@@ -119,11 +129,16 @@ include_once __DIR__ . '/../includes/header.php';
                             <td><?= htmlspecialchars($fabricante['endereco'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($fabricante['observacao'] ?? '-') ?></td>
                             <td class="actions">
+                                <?php if ($current_user_permissions['update']): ?>
                                 <a href="fabricante.php?id=<?= $fabricante['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
+                                <?php endif; ?>
+
+                                <?php if ($current_user_permissions['delete']): ?>
                                 <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir este fabricante?');" style="display: inline;">
                                     <input type="hidden" name="id" value="<?= $fabricante['id'] ?>">
                                     <button type="submit" name="delete" class="btn btn-sm btn-danger">Excluir</button>
                                 </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
