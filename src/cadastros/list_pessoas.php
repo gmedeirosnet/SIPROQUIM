@@ -76,6 +76,12 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
 
 // Handle enable/disable action
 if (isset($_POST['toggle_enable']) && isset($_POST['id'])) {
+    // Verificar se o usuário é administrador
+    if ($current_user_grupo != GROUP_ADMINISTRADORES) {
+        header('Location: /auth/access_denied.php');
+        exit;
+    }
+
     $id = (int)$_POST['id'];
     $enable = (int)$_POST['enable'];
     $new_status = $enable ? 0 : 1; // Toggle the current status
@@ -162,6 +168,7 @@ include_once __DIR__ . '/../includes/header.php';
                                 <?php endif; ?>
                             </td>
                             <td>
+                                <?php if ($current_user_grupo == GROUP_ADMINISTRADORES): ?>
                                 <form method="post" style="display: inline;">
                                     <input type="hidden" name="id" value="<?= $pessoa['id'] ?>">
                                     <input type="hidden" name="enable" value="<?= $pessoa['enable'] ?>">
@@ -169,6 +176,11 @@ include_once __DIR__ . '/../includes/header.php';
                                         <?= $pessoa['enable'] ? 'Habilitado' : 'Desabilitado' ?>
                                     </button>
                                 </form>
+                                <?php else: ?>
+                                <span class="<?= $pessoa['enable'] ? 'text-success' : 'text-secondary' ?>">
+                                    <?= $pessoa['enable'] ? 'Habilitado' : 'Desabilitado' ?>
+                                </span>
+                                <?php endif; ?>
                             </td>
                             <td class="actions">
                                 <?php if ($current_user_permissions['update']): ?>
