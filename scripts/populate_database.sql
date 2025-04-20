@@ -33,7 +33,7 @@ INSERT INTO grupos_pessoas (nome, descricao) VALUES
 -- 2. Pessoas (pessoas) - Adicionando o campo enable e password
 INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable, password) VALUES
 -- Administradores (id_grupo_pessoa=1)
-('Admin Sistema', 'admin@siproquim.gov.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'), -- senha: 123456
+('Admin Sistema', 'admin@siproquim.cct.ufcg.edu.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'), -- senha: 123456
 ('Maria Gerente', 'maria.gerente@siproquim.gov.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
 -- Usuários (id_grupo_pessoa=2)
