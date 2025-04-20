@@ -75,6 +75,24 @@ function isActive($page, $current_page = null, $current_dir = null) {
             justify-content: space-between;
             align-items: center;
         }
+
+        /* Estilos para indicar o nível de permissão do usuário */
+        .permission-badge {
+            font-size: 0.7em;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-left: 5px;
+            color: white;
+        }
+        .permission-admin {
+            background-color: #006D77; /* Primary color */
+        }
+        .permission-technical {
+            background-color: #E29578; /* Secondary color */
+        }
+        .permission-readonly {
+            background-color: #83C5BE; /* Tertiary color */
+        }
     </style>
 </head>
 <body>
@@ -91,6 +109,7 @@ function isActive($page, $current_page = null, $current_dir = null) {
                         <a href="/index.php">Dashboard</a>
                     </div>
 
+                    <?php if (isset($current_user_permissions) && ($current_user_permissions['create'] || $current_user_permissions['update'])): ?>
                     <div class="nav-item dropdown">
                         <a href="#">Cadastros</a>
                         <div class="dropdown-content">
@@ -102,6 +121,7 @@ function isActive($page, $current_page = null, $current_dir = null) {
                             <a href="/cadastros/grupo_pessoa.php">Grupos de Pessoas</a>
                         </div>
                     </div>
+                    <?php endif; ?>
 
                     <div class="nav-item dropdown">
                         <a href="#">Listas</a>
@@ -115,9 +135,11 @@ function isActive($page, $current_page = null, $current_dir = null) {
                         </div>
                     </div>
 
+                    <?php if (isset($current_user_permissions) && $current_user_permissions['create']): ?>
                     <div class="nav-item <?php echo $current_page === 'movimento.php' ? 'active' : ''; ?>">
                         <a href="/cadastros/movimento.php">Movimentação</a>
                     </div>
+                    <?php endif; ?>
 
                     <div class="nav-item dropdown">
                         <a href="#">Relatórios</a>
@@ -132,7 +154,18 @@ function isActive($page, $current_page = null, $current_dir = null) {
 
                 <?php if (isset($_SESSION['user_id'])): ?>
                 <div class="nav-item dropdown user-dropdown">
-                    <a href="#"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
+                    <a href="#">
+                        <?= htmlspecialchars($_SESSION['user_name']) ?>
+                        <?php if (isset($current_user_grupo)): ?>
+                            <?php if ($current_user_grupo == GROUP_ADMINISTRADORES): ?>
+                                <span class="permission-badge permission-admin" title="Acesso total - CRUD">Admin</span>
+                            <?php elseif ($current_user_grupo == GROUP_TECNICOS): ?>
+                                <span class="permission-badge permission-technical" title="Acesso parcial - CRU">Técnico</span>
+                            <?php else: ?>
+                                <span class="permission-badge permission-readonly" title="Acesso somente leitura - R">Leitura</span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </a>
                     <div class="dropdown-content">
                         <a href="/auth/change_password.php">Alterar Senha</a>
                         <a href="/auth/logout.php">Sair</a>
