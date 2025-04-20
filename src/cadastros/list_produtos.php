@@ -235,11 +235,16 @@ include_once __DIR__ . '/../includes/header.php';
                                 <?php endif; ?>
                             </td>
                             <td class="actions">
+                                <?php if ($current_user_permissions['update']): ?>
                                 <a href="produto.php?id=<?= $produto['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
+                                <?php endif; ?>
+
+                                <?php if ($current_user_permissions['delete']): ?>
                                 <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir este produto?');" style="display: inline;">
                                     <input type="hidden" name="id" value="<?= $produto['id'] ?>">
                                     <button type="submit" name="delete" class="btn btn-sm btn-danger">Excluir</button>
                                 </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
