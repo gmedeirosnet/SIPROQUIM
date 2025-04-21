@@ -203,7 +203,9 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php foreach ($produtos as $produto): ?>
                         <tr>
                             <td><?= $produto['id'] ?></td>
-                            <td><?= htmlspecialchars($produto['nome']) ?></td>
+                            <td>
+                                <a href="../relatorios/movimentacao_produtos.php?produto_id=<?= $produto['id'] ?>"><?= htmlspecialchars($produto['nome']) ?></a>
+                            </td>
                             <td>
                                 <?php if (!empty($produto['fabricante_nome'])): ?>
                                     <?= htmlspecialchars($produto['fabricante_nome']) ?>
