@@ -148,6 +148,7 @@ function isActive($page, $current_page = null, $current_dir = null) {
                             <a href="/relatorios/produtos_por_local.php">Produtos por Local</a>
                             <a href="/relatorios/relatorio_movimentos.php">Movimentações</a>
                             <a href="/relatorios/movimentacao_produtos.php">Movimentação por Produto</a>
+                            <a href="/relatorios/movimentacao_por_pessoa.php">Movimentação por Pessoa</a>
                         </div>
                     </div>
                 </nav>

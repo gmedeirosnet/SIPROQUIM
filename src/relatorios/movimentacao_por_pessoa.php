@@ -23,11 +23,11 @@ $produtos_movimentados = [];
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search_term = $_GET['search'];
 
-    // Search for pessoas matching the term
+    // Search for pessoas matching the term (removendo referência à coluna documento)
     $stmt = $pdo->prepare("
-        SELECT id, nome, documento, tipo
+        SELECT id, nome, email
         FROM pessoas
-        WHERE nome LIKE :search OR documento LIKE :search
+        WHERE nome LIKE :search OR email LIKE :search
         ORDER BY nome
     ");
     $stmt->execute(['search' => "%{$search_term}%"]);
@@ -38,11 +38,11 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 if (isset($_GET['pessoa_id']) && !empty($_GET['pessoa_id'])) {
     $pessoa_id = (int) $_GET['pessoa_id'];
 
-    // Get selected person details
+    // Get selected person details (removendo referência à coluna documento e tipo)
     $stmt = $pdo->prepare("
-        SELECT p.id, p.nome, p.documento, p.tipo, gp.nome AS grupo
+        SELECT p.id, p.nome, p.email, gp.nome AS grupo
         FROM pessoas p
-        LEFT JOIN grupos_pessoas gp ON p.id_grupo = gp.id
+        LEFT JOIN grupos_pessoas gp ON p.id_grupo_pessoa = gp.id
         WHERE p.id = :id
     ");
     $stmt->execute(['id' => $pessoa_id]);
@@ -109,7 +109,7 @@ include_once __DIR__ . '/../includes/header.php';
         <div class="card-body">
             <form method="get" action="" class="mb-0">
                 <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Buscar pessoa por nome ou documento..." value="<?= htmlspecialchars($search_term) ?>">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar pessoa por nome ou email..." value="<?= htmlspecialchars($search_term) ?>">
                     <button type="submit" class="btn btn-primary">Buscar</button>
                 </div>
             </form>
@@ -121,8 +121,7 @@ include_once __DIR__ . '/../includes/header.php';
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Documento</th>
-                                <th>Tipo</th>
+                                <th>Email</th>
                                 <th>Ação</th>
                             </tr>
                         </thead>
@@ -130,8 +129,7 @@ include_once __DIR__ . '/../includes/header.php';
                             <?php foreach ($pessoas as $pessoa): ?>
                             <tr>
                                 <td><?= htmlspecialchars($pessoa['nome']) ?></td>
-                                <td><?= htmlspecialchars($pessoa['documento'] ?? '-') ?></td>
-                                <td><?= htmlspecialchars($pessoa['tipo'] ?? '-') ?></td>
+                                <td><?= htmlspecialchars($pessoa['email'] ?? '-') ?></td>
                                 <td>
                                     <a href="?pessoa_id=<?= $pessoa['id'] ?>&search=<?= urlencode($search_term) ?>" class="btn btn-sm btn-primary">
                                         Selecionar
@@ -153,13 +151,10 @@ include_once __DIR__ . '/../includes/header.php';
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>Documento:</strong> <?= htmlspecialchars($selected_person['documento'] ?? 'Não informado') ?></p>
+                    <div class="col-md-6">
+                        <p><strong>Email:</strong> <?= htmlspecialchars($selected_person['email'] ?? 'Não informado') ?></p>
                     </div>
-                    <div class="col-md-4">
-                        <p><strong>Tipo:</strong> <?= htmlspecialchars($selected_person['tipo'] ?? 'Não especificado') ?></p>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <p><strong>Grupo:</strong> <?= htmlspecialchars($selected_person['grupo'] ?? 'Não especificado') ?></p>
                     </div>
                 </div>
