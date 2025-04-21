@@ -237,7 +237,7 @@ include_once __DIR__ . '/../includes/header.php';
                                 <?php endif; ?>
                             </td>
                             <td class="actions">
-                                <?php if ($current_user_permissions['update']): ?>
+                                <?php if ($current_user_permissions['update'] && $current_user_grupo != GROUP_AUDITORES): ?>
                                 <a href="produto.php?id=<?= $produto['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
                                 <?php endif; ?>
 

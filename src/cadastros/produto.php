@@ -134,6 +134,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Include the header
 include_once __DIR__ . '/../includes/header.php';
+
+// Verifica se é um Auditor tentando editar um produto
+$is_auditor = $current_user_grupo == GROUP_AUDITORES;
+$editing_blocked = $editing && $is_auditor;
+
+// Se for um auditor tentando editar, mostra mensagem de permissão negada
+if ($editing_blocked) {
+    echo '<div class="content">
+        <div class="container">
+            <div class="alert alert-danger">
+                <strong>Acesso Negado:</strong> Usuários do grupo Auditores não têm permissão para editar produtos.
+            </div>
+            <a href="list_produtos.php" class="btn btn-primary">Voltar para a Lista de Produtos</a>
+        </div>
+    </div>';
+    include_once __DIR__ . '/../includes/footer.php';
+    exit;
+}
 ?>
 
 <div class="content">
