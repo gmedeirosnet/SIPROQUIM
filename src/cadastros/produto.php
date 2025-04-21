@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nome = trim($_POST['nome']);
     $id_grupo = !empty($_POST['id_grupo']) ? (int)$_POST['id_grupo'] : null;
     $id_fabricante = !empty($_POST['id_fabricante']) ? (int)$_POST['id_fabricante'] : null;
-    $referencia = trim($_POST['referencia'] ?? '');
     $tipo = trim($_POST['tipo'] ?? '');
     $volume = trim($_POST['volume'] ?? '');
     $unidade_medida = trim($_POST['unidade_medida'] ?? '');
@@ -68,7 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     nome = :nome,
                     id_grupo = :id_grupo,
                     id_fabricante = :id_fabricante,
-                    referencia = :referencia,
                     tipo = :tipo,
                     volume = :volume,
                     unidade_medida = :unidade_medida,
@@ -80,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'nome' => $nome,
                 'id_grupo' => $id_grupo,
                 'id_fabricante' => $id_fabricante,
-                'referencia' => $referencia,
                 'tipo' => $tipo,
                 'volume' => $volume,
                 'unidade_medida' => $unidade_medida,
@@ -103,14 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } else {
             // Insert new record
-            $sql = "INSERT INTO produtos (nome, id_grupo, id_fabricante, referencia, tipo, volume, unidade_medida, preco, descricao)
-                    VALUES (:nome, :id_grupo, :id_fabricante, :referencia, :tipo, :volume, :unidade_medida, :preco, :descricao)";
+            $sql = "INSERT INTO produtos (nome, id_grupo, id_fabricante, tipo, volume, unidade_medida, preco, descricao)
+                    VALUES (:nome, :id_grupo, :id_fabricante, :tipo, :volume, :unidade_medida, :preco, :descricao)";
             $stmt = $pdo->prepare($sql);
             $result = $stmt->execute([
                 'nome' => $nome,
                 'id_grupo' => $id_grupo,
                 'id_fabricante' => $id_fabricante,
-                'referencia' => $referencia,
                 'tipo' => $tipo,
                 'volume' => $volume,
                 'unidade_medida' => $unidade_medida,
@@ -122,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $message = "Produto cadastrado com sucesso!";
                 $messageType = "success";
                 // Clear form fields
-                $nome = $tipo = $volume = $unidade_medida = $descricao = $referencia = '';
+                $nome = $tipo = $volume = $unidade_medida = $descricao = '';
                 $id_grupo = $id_fabricante = null;
                 $preco = '';
             } else {
@@ -171,12 +167,6 @@ if ($editing_blocked) {
                 <label for="nome" class="form-label">Nome do Produto: <span class="required-indicator">*</span></label>
                 <input type="text" name="nome" id="nome" required class="form-control"
                        value="<?= $editing ? htmlspecialchars($produto['nome']) : (isset($nome) ? htmlspecialchars($nome) : '') ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="referencia" class="form-label">Referência:</label>
-                <input type="text" name="referencia" id="referencia" class="form-control"
-                       value="<?= $editing ? htmlspecialchars($produto['referencia'] ?? '') : (isset($referencia) ? htmlspecialchars($referencia) : '') ?>">
             </div>
 
             <div class="form-row">
