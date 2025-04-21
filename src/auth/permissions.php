@@ -11,6 +11,7 @@ define('PERMISSION_DELETE', 'delete');
 define('GROUP_ADMINISTRADORES', 1);
 define('GROUP_TECNICOS', 3);  // Verificado através do populate_database.sql
 define('GROUP_SUPERVISORES', 4);  // Adicionado conforme populate_database.sql
+define('GROUP_AUDITORES', 5);  // Adicionado para o grupo de Auditores
 
 /**
  * Verifica se o usuário tem uma permissão específica
@@ -31,6 +32,14 @@ function hasPermission($permission, $user_group_id) {
             return false;
         }
         return true;
+    }
+
+    // Auditores podem apenas ler, sem permissão para criar, atualizar ou excluir
+    if ($user_group_id == GROUP_AUDITORES) {
+        if ($permission == PERMISSION_READ) {
+            return true;
+        }
+        return false;
     }
 
     // Demais grupos possuem acesso restrito (R)
