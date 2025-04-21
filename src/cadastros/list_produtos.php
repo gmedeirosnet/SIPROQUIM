@@ -191,7 +191,6 @@ include_once __DIR__ . '/../includes/header.php';
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th>Referência</th>
                         <th>Fabricante</th>
                         <th>Grupo</th>
                         <th>Tipo</th>
@@ -206,13 +205,6 @@ include_once __DIR__ . '/../includes/header.php';
                             <td><?= $produto['id'] ?></td>
                             <td>
                                 <a href="../relatorios/movimentacao_produtos.php?produto_id=<?= $produto['id'] ?>"><?= htmlspecialchars($produto['nome']) ?></a>
-                            </td>
-                            <td>
-                                <?php if (!empty($produto['referencia'])): ?>
-                                    <?= htmlspecialchars($produto['referencia']) ?>
-                                <?php else: ?>
-                                    -
-                                <?php endif; ?>
                             </td>
                             <td>
                                 <?php if (!empty($produto['fabricante_nome'])): ?>

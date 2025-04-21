@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS produtos (
   nome VARCHAR(100) NOT NULL,
   id_grupo INTEGER REFERENCES grupos(id) ON DELETE SET NULL,
   preco NUMERIC(10,2),
-  referencia VARCHAR(50),
   data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

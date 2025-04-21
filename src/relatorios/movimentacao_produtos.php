@@ -36,7 +36,7 @@ if (isset($_GET['produto_id']) && !empty($_GET['produto_id'])) {
 
     // Get selected product details
     $stmt = $pdo->prepare("
-        SELECT p.id, p.nome, p.tipo, p.volume, p.unidade_medida, p.referencia, g.nome AS grupo, f.nome AS fabricante
+        SELECT p.id, p.nome, p.tipo, p.volume, p.unidade_medida, g.nome AS grupo, f.nome AS fabricante
         FROM produtos p
         LEFT JOIN grupos g ON p.id_grupo = g.id
         LEFT JOIN fabricantes f ON p.id_fabricante = f.id
@@ -150,13 +150,6 @@ include_once __DIR__ . '/../includes/header.php';
                         <p><strong>Fabricante:</strong> <?= htmlspecialchars($selected_product['fabricante'] ?? 'Não especificado') ?></p>
                     </div>
                     <div class="col-md-4">
-                        <?php if (!empty($selected_product['referencia'])): ?>
-                            <p><strong>Referência:</strong> <?= htmlspecialchars($selected_product['referencia']) ?></p>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
                         <?php if (!empty($selected_product['tipo']) || !empty($selected_product['volume'])): ?>
                             <p>
                                 <strong>Detalhes:</strong>
@@ -168,6 +161,7 @@ include_once __DIR__ . '/../includes/header.php';
                             </p>
                         <?php endif; ?>
                     </div>
+                <br>
                 </div>
                 <p><a href="?search=<?= urlencode($search_term) ?>" class="btn btn-sm btn-outline-primary">« Selecionar outro produto</a></p>
             </div>
