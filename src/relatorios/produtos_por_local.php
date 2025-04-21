@@ -45,6 +45,7 @@ $sql = "
         l.nome as lugar,
         p.id as produto_id,
         p.nome as produto,
+        p.referencia,
         g.nome as grupo,
         f.nome as fabricante,
         COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) as saldo
@@ -54,7 +55,7 @@ $sql = "
     LEFT JOIN grupos g ON p.id_grupo = g.id
     LEFT JOIN fabricantes f ON p.id_fabricante = f.id
     WHERE 1=1 {$where_clause}
-    GROUP BY l.id, l.nome, p.id, p.nome, g.nome, f.nome
+    GROUP BY l.id, l.nome, p.id, p.nome, p.referencia, g.nome, f.nome
     {$having_clause}
     ORDER BY l.nome, p.nome
 ";
@@ -188,6 +189,7 @@ include_once __DIR__ . '/../includes/header.php';
                             <thead>
                                 <tr>
                                     <th>Produto</th>
+                                    <th>Referência</th>
                                     <th>Grupo</th>
                                     <th>Fabricante</th>
                                     <th class="text-right">Quantidade</th>
@@ -197,6 +199,13 @@ include_once __DIR__ . '/../includes/header.php';
                                 <?php foreach ($lugar['produtos'] as $item): ?>
                                 <tr>
                                     <td><?= htmlspecialchars($item['produto']) ?></td>
+                                    <td>
+                                        <?php if (!empty($item['referencia'])): ?>
+                                            <?= htmlspecialchars($item['referencia']) ?>
+                                        <?php else: ?>
+                                            -
+                                        <?php endif; ?>
+                                    </td>
                                     <td><?= htmlspecialchars($item['grupo'] ?? 'Sem grupo') ?></td>
                                     <td><?= htmlspecialchars($item['fabricante'] ?? 'Não especificado') ?></td>
                                     <td class="text-right"><?= $item['saldo'] ?></td>

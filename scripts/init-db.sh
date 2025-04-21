@@ -3,7 +3,7 @@ set -e
 
 # This script creates the database and necessary tables for the Estoque application
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+psql -v ON_ERROR_STOP=1 -h localhost -p 5432 --username "admin" --dbname "estoque" <<-EOSQL
     -- Ensure estoque user exists
     DO \$\$
     BEGIN
@@ -131,6 +131,10 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
             IF NOT EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'produtos' AND column_name = 'descricao') THEN
                 ALTER TABLE produtos ADD COLUMN descricao TEXT;
             END IF;
+
+            IF NOT EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'produtos' AND column_name = 'referencia') THEN
+                ALTER TABLE produtos ADD COLUMN referencia VARCHAR(50);
+            END IF;
         END IF;
     END
     \$\$;
@@ -176,7 +180,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 EOSQL
 
 # Grant permissions after table creation
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "estoque" <<-EOSQL
+psql -v ON_ERROR_STOP=1 -h localhost -p 5432 --username "admin" --dbname "estoque" <<-EOSQL
     -- Grant permissions on all tables
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO estoque;
     GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO estoque;
