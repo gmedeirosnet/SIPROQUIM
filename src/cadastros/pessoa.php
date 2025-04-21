@@ -2,8 +2,14 @@
 // cadastros/pessoa.php
 require_once __DIR__ . '/../config/db.php';
 
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+
+// Verificar se o usuário é administrador para realizar operações em pessoas
+requireAdmin($current_user_grupo);
+
 // Set page title for the header
-$pageTitle = ($editing = isset($_GET['id'])) ? 'Editar Pessoa' : 'Cadastrar Pessoa';
+$pageTitle = 'Cadastro de Pessoa';
 
 // Fetch person groups for dropdown
 $stmt_grupos = $pdo->query("SELECT id, nome FROM grupos_pessoas ORDER BY nome");
@@ -19,17 +25,33 @@ foreach ($grupos as $grupo) {
 }
 
 // Check if editing existing record
+$editing = false;
 $pessoa = null;
-if ($editing) {
+if (isset($_GET['id'])) {
+    // Verificar permissão de leitura para edição
+    requirePermission(PERMISSION_READ, $current_user_grupo);
+
     $stmt = $pdo->prepare("SELECT * FROM pessoas WHERE id = :id");
     $stmt->execute(['id' => $_GET['id']]);
     $pessoa = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$pessoa) {
-        $editing = false;
+    if ($pessoa) {
+        $editing = true;
+        $pageTitle = 'Editar Pessoa';
     }
+} else {
+    // Se não for edição, é criação - verificar permissão
+    requirePermission(PERMISSION_CREATE, $current_user_grupo);
 }
 
+// Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Verificar permissão de escrita/atualização
+    if ($editing) {
+        requirePermission(PERMISSION_UPDATE, $current_user_grupo);
+    } else {
+        requirePermission(PERMISSION_CREATE, $current_user_grupo);
+    }
+
     $nome = $_POST['nome'];
     $email = $_POST['email'];
     $id_grupo_pessoa = $_POST['id_grupo_pessoa'];

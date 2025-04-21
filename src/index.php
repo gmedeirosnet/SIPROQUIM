@@ -331,6 +331,84 @@ include_once __DIR__ . '/includes/header.php';
             </div>
         <?php endif; ?>
     </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h3>Suas Permissões</h3>
+        </div>
+        <div class="permission-info">
+            <?php if (isset($current_user_permissions)): ?>
+                <div class="permission-card <?= $current_user_permissions['create'] ? 'permission-enabled' : 'permission-disabled' ?>">
+                    <h4>Criar</h4>
+                    <i class="fas fa-<?= $current_user_permissions['create'] ? 'check' : 'times' ?>"></i>
+                    <p><?= $current_user_permissions['create'] ? 'Você pode criar novos registros' : 'Você não pode criar novos registros' ?></p>
+                </div>
+
+                <div class="permission-card <?= $current_user_permissions['read'] ? 'permission-enabled' : 'permission-disabled' ?>">
+                    <h4>Ler</h4>
+                    <i class="fas fa-<?= $current_user_permissions['read'] ? 'check' : 'times' ?>"></i>
+                    <p><?= $current_user_permissions['read'] ? 'Você pode visualizar registros' : 'Você não pode visualizar registros' ?></p>
+                </div>
+
+                <div class="permission-card <?= $current_user_permissions['update'] ? 'permission-enabled' : 'permission-disabled' ?>">
+                    <h4>Atualizar</h4>
+                    <i class="fas fa-<?= $current_user_permissions['update'] ? 'check' : 'times' ?>"></i>
+                    <p><?= $current_user_permissions['update'] ? 'Você pode editar registros existentes' : 'Você não pode editar registros existentes' ?></p>
+                </div>
+
+                <div class="permission-card <?= $current_user_permissions['delete'] ? 'permission-enabled' : 'permission-disabled' ?>">
+                    <h4>Excluir</h4>
+                    <i class="fas fa-<?= $current_user_permissions['delete'] ? 'check' : 'times' ?>"></i>
+                    <p><?= $current_user_permissions['delete'] ? 'Você pode excluir registros' : 'Você não pode excluir registros' ?></p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <style>
+        .permission-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .permission-card {
+            flex: 1;
+            min-width: 200px;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .permission-card h4 {
+            margin-top: 0;
+        }
+
+        .permission-card i {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .permission-enabled {
+            background-color: rgba(131, 197, 190, 0.2);
+            border: 1px solid #83C5BE;
+        }
+
+        .permission-enabled i {
+            color: #006D77;
+        }
+
+        .permission-disabled {
+            background-color: rgba(245, 211, 195, 0.2);
+            border: 1px solid #F5D3C3;
+        }
+
+        .permission-disabled i {
+            color: #E29578;
+        }
+    </style>
 </div>
 
 <style>

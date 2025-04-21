@@ -2,6 +2,10 @@
 // relatorios/relatorio_estoque.php
 require_once __DIR__ . '/../config/db.php';
 
+// Verificação de permissões (todos têm permissão de leitura)
+require_once __DIR__ . '/../auth/auth_check.php';
+requirePermission(PERMISSION_READ, $current_user_grupo);
+
 // Set page title for the header
 // $pageTitle = 'Relatório de Estoque';
 
