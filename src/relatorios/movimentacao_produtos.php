@@ -161,6 +161,7 @@ include_once __DIR__ . '/../includes/header.php';
                             </p>
                         <?php endif; ?>
                     </div>
+                <br>
                 </div>
                 <p><a href="?search=<?= urlencode($search_term) ?>" class="btn btn-sm btn-outline-primary">« Selecionar outro produto</a></p>
             </div>
