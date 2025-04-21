@@ -2,6 +2,10 @@
 // cadastros/list_grupos.php
 require_once __DIR__ . '/../config/db.php';
 
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+requirePermission(PERMISSION_READ, $current_user_grupo);
+
 // Set page title
 // $pageTitle = 'Lista de Grupos de Produtos';
 
@@ -43,6 +47,12 @@ $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle delete action
 if (isset($_POST['delete']) && isset($_POST['id'])) {
+    // Verificar se o usuário tem permissão para excluir
+    if (!userCan(PERMISSION_DELETE)) {
+        header('Location: /auth/access_denied.php');
+        exit;
+    }
+
     $id = (int)$_POST['id'];
 
     try {
@@ -123,11 +133,16 @@ include_once __DIR__ . '/../includes/header.php';
                                 <?php endif; ?>
                             </td>
                             <td class="actions">
+                                <?php if ($current_user_permissions['update']): ?>
                                 <a href="grupo.php?id=<?= $grupo['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
+                                <?php endif; ?>
+
+                                <?php if ($current_user_permissions['delete']): ?>
                                 <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir este grupo?');" style="display: inline;">
                                     <input type="hidden" name="id" value="<?= $grupo['id'] ?>">
                                     <button type="submit" name="delete" class="btn btn-sm btn-danger" <?= $grupo['total_produtos'] > 0 ? 'disabled title="Não é possível excluir um grupo que está sendo usado"' : '' ?>>Excluir</button>
                                 </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

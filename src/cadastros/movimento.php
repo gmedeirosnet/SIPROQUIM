@@ -2,8 +2,14 @@
 // cadastros/movimento.php
 require_once __DIR__ . '/../config/db.php';
 
-// // Set page title
-// $pageTitle = 'Movimentação de Produtos';
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+
+// Para movimentações, exigimos permissão de criação
+requirePermission(PERMISSION_CREATE, $current_user_grupo);
+
+// Set page title
+$pageTitle = 'Movimentação de Produtos';
 
 // Buscar produtos, pessoas e lugares para preencher os selects
 $produtos = $pdo->query("SELECT id, nome FROM produtos ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
