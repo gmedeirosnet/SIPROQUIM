@@ -48,11 +48,8 @@ $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle delete action
 if (isset($_POST['delete']) && isset($_POST['id'])) {
-    // Verificar se o usuário tem permissão para excluir
-    if (!userCan(PERMISSION_DELETE)) {
-        header('Location: /auth/access_denied.php');
-        exit;
-    }
+    // Verificar se o usuário é administrador
+    requireAdmin($current_user_grupo);
 
     $id = (int)$_POST['id'];
 
@@ -126,11 +123,9 @@ include_once __DIR__ . '/../includes/header.php';
                                 <?php endif; ?>
                             </td>
                             <td class="actions">
-                                <?php if ($current_user_permissions['update']): ?>
+                                <?php if (isAdmin($current_user_grupo)): ?>
                                 <a href="grupo_pessoa.php?id=<?= $grupo['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
-                                <?php endif; ?>
 
-                                <?php if ($current_user_permissions['delete']): ?>
                                 <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir este grupo?');" style="display: inline;">
                                     <input type="hidden" name="id" value="<?= $grupo['id'] ?>">
                                     <button type="submit" name="delete" class="btn btn-sm btn-danger" <?= $grupo['total_pessoas'] > 0 ? 'disabled title="Não é possível excluir um grupo que está sendo usado"' : '' ?>>Excluir</button>
@@ -176,7 +171,15 @@ include_once __DIR__ . '/../includes/header.php';
         <?php endif; ?>
     <?php else: ?>
         <div class="alert alert-info">
-            <p>Nenhum grupo de pessoas encontrado.</p>
+            <?php if (!empty($search)): ?>
+                Nenhum grupo de pessoas encontrado com o termo "<?= htmlspecialchars($search) ?>".
+                <p><a href="list_grupos_pessoas.php" class="btn btn-outline-primary mt-2">Limpar busca</a></p>
+            <?php else: ?>
+                <p>Nenhum grupo de pessoas cadastrado.</p>
+                <?php if (isAdmin($current_user_grupo)): ?>
+                <p><a href="grupo_pessoa.php" class="btn btn-primary mt-2">Cadastrar Grupo de Pessoas</a></p>
+                <?php endif; ?>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 

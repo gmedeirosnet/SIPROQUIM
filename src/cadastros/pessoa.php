@@ -5,6 +5,9 @@ require_once __DIR__ . '/../config/db.php';
 // Verificação de permissões
 require_once __DIR__ . '/../auth/auth_check.php';
 
+// Verificar se o usuário é administrador para realizar operações em pessoas
+requireAdmin($current_user_grupo);
+
 // Set page title for the header
 $pageTitle = 'Cadastro de Pessoa';
 
