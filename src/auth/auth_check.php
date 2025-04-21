@@ -1,6 +1,8 @@
 <?php
 // auth/auth_check.php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar se o usuário está autenticado
 if (!isset($_SESSION['user_id'])) {

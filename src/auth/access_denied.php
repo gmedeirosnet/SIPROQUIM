@@ -1,6 +1,8 @@
 <?php
 // auth/access_denied.php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $pageTitle = 'Acesso Negado';
 include_once __DIR__ . '/../includes/header.php';
