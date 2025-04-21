@@ -13,6 +13,7 @@ requirePermission(PERMISSION_READ, $current_user_grupo);
 $sql = "SELECT
             p.id as produto_id,
             p.nome as produto,
+            p.referencia,
             g.nome as grupo,
             l.nome as lugar,
             COALESCE(SUM(CASE
@@ -24,7 +25,7 @@ $sql = "SELECT
         LEFT JOIN grupos g ON p.id_grupo = g.id
         LEFT JOIN movimentos m ON p.id = m.id_produto
         LEFT JOIN lugares l ON m.id_lugar = l.id
-        GROUP BY p.id, p.nome, g.nome, l.nome
+        GROUP BY p.id, p.nome, p.referencia, g.nome, l.nome
         ORDER BY p.nome, l.nome";
 
 try {
@@ -102,6 +103,7 @@ include_once __DIR__ . '/../includes/header.php';
             <thead>
                 <tr>
                     <th>Produto</th>
+                    <th>Referência</th>
                     <th>Grupo</th>
                     <th>Almoxarifado</th>
                     <th class="text-right">Saldo</th>
@@ -110,9 +112,16 @@ include_once __DIR__ . '/../includes/header.php';
             <tbody>
                 <?php foreach ($estoques as $estoque): ?>
                 <tr<?= $estoque['saldo'] < 5 ? ' class="table-danger"' : '' ?>>
-                    <td><?= $estoque['produto'] ?></td>
-                    <td><?= $estoque['grupo'] ?: 'Sem grupo' ?></td>
-                    <td><?= $estoque['lugar'] ?: 'Não especificado' ?></td>
+                    <td><?= htmlspecialchars($estoque['produto']) ?></td>
+                    <td>
+                        <?php if (!empty($estoque['referencia'])): ?>
+                            <?= htmlspecialchars($estoque['referencia']) ?>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </td>
+                    <td><?= htmlspecialchars($estoque['grupo'] ?: 'Sem grupo') ?></td>
+                    <td><?= htmlspecialchars($estoque['lugar'] ?: 'Não especificado') ?></td>
                     <td class="text-right"><?= $estoque['saldo'] ?></td>
                 </tr>
                 <?php endforeach; ?>

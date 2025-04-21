@@ -8,6 +8,7 @@ DECLARE
     nome_produto TEXT;
     grupo_id INTEGER;
     fabricante_id INTEGER;
+    referencia_produto TEXT;
     tipo_produto TEXT;
     volume_produto TEXT;
     unidade TEXT;
@@ -18,6 +19,9 @@ DECLARE
     tipos TEXT[] := ARRAY['Líquido', 'Sólido', 'Gás', 'Pó', 'Cristal', 'Gel'];
     volumes TEXT[] := ARRAY['50', '100', '250', '500', '1000', '2000', '5000'];
     unidades TEXT[] := ARRAY['ml', 'g', 'L', 'mg', 'kg'];
+
+    -- Array para gerar referências
+    codigos TEXT[] := ARRAY['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
     -- Prefixos e sufixos para nomes de produtos
     prefixos TEXT[] := ARRAY['Meta', 'Etil', 'Poli', 'Mono', 'Tri', 'Di', 'Tetra', 'Hidro', 'Oxi', 'Nitro', 'Cloro', 'Flúor', 'Bromo', 'Iodo', 'Carboxi'];
@@ -55,6 +59,12 @@ BEGIN
         -- Atribuir a um fabricante (1-6)
         fabricante_id := 1 + floor(random() * 6);
 
+        -- Gerar referência aleatória (formato: XX-9999)
+        referencia_produto :=
+            codigos[1 + floor(random() * array_length(codigos, 1))] ||
+            codigos[1 + floor(random() * array_length(codigos, 1))] || '-' ||
+            LPAD(CAST((1000 + floor(random() * 8999)) AS TEXT), 4, '0');
+
         -- Gerar tipo aleatório
         tipo_produto := tipos[1 + floor(random() * array_length(tipos, 1))];
 
@@ -73,8 +83,8 @@ BEGIN
                    desc_usos[1 + floor(random() * array_length(desc_usos, 1))];
 
         -- Inserir o produto
-        INSERT INTO produtos (nome, id_grupo, id_fabricante, tipo, volume, unidade_medida, preco, descricao)
-        VALUES (nome_produto, grupo_id, fabricante_id, tipo_produto, volume_produto, unidade, ROUND(preco::numeric, 2), descricao);
+        INSERT INTO produtos (nome, id_grupo, id_fabricante, referencia, tipo, volume, unidade_medida, preco, descricao)
+        VALUES (nome_produto, grupo_id, fabricante_id, referencia_produto, tipo_produto, volume_produto, unidade, ROUND(preco::numeric, 2), descricao);
     END LOOP;
 
     RAISE NOTICE 'Gerados 275 produtos adicionais com sucesso (total 300).';
