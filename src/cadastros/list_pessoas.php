@@ -54,11 +54,8 @@ $pessoas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle delete action
 if (isset($_POST['delete']) && isset($_POST['id'])) {
-    // Verificar se o usuário tem permissão para excluir
-    if (!userCan(PERMISSION_DELETE)) {
-        header('Location: /auth/access_denied.php');
-        exit;
-    }
+    // Verificar se o usuário é administrador
+    requireAdmin($current_user_grupo);
 
     $id = (int)$_POST['id'];
 
@@ -183,11 +180,9 @@ include_once __DIR__ . '/../includes/header.php';
                                 <?php endif; ?>
                             </td>
                             <td class="actions">
-                                <?php if ($current_user_permissions['update']): ?>
+                                <?php if (isAdmin($current_user_grupo)): ?>
                                 <a href="pessoa.php?id=<?= $pessoa['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
-                                <?php endif; ?>
 
-                                <?php if ($current_user_permissions['delete']): ?>
                                 <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta pessoa?');" style="display: inline;">
                                     <input type="hidden" name="id" value="<?= $pessoa['id'] ?>">
                                     <button type="submit" name="delete" class="btn btn-sm btn-danger">Excluir</button>
@@ -237,7 +232,9 @@ include_once __DIR__ . '/../includes/header.php';
                 <p><a href="list_pessoas.php" class="btn btn-outline-primary mt-2">Limpar filtros</a></p>
             <?php else: ?>
                 Nenhuma pessoa cadastrada.
+                <?php if (isAdmin($current_user_grupo)): ?>
                 <p><a href="pessoa.php" class="btn btn-primary mt-2">Cadastrar Pessoa</a></p>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     <?php endif; ?>

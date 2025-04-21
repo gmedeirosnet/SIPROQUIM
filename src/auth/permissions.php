@@ -115,3 +115,33 @@ function getUserPermissions($user_group_id) {
         'delete' => canDelete($user_group_id)
     ];
 }
+
+/**
+ * Verifica se o usuário é administrador
+ *
+ * @param int $user_group_id ID do grupo do usuário
+ * @return bool True se o usuário for administrador, false caso contrário
+ */
+function isAdmin($user_group_id) {
+    return $user_group_id == GROUP_ADMINISTRADORES;
+}
+
+/**
+ * Verifica se o usuário é administrador e redireciona para uma página de erro se não for
+ *
+ * @param int $user_group_id ID do grupo do usuário
+ * @param string $redirect_url URL para redirecionar em caso de acesso negado (opcional)
+ * @return void
+ */
+function requireAdmin($user_group_id, $redirect_url = null) {
+    if (!isAdmin($user_group_id)) {
+        // Se um URL de redirecionamento específico não foi fornecido, use o padrão
+        if ($redirect_url === null) {
+            $redirect_url = '/auth/access_denied.php';
+        }
+
+        // Redirecionar para a página de acesso negado
+        header('Location: ' . $redirect_url);
+        exit;
+    }
+}
