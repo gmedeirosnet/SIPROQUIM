@@ -155,7 +155,7 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php foreach ($pessoas as $pessoa): ?>
                         <tr>
                             <td><?= $pessoa['id'] ?></td>
-                            <td><?= htmlspecialchars($pessoa['nome']) ?></td>
+                            <td><a href="../relatorios/movimentacao_por_pessoa.php?pessoa_id=<?= $pessoa['id'] ?>"><?= htmlspecialchars($pessoa['nome']) ?></a></td>
                             <td><?= htmlspecialchars($pessoa['email'] ?? '-') ?></td>
                             <td>
                                 <?php if (!empty($pessoa['grupo_nome'])): ?>
