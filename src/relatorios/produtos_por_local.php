@@ -2,11 +2,44 @@
 // relatorios/produtos_por_local.php
 require_once __DIR__ . '/../config/db.php';
 
+// Verificação de permissões
+require_once __DIR__ . '/../auth/auth_check.php';
+requirePermission(PERMISSION_READ, $current_user_grupo);
+
 // Set page title for the header
 // $pageTitle = 'Produtos Disponíveis por Almoxarifado';
 
-// Get inventory by location
-$stmt = $pdo->query("
+// Inicializar variáveis de filtro
+$filter_produto = isset($_GET['produto']) ? trim($_GET['produto']) : '';
+$filter_grupo = isset($_GET['grupo']) ? (int)$_GET['grupo'] : 0;
+$filter_fabricante = isset($_GET['fabricante']) ? (int)$_GET['fabricante'] : 0;
+
+// Obter grupos e fabricantes para os filtros
+$grupos = $pdo->query("SELECT id, nome FROM grupos ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
+$fabricantes = $pdo->query("SELECT id, nome FROM fabricantes ORDER BY nome")->fetchAll(PDO::FETCH_ASSOC);
+
+// Construir cláusula WHERE para filtros
+$where_clause = '';
+$having_clause = 'HAVING COALESCE(SUM(CASE WHEN m.tipo = \'entrada\' THEN m.quantidade ELSE -m.quantidade END), 0) > 0';
+$params = [];
+
+if (!empty($filter_produto)) {
+    $where_clause .= " AND p.nome LIKE :produto";
+    $params[':produto'] = "%{$filter_produto}%";
+}
+
+if ($filter_grupo > 0) {
+    $where_clause .= " AND p.id_grupo = :grupo";
+    $params[':grupo'] = $filter_grupo;
+}
+
+if ($filter_fabricante > 0) {
+    $where_clause .= " AND p.id_fabricante = :fabricante";
+    $params[':fabricante'] = $filter_fabricante;
+}
+
+// Get inventory by location with filters
+$sql = "
     SELECT
         l.id as lugar_id,
         l.nome as lugar,
@@ -20,10 +53,17 @@ $stmt = $pdo->query("
     LEFT JOIN produtos p ON m.id_produto = p.id
     LEFT JOIN grupos g ON p.id_grupo = g.id
     LEFT JOIN fabricantes f ON p.id_fabricante = f.id
+    WHERE 1=1 {$where_clause}
     GROUP BY l.id, l.nome, p.id, p.nome, g.nome, f.nome
-    HAVING COALESCE(SUM(CASE WHEN m.tipo = 'entrada' THEN m.quantidade ELSE -m.quantidade END), 0) > 0
+    {$having_clause}
     ORDER BY l.nome, p.nome
-");
+";
+
+$stmt = $pdo->prepare($sql);
+foreach ($params as $key => $value) {
+    $stmt->bindValue($key, $value);
+}
+$stmt->execute();
 
 $produtos_por_lugar = [];
 $total_lugares = 0;
@@ -57,6 +97,70 @@ include_once __DIR__ . '/../includes/header.php';
 <div class="content">
     <h2 class="section-title">Produtos Disponíveis por Almoxarifado</h2>
 
+    <!-- Form para filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="" class="mb-2">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="produto">Nome do Produto:</label>
+                        <input type="text" id="produto" name="produto" class="form-control"
+                               value="<?= htmlspecialchars($filter_produto) ?>" placeholder="Filtrar por nome do produto">
+                    </div>
+                    <div class="form-col">
+                        <label for="grupo">Grupo:</label>
+                        <select id="grupo" name="grupo" class="form-select">
+                            <option value="0">Todos os Grupos</option>
+                            <?php foreach ($grupos as $grupo): ?>
+                            <option value="<?= $grupo['id'] ?>" <?= $filter_grupo == $grupo['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($grupo['nome']) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <label for="fabricante">Fabricante:</label>
+                        <select id="fabricante" name="fabricante" class="form-select">
+                            <option value="0">Todos os Fabricantes</option>
+                            <?php foreach ($fabricantes as $fab): ?>
+                            <option value="<?= $fab['id'] ?>" <?= $filter_fabricante == $fab['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($fab['nome']) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row mt-3">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <?php if (!empty($filter_produto) || $filter_grupo > 0 || $filter_fabricante > 0): ?>
+                        <a href="produtos_por_local.php" class="btn btn-outline-secondary ml-2">Limpar Filtros</a>
+                    <?php endif; ?>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <?php if (!empty($filter_produto) || $filter_grupo > 0 || $filter_fabricante > 0): ?>
+        <div class="alert alert-info">
+            <strong>Filtros aplicados:</strong>
+            <?php
+            $filtros = [];
+            if (!empty($filter_produto)) $filtros[] = "Produto contendo \"" . htmlspecialchars($filter_produto) . "\"";
+            if ($filter_grupo > 0) {
+                foreach ($grupos as $g) {
+                    if ($g['id'] == $filter_grupo) $filtros[] = "Grupo: " . htmlspecialchars($g['nome']);
+                }
+            }
+            if ($filter_fabricante > 0) {
+                foreach ($fabricantes as $f) {
+                    if ($f['id'] == $filter_fabricante) $filtros[] = "Fabricante: " . htmlspecialchars($f['nome']);
+                }
+            }
+            echo implode(", ", $filtros);
+            ?>
+        </div>
+    <?php endif; ?>
+
     <div class="dashboard-cards">
         <div class="dashboard-card">
             <div>Total de Locais: <strong><?= $total_lugares ?></div></strong>
@@ -69,7 +173,7 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
     </div>
 
-    <br></br>
+    <br>
     <?php if (!empty($produtos_por_lugar)): ?>
         <div class="accordion mt-4">
             <?php foreach ($produtos_por_lugar as $lugar): ?>
@@ -107,7 +211,12 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
     <?php else: ?>
         <div class="alert alert-info mt-4">
-            <p>Não há produtos em estoque no momento.</p>
+            <?php if (!empty($filter_produto) || $filter_grupo > 0 || $filter_fabricante > 0): ?>
+                <p>Não foram encontrados produtos correspondentes aos filtros aplicados.</p>
+                <p><a href="produtos_por_local.php" class="btn btn-outline-primary mt-2">Limpar Filtros</a></p>
+            <?php else: ?>
+                <p>Não há produtos em estoque no momento.</p>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 
