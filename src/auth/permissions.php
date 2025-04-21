@@ -10,6 +10,7 @@ define('PERMISSION_DELETE', 'delete');
 // Constantes para IDs dos grupos (pode ser ajustado conforme a configuração do banco de dados)
 define('GROUP_ADMINISTRADORES', 1);
 define('GROUP_TECNICOS', 3);  // Verificado através do populate_database.sql
+define('GROUP_SUPERVISORES', 4);  // Adicionado conforme populate_database.sql
 
 /**
  * Verifica se o usuário tem uma permissão específica
@@ -24,8 +25,8 @@ function hasPermission($permission, $user_group_id) {
         return true;
     }
 
-    // Técnicos possuem acesso parcial (CRU)
-    if ($user_group_id == GROUP_TECNICOS) {
+    // Técnicos e Supervisores possuem acesso parcial (CRU)
+    if ($user_group_id == GROUP_TECNICOS || $user_group_id == GROUP_SUPERVISORES) {
         if ($permission == PERMISSION_DELETE) {
             return false;
         }
