@@ -1,5 +1,5 @@
 -- Database Population Script for SIPROQUIM
--- Atualizado em 19 de Abril de 2025
+-- Atualizado em 21 de Abril de 2025
 
 -- Clear existing data (if you want to start fresh)
 -- AVISO: Comentar estas linhas se quiser preservar dados existentes
@@ -35,25 +35,42 @@ INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable, password) VALUES
 -- Administradores (id_grupo_pessoa=1)
 ('Admin Sistema', 'admin@siproquim.cct.ufcg.edu.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'), -- senha: 123456
 ('Maria Gerente', 'maria.gerente@siproquim.gov.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Roberto Diretor', 'roberto.diretor@siproquim.gov.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Camila Gestora', 'camila.gestora@siproquim.gov.br', 1, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
 -- Usuários (id_grupo_pessoa=2)
 ('João Silva', 'joao.silva@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 ('Ana Santos', 'ana.santos@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 ('Carlos Oliveira', 'carlos.oliveira@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 ('Patrícia Lima', 'patricia.lima@siproquim.gov.br', 2, false, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Bruno Mendes', 'bruno.mendes@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Juliana Alves', 'juliana.alves@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Rafael Gomes', 'rafael.gomes@siproquim.gov.br', 2, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
 -- Técnicos (id_grupo_pessoa=3)
 ('Roberto Queiroz', 'roberto.queiroz@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 ('Lúcia Marques', 'lucia.marques@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 ('Fernando Costa', 'fernando.costa@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Cristina Moraes', 'cristina.moraes@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Daniel Santos', 'daniel.santos@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Fernanda Lima', 'fernanda.lima@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Gustavo Pereira', 'gustavo.pereira@siproquim.gov.br', 3, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
 -- Supervisores (id_grupo_pessoa=4)
 ('Marcelo Pereira', 'marcelo.pereira@siproquim.gov.br', 4, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 ('Regina Campos', 'regina.campos@siproquim.gov.br', 4, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Eduardo Ferraz', 'eduardo.ferraz@siproquim.gov.br', 4, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Carolina Torres', 'carolina.torres@siproquim.gov.br', 4, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Henrique Dias', 'henrique.dias@siproquim.gov.br', 4, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 
 -- Auditores (id_grupo_pessoa=5)
 ('Paulo Cardoso', 'paulo.cardoso@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
-('Amanda Vieira', 'amanda.vieira@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+('Amanda Vieira', 'amanda.vieira@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Ricardo Barros', 'ricardo.barros@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Carla Mendes', 'carla.mendes@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Leonardo Castro', 'leonardo.castro@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Mariana Rodrigues', 'mariana.rodrigues@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('Felipe Albuquerque', 'felipe.albuquerque@siproquim.gov.br', 5, true, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
 -- 3. Grupos de Produtos (grupos)
 INSERT INTO grupos (nome, descricao) VALUES
