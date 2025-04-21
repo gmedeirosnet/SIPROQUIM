@@ -20,6 +20,14 @@ O sistema é estruturado em camadas, separando configuração, conexão com banc
 - Terraform 1.5+ (para provisionamento da infraestrutura)
 - Nginx (para produção)
 
+## Características Principais
+
+- **Segurança Avançada:** Proteção contra SQL Injection, XSS e implementação de headers de segurança HTTP adicionais
+- **Interface Responsiva:** Layout adaptável para diferentes dispositivos e tamanhos de tela
+- **Infraestrutura como Código:** Configuração completa de ambiente de produção usando Terraform
+- **Monitoramento Integrado:** Capacidade de integração com serviços de monitoramento em tempo real
+- **Diagnóstico Facilitado:** Utilitários para solução de problemas de conexão e diagnóstico de consultas SQL
+
 ## Estrutura de Arquivos e Organização do projeto
 
 ```
@@ -27,6 +35,7 @@ SIPROQUIM/
 ├── src/                      # Código-fonte da aplicação principal
 │   ├── index.php             # Página inicial/Dashboard
 │   ├── test_connection.php   # Ferramenta para testar a conexão com o DB
+│   ├── test_search.php       # Utilitário para diagnóstico avançado de consultas SQL
 │   ├── php.ini               # Configuração personalizada do PHP
 │   ├── api/                  # Endpoints de API
 │   │   └── uploads/          # Diretório para uploads de arquivos
@@ -127,6 +136,7 @@ SIPROQUIM/
 
 5. Para testar a conexão com o banco de dados:
    - Acesse http://localhost:8080/test_connection.php
+   - Para diagnóstico avançado de consultas SQL: http://localhost:8080/test_search.php
 
 ### Instalação Manual
 
@@ -160,6 +170,8 @@ Para provisionamento em ambientes de produção:
    terraform apply tfplan.out
    ```
 
+8. Após o provisionamento, você receberá a URL de acesso e outras informações úteis como outputs do Terraform.
+
 ## Solução de Problemas de Conexão
 
 Se encontrar problemas de conexão com o PostgreSQL:
@@ -169,9 +181,10 @@ Se encontrar problemas de conexão com o PostgreSQL:
    docker-compose ps
    ```
 
-2. Acesse a página de teste de conexão:
+2. Acesse as ferramentas de diagnóstico:
    ```
-   http://localhost:8080/test_connection.php
+   http://localhost:8080/test_connection.php  # Para problemas de conexão ao banco
+   http://localhost:8080/test_search.php      # Para diagnóstico de consultas SQL
    ```
 
 3. Verifique os logs do container PostgreSQL:
@@ -188,25 +201,30 @@ Se encontrar problemas de conexão com o PostgreSQL:
 ### Validações e Segurança:
 - Prepared statements para prevenção de SQL Injection
 - Validação e sanitização de dados nos formulários
+- Headers de segurança HTTP adicionais (CSP, HSTS, X-Content-Type-Options)
 - Estrutura que permite implementação futura de autenticação de usuários
 - Configuração segura de contêineres Docker e infraestrutura
 - Acesso SSH seguro às instâncias EC2 utilizando chaves dedicadas
+- Restrição de permissões nos volumes Docker seguindo princípio do privilégio mínimo
 
 ### Modularização:
 - Organização em diretórios funcionais
 - Separação clara entre lógica de dados e apresentação
 - Fácil manutenção e extensão do código
+- Verificação aprimorada da integridade do banco de dados durante inicialização
 
 ### Interface e Usabilidade:
 - Interface HTML simples e funcional com CSS responsivo
 - Possibilidade de integração com frameworks CSS no futuro
 - Formulários validados tanto no cliente quanto no servidor
 - Frontend moderno em desenvolvimento (diretório frontend/)
+- Melhorias na interface dos relatórios de movimentação de produtos
 
 ### Infraestrutura:
 - Configuração containerizada para desenvolvimento
 - Infraestrutura como código usando Terraform para ambientes de produção
 - Utilização de Ubuntu 24.04 TLS como base para instâncias EC2
+- Integração expandida com serviços de monitoramento
 - Facilidade para escalar em diferentes provedores de nuvem
 
 ## Contribuição
@@ -225,4 +243,4 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para d
 
 ## Última Atualização
 
-19 de abril de 2025
+21 de abril de 2025
