@@ -178,6 +178,7 @@ include_once __DIR__ . '/../includes/header.php';
             </div>
         </div>
 
+        <br>
         <?php if (!empty($produtos_movimentados)): ?>
             <div class="card mt-4">
                 <div class="card-header">
