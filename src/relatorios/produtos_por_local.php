@@ -161,6 +161,7 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
     <?php endif; ?>
 
+    <br>
     <div class="dashboard-cards">
         <div class="dashboard-card">
             <div>Total de Locais: <strong><?= $total_lugares ?></div></strong>
