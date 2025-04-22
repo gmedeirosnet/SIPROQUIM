@@ -4,7 +4,7 @@
 # Usage: ./toggle_ssl_config.sh [letsencrypt|self-signed]
 
 DOMAIN="siproquim.gmedeiros.net"
-NGINX_CONFIG="/Users/gutembergmedeiros/Work/SIPROQUIM/nginx/default.conf"
+NGINX_CONFIG="./nginx/default.conf"
 CONFIG_TYPE=$1
 
 # Default to self-signed if no argument is provided
