@@ -12,6 +12,9 @@ requirePermission(PERMISSION_READ, $current_user_grupo);
 // Inicializar variável de pesquisa
 $search_produto = isset($_GET['search_produto']) ? trim($_GET['search_produto']) : '';
 
+// Verificar se existe um filtro específico por ID do produto
+$produto_id_filter = isset($_GET['produto_id']) ? intval($_GET['produto_id']) : null;
+
 // Construir a consulta SQL base
 $sql_base = "SELECT
             p.id as produto_id,
@@ -28,13 +31,16 @@ $sql_base = "SELECT
         LEFT JOIN movimentos m ON p.id = m.id_produto
         LEFT JOIN lugares l ON m.id_lugar = l.id";
 
-// Adicionar cláusula WHERE para filtrar por nome do produto, se necessário
+// Adicionar cláusula WHERE para filtrar por nome do produto ou ID do produto
 $where_clause = "";
 $params = [];
 
 if (!empty($search_produto)) {
     $where_clause = " WHERE p.nome LIKE :search_produto";
     $params[':search_produto'] = "%{$search_produto}%";
+} elseif ($produto_id_filter) {
+    $where_clause = " WHERE p.id = :produto_id";
+    $params[':produto_id'] = $produto_id_filter;
 }
 
 // Completar a consulta SQL
@@ -53,6 +59,12 @@ try {
 } catch (PDOException $e) {
     echo "Erro ao gerar relatório: " . $e->getMessage();
     exit;
+}
+
+// Se estamos filtrando um produto específico, vamos buscar o nome dele para exibir
+$produto_nome_filtrado = '';
+if ($produto_id_filter && count($estoques) > 0) {
+    $produto_nome_filtrado = $estoques[0]['produto'];
 }
 
 // Calcular totais
@@ -99,7 +111,7 @@ include_once __DIR__ . '/../includes/header.php';
                         <button type="submit" class="btn btn-primary">Pesquisar</button>
                     </div>
                 </div>
-                <?php if (!empty($search_produto)): ?>
+                <?php if (!empty($search_produto) || $produto_id_filter): ?>
                     <a href="relatorio_estoque.php" class="btn btn-secondary btn-sm">Limpar Pesquisa</a>
                 <?php endif; ?>
             </form>
@@ -110,6 +122,10 @@ include_once __DIR__ . '/../includes/header.php';
         <div class="alert alert-info">
             <strong>Filtrando por:</strong> produtos contendo "<?= htmlspecialchars($search_produto) ?>"
             (<?= count($estoques) ?> resultados encontrados)
+        </div>
+    <?php elseif ($produto_id_filter): ?>
+        <div class="alert alert-info">
+            <strong>Filtrando pelo produto:</strong> <?= htmlspecialchars($produto_nome_filtrado) ?>
         </div>
     <?php endif; ?>
 
@@ -161,7 +177,11 @@ include_once __DIR__ . '/../includes/header.php';
                 <tbody>
                     <?php foreach ($estoques as $estoque): ?>
                     <tr<?= $estoque['saldo'] < 5 ? ' class="table-danger"' : '' ?>>
-                        <td><?= $estoque['produto'] ?></td>
+                        <td>
+                            <a href="movimentacao_produtos.php?produto_id=<?= $estoque['produto_id'] ?>" class="produto-link">
+                                <?= $estoque['produto'] ?>
+                            </a>
+                        </td>
                         <td><?= $estoque['grupo'] ?: 'Sem grupo' ?></td>
                         <td><?= $estoque['lugar'] ?: 'Não especificado' ?></td>
                         <td class="text-right"><?= $estoque['saldo'] ?></td>
@@ -182,5 +202,16 @@ include_once __DIR__ . '/../includes/header.php';
         <a href="../index.php" class="btn btn-secondary">Voltar para a Página Inicial</a>
     </div>
 </div>
+
+<style>
+    .produto-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .produto-link:hover {
+        text-decoration: underline;
+        color: #0056b3;
+    }
+</style>
 
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
