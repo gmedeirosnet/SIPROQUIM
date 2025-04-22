@@ -9,8 +9,11 @@ requirePermission(PERMISSION_READ, $current_user_grupo);
 // Set page title for the header
 // $pageTitle = 'Relatório de Estoque';
 
-// Consulta SQL para calcular o saldo atual em estoque por produto e lugar
-$sql = "SELECT
+// Inicializar variável de pesquisa
+$search_produto = isset($_GET['search_produto']) ? trim($_GET['search_produto']) : '';
+
+// Construir a consulta SQL base
+$sql_base = "SELECT
             p.id as produto_id,
             p.nome as produto,
             g.nome as grupo,
@@ -23,12 +26,29 @@ $sql = "SELECT
         FROM produtos p
         LEFT JOIN grupos g ON p.id_grupo = g.id
         LEFT JOIN movimentos m ON p.id = m.id_produto
-        LEFT JOIN lugares l ON m.id_lugar = l.id
-        GROUP BY p.id, p.nome, g.nome, l.nome
-        ORDER BY p.nome, l.nome";
+        LEFT JOIN lugares l ON m.id_lugar = l.id";
+
+// Adicionar cláusula WHERE para filtrar por nome do produto, se necessário
+$where_clause = "";
+$params = [];
+
+if (!empty($search_produto)) {
+    $where_clause = " WHERE p.nome LIKE :search_produto";
+    $params[':search_produto'] = "%{$search_produto}%";
+}
+
+// Completar a consulta SQL
+$sql = $sql_base . $where_clause . " GROUP BY p.id, p.nome, g.nome, l.nome ORDER BY p.nome, l.nome";
 
 try {
-    $stmt = $pdo->query($sql);
+    $stmt = $pdo->prepare($sql);
+
+    // Vincular parâmetros, se houver
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+
+    $stmt->execute();
     $estoques = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Erro ao gerar relatório: " . $e->getMessage();
@@ -64,6 +84,36 @@ include_once __DIR__ . '/../includes/header.php';
 <div class="content">
     <h2 class="section-title">Relatório de Estoque</h2>
 
+    <!-- Formulário de pesquisa de produtos -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Pesquisar Produtos</h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="" class="form-inline">
+                <div class="input-group mb-2">
+                    <input type="text" name="search_produto" class="form-control"
+                           placeholder="Digite o nome do produto..."
+                           value="<?= htmlspecialchars($search_produto) ?>">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Pesquisar</button>
+                    </div>
+                </div>
+                <?php if (!empty($search_produto)): ?>
+                    <a href="relatorio_estoque.php" class="btn btn-secondary btn-sm">Limpar Pesquisa</a>
+                <?php endif; ?>
+            </form>
+        </div>
+    </div>
+
+    <?php if (!empty($search_produto)): ?>
+        <div class="alert alert-info">
+            <strong>Filtrando por:</strong> produtos contendo "<?= htmlspecialchars($search_produto) ?>"
+            (<?= count($estoques) ?> resultados encontrados)
+        </div>
+    <?php endif; ?>
+
+    <br>
     <div class="dashboard-cards">
         <div class="dashboard-card">
             <div>Total de Produtos: <strong><?= $total_produtos ?></div></strong>
@@ -97,28 +147,34 @@ include_once __DIR__ . '/../includes/header.php';
     <?php endif; ?>
 
     <h3 class="mt-4">Saldo por Produto e Almoxarifado</h3>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Produto</th>
-                    <th>Grupo</th>
-                    <th>Almoxarifado</th>
-                    <th class="text-right">Saldo</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($estoques as $estoque): ?>
-                <tr<?= $estoque['saldo'] < 5 ? ' class="table-danger"' : '' ?>>
-                    <td><?= $estoque['produto'] ?></td>
-                    <td><?= $estoque['grupo'] ?: 'Sem grupo' ?></td>
-                    <td><?= $estoque['lugar'] ?: 'Não especificado' ?></td>
-                    <td class="text-right"><?= $estoque['saldo'] ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+    <?php if (count($estoques) > 0): ?>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Grupo</th>
+                        <th>Almoxarifado</th>
+                        <th class="text-right">Saldo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($estoques as $estoque): ?>
+                    <tr<?= $estoque['saldo'] < 5 ? ' class="table-danger"' : '' ?>>
+                        <td><?= $estoque['produto'] ?></td>
+                        <td><?= $estoque['grupo'] ?: 'Sem grupo' ?></td>
+                        <td><?= $estoque['lugar'] ?: 'Não especificado' ?></td>
+                        <td class="text-right"><?= $estoque['saldo'] ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-warning">
+            Nenhum produto encontrado com os critérios de pesquisa.
+        </div>
+    <?php endif; ?>
 
     <div class="btn-group mt-4">
         <a href="relatorio_movimentos.php" class="btn btn-outline-primary">Ver Movimentações</a>
