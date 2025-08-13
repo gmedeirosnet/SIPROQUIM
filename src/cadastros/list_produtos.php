@@ -51,6 +51,17 @@ if ($filter_fabricante > 0) {
     $params[':fabricante'] = $filter_fabricante;
 }
 
+// Filter by tipo
+$filter_tipo = isset($_GET['tipo']) ? trim($_GET['tipo']) : '';
+if (!empty($filter_tipo)) {
+    if (empty($where_clause)) {
+        $where_clause = "WHERE p.tipo = :tipo";
+    } else {
+        $where_clause .= " AND p.tipo = :tipo";
+    }
+    $params[':tipo'] = $filter_tipo;
+}
+
 // Get produtos with pagination, search and filters
 $sql = "SELECT p.*,
         g.nome as grupo_nome,
@@ -78,6 +89,10 @@ $grupos = $stmt_grupos->fetchAll(PDO::FETCH_ASSOC);
 $stmt_fabricantes = $pdo->query("SELECT id, nome FROM fabricantes ORDER BY nome");
 $fabricantes = $stmt_fabricantes->fetchAll(PDO::FETCH_ASSOC);
 
+// Get distinct tipos for filter
+$stmt_tipos = $pdo->query("SELECT DISTINCT tipo FROM produtos WHERE tipo IS NOT NULL AND tipo != '' ORDER BY tipo");
+$tipos = $stmt_tipos->fetchAll(PDO::FETCH_ASSOC);
+
 // Handle delete action
 if (isset($_POST['delete']) && isset($_POST['id'])) {
     // Verificar se o usuário tem permissão para excluir
@@ -104,6 +119,7 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
             header("Location: list_produtos.php?deleted=1" .
                 ($filter_grupo ? '&grupo=' . $filter_grupo : '') .
                 ($filter_fabricante ? '&fabricante=' . $filter_fabricante : '') .
+                (!empty($filter_tipo) ? '&tipo=' . urlencode($filter_tipo) : '') .
                 (!empty($search) ? '&search=' . urlencode($search) : ''));
             exit;
         }
@@ -141,11 +157,14 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php if ($filter_fabricante > 0): ?>
                         <input type="hidden" name="fabricante" value="<?= $filter_fabricante ?>">
                     <?php endif; ?>
+                    <?php if (!empty($filter_tipo)): ?>
+                        <input type="hidden" name="tipo" value="<?= htmlspecialchars($filter_tipo) ?>">
+                    <?php endif; ?>
                 </div>
                 <div>
                     <button type="submit" class="btn btn-primary">Buscar</button>
                     <?php if (!empty($search)): ?>
-                        <a href="?<?= $filter_grupo ? 'grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? ($filter_grupo ? '&' : '') . 'fabricante=' . $filter_fabricante : '' ?>" class="btn btn-outline-secondary">Limpar Busca</a>
+                        <a href="?<?= $filter_grupo ? 'grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? ($filter_grupo ? '&' : '') . 'fabricante=' . $filter_fabricante : '' ?><?= !empty($filter_tipo) ? (($filter_grupo || $filter_fabricante) ? '&' : '') . 'tipo=' . urlencode($filter_tipo) : '' ?>" class="btn btn-outline-secondary">Limpar Busca</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -177,9 +196,21 @@ include_once __DIR__ . '/../includes/header.php';
                 <?php endforeach; ?>
             </select>
         </div>
+
+        <div class="filter-item">
+            <label for="filter_tipo">Filtrar por Tipo:</label>
+            <select id="filter_tipo" class="form-select" onchange="applyFilters()">
+                <option value="">Todos os Tipos</option>
+                <?php foreach ($tipos as $tipo): ?>
+                <option value="<?= htmlspecialchars($tipo['tipo']) ?>" <?= $filter_tipo == $tipo['tipo'] ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($tipo['tipo']) ?>
+                </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
         <br>
 
-        <?php if ($filter_grupo > 0 || $filter_fabricante > 0 || !empty($search)): ?>
+        <?php if ($filter_grupo > 0 || $filter_fabricante > 0 || !empty($filter_tipo) || !empty($search)): ?>
             <a href="list_produtos.php" class="btn btn-outline-secondary">Limpar Filtros</a>
         <?php endif; ?>
     </div>
@@ -253,10 +284,19 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
 
         <?php if ($total_pages > 1): ?>
+            <?php
+            // Build pagination URL parameters
+            $pagination_params = [];
+            if ($filter_grupo > 0) $pagination_params[] = 'grupo=' . $filter_grupo;
+            if ($filter_fabricante > 0) $pagination_params[] = 'fabricante=' . $filter_fabricante;
+            if (!empty($filter_tipo)) $pagination_params[] = 'tipo=' . urlencode($filter_tipo);
+            if (!empty($search)) $pagination_params[] = 'search=' . urlencode($search);
+            $pagination_query = !empty($pagination_params) ? '&' . implode('&', $pagination_params) : '';
+            ?>
             <ul class="pagination">
                 <?php if ($page > 1): ?>
-                    <li><a href="?page=1<?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? '&fabricante=' . $filter_fabricante : '' ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Primeira</a></li>
-                    <li><a href="?page=<?= ($page - 1) ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? '&fabricante=' . $filter_fabricante : '' ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Anterior</a></li>
+                    <li><a href="?page=1<?= $pagination_query ?>">Primeira</a></li>
+                    <li><a href="?page=<?= ($page - 1) ?><?= $pagination_query ?>">Anterior</a></li>
                 <?php else: ?>
                     <li class="disabled"><span>Primeira</span></li>
                     <li class="disabled"><span>Anterior</span></li>
@@ -269,13 +309,13 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php if ($i == $page): ?>
                         <li class="active"><span><?= $i ?></span></li>
                     <?php else: ?>
-                        <li><a href="?page=<?= $i ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? '&fabricante=' . $filter_fabricante : '' ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>"><?= $i ?></a></li>
+                        <li><a href="?page=<?= $i ?><?= $pagination_query ?>"><?= $i ?></a></li>
                     <?php endif; ?>
                 <?php endfor; ?>
 
                 <?php if ($page < $total_pages): ?>
-                    <li><a href="?page=<?= ($page + 1) ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? '&fabricante=' . $filter_fabricante : '' ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Próxima</a></li>
-                    <li><a href="?page=<?= $total_pages ?><?= $filter_grupo ? '&grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? '&fabricante=' . $filter_fabricante : '' ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Última</a></li>
+                    <li><a href="?page=<?= ($page + 1) ?><?= $pagination_query ?>">Próxima</a></li>
+                    <li><a href="?page=<?= $total_pages ?><?= $pagination_query ?>">Última</a></li>
                 <?php else: ?>
                     <li class="disabled"><span>Próxima</span></li>
                     <li class="disabled"><span>Última</span></li>
@@ -284,7 +324,7 @@ include_once __DIR__ . '/../includes/header.php';
         <?php endif; ?>
     <?php else: ?>
         <div class="alert alert-info">
-            <?php if (!empty($search) || $filter_grupo > 0 || $filter_fabricante > 0): ?>
+            <?php if (!empty($search) || $filter_grupo > 0 || $filter_fabricante > 0 || !empty($filter_tipo)): ?>
                 Nenhum produto encontrado com os filtros selecionados.
                 <p><a href="list_produtos.php" class="btn btn-outline-primary mt-2">Limpar filtros</a></p>
             <?php else: ?>
@@ -300,6 +340,7 @@ include_once __DIR__ . '/../includes/header.php';
         let url = 'list_produtos.php?';
         let grupoValue = document.getElementById('filter_grupo').value;
         let fabricanteValue = document.getElementById('filter_fabricante').value;
+        let tipoValue = document.getElementById('filter_tipo').value;
         let searchValue = "<?= urlencode($search) ?>";
 
         let params = [];
@@ -310,6 +351,10 @@ include_once __DIR__ . '/../includes/header.php';
 
         if (fabricanteValue !== '0') {
             params.push('fabricante=' + fabricanteValue);
+        }
+
+        if (tipoValue !== '') {
+            params.push('tipo=' + encodeURIComponent(tipoValue));
         }
 
         if (searchValue) {
