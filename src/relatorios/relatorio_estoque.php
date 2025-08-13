@@ -16,7 +16,7 @@ $search_produto = isset($_GET['search_produto']) ? trim($_GET['search_produto'])
 $produto_id_filter = isset($_GET['produto_id']) ? intval($_GET['produto_id']) : null;
 
 // Adicionar filtros de visualização
-$view_type = isset($_GET['view_type']) ? $_GET['view_type'] : 'detalhado';
+$view_type = isset($_GET['view_type']) ? $_GET['view_type'] : 'almoxarifado';
 
 // Construir a consulta SQL baseada no tipo de visualização
 if ($view_type === 'produto') {
