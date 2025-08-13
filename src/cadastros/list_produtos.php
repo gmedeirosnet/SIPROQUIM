@@ -10,7 +10,7 @@ requirePermission(PERMISSION_READ, $current_user_grupo);
 // $pageTitle = 'Lista de Produtos';
 
 // Pagination setup
-$per_page = 100;
+$per_page = 25;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $per_page;
 
