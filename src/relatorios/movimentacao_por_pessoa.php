@@ -198,41 +198,6 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
 
         <br>
-        <?php if (!empty($produtos_movimentados)): ?>
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h3 class="h5 mb-0">Resumo por Produto</h3>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Produto</th>
-                                    <th class="text-center">Entradas</th>
-                                    <th class="text-center">Saídas</th>
-                                    <th class="text-center">Saldo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($produtos_movimentados as $produto): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($produto['nome']) ?></td>
-                                    <td class="text-center text-success"><?= $produto['entradas'] ?></td>
-                                    <td class="text-center text-danger"><?= $produto['saidas'] ?></td>
-                                    <td class="text-center <?= ($produto['entradas'] - $produto['saidas'] >= 0) ? 'text-success' : 'text-danger' ?>">
-                                        <strong><?= $produto['entradas'] - $produto['saidas'] ?></strong>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        <?php endif; ?>
-
-        <br>
         <?php if (!empty($movimentos)): ?>
             <h3 class="mt-4">Histórico de Movimentações</h3>
             <div class="table-responsive">
