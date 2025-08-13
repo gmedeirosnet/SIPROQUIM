@@ -131,19 +131,8 @@ resource "aws_instance" "siproquim_server" {
   depends_on = [aws_internet_gateway.siproquim_igw]
 }
 
-# Elastic IP for EC2 instance
-resource "aws_eip" "siproquim_eip" {
-  domain = "vpc"
-  address = var.ec2_eip
-  instance = aws_instance.siproquim_server.id
-
-  tags = merge(var.common_tags, {
-    Name = "${lower(var.project_name)}-eip"
-  })
-}
-
-# EIP Association
+# EIP Association using existing Elastic IP
 resource "aws_eip_association" "siproquim_eip_assoc" {
   instance_id   = aws_instance.siproquim_server.id
-  allocation_id = aws_eip.siproquim_eip.id
+  allocation_id = var.ec2_eip_allocation
 }

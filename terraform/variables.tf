@@ -19,7 +19,13 @@ variable "instance_type" {
 variable "ec2_eip" {
   description = "EC2 Elastic IP address"
   type = string
-  default = "18.208.32.208"
+  default = "174.129.195.18"
+}
+
+variable "ec2_eip_allocation" {
+  description = "Elastic IP address allocation to EC2 instance"
+  type = string
+  default = "eipalloc-02b18da0adb5c6f37"
 }
 
 variable "volume_size" {
