@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "ec2_ami" {
+  description = "Ubuntu 24.04 LTS ARM64"
+  type = string
+  default = "ami-07041441b708acbd6"
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
