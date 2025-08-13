@@ -16,6 +16,12 @@ variable "instance_type" {
   default     = "t4g.small"
 }
 
+variable "ec2_eip" {
+  description = "EC2 Elastic IP address"
+  type = string
+  default = "18.208.32.208"
+}
+
 variable "volume_size" {
   description = "Size of the root volume in GB"
   type        = number

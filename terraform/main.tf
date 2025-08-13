@@ -138,7 +138,7 @@ resource "aws_instance" "siproquim_server" {
 # Elastic IP for EC2 instance
 resource "aws_eip" "siproquim_eip" {
   domain = "vpc"
-  address = "44.206.88.47"
+  address = var.ec2_eip
   instance = aws_instance.siproquim_server.id
 
   tags = {
