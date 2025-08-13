@@ -56,3 +56,13 @@ temp/
 
 # Remove the Private Key from the Public Repository
 siproquim
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfplan
+.terraform.lock.hcl
