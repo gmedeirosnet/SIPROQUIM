@@ -5,6 +5,38 @@ Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/spec/v2.0.0.html).
 
+## [0.7.0] - 2025-08-13
+
+### Adicionado
+- Sistema de validação obrigatória para campos críticos:
+  - Produtos: Fabricante e Grupo são agora campos obrigatórios
+  - Pessoas: Grupo obrigatório para todos os usuários
+- Filtro avançado por "Tipo" na listagem de produtos
+- Sistema de filtros em três níveis: Grupo → Fabricante → Tipo
+- Configuração completa do GitHub Copilot com instruções específicas para AI coding assistants
+- Configuração otimizada do VS Code workspace para desenvolvimento PHP/PostgreSQL
+- Documentação detalhada dos padrões arquiteturais e convenções de código
+- Pesquisa case-insensitive (ILIKE) em relatórios de estoque
+
+### Alterado
+- Interface das listagens otimizada com remoção da coluna ID para visual mais limpo
+- Paginação aumentada para 100 registros por página nas listagens de produtos
+- Movimento padrão alterado de "Entrada" para "Saída" no registro de movimentações
+- Relatório de estoque com visualização padrão alterada para "Saldo por Almoxarifado"
+- Indicadores visuais aprimorados para campos obrigatórios em formulários
+- Validação condicional de senha para usuários existentes vs. novos usuários
+
+### Melhorado
+- Experiência do usuário com validações mais intuitivas
+- Performance das consultas com filtros otimizados
+- Consistência na aplicação de permissões e validações
+- Navegação e usabilidade geral do sistema
+
+### Segurança
+- Validação server-side robusta para todos os campos obrigatórios
+- Sanitização aprimorada de dados de entrada
+- Controle de permissões mais granular
+
 ## [0.6.0] - Em desenvolvimento
 
 ### Adicionado
