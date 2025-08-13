@@ -70,7 +70,7 @@ $where_clause = "";
 $params = [];
 
 if (!empty($search_produto)) {
-    $where_clause = " WHERE p.nome LIKE :search_produto";
+    $where_clause = " WHERE p.nome ILIKE :search_produto";
     $params[':search_produto'] = "%{$search_produto}%";
 } elseif ($produto_id_filter) {
     $where_clause = " WHERE p.id = :produto_id";
