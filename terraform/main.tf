@@ -69,7 +69,7 @@ resource "aws_key_pair" "gmedeiros_key" {
 
 # EC2 instance
 resource "aws_instance" "siproquim_server" {
-  ami                    = "ami-084568db4383264d4" # Ubuntu 24.04 TLS
+  ami                    = "ami-0c02fb55956c7d316" # Ubuntu 24.04 LTS ARM64
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.public_subnet_a.id
   vpc_security_group_ids = [aws_security_group.siproquim_sg.id]
