@@ -195,7 +195,7 @@ chmod 600 $PGPASSFILE
 EOSQL
 
 # Grant permissions after table creation
-/opt/homebrew/bin/psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "estoque" <<-EOSQL
+/usr/bin/psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "estoque" <<-EOSQL
     -- Grant permissions on all tables
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO estoque;
     GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO estoque;
