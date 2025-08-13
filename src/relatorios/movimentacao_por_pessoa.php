@@ -23,12 +23,15 @@ $produtos_movimentados = [];
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search_term = $_GET['search'];
 
-    // Search for pessoas matching the term (removendo referência à coluna documento)
+    // Search for pessoas matching the term with last movement date
     $stmt = $pdo->prepare("
-        SELECT id, nome, email
-        FROM pessoas
-        WHERE nome LIKE :search OR email LIKE :search
-        ORDER BY nome
+        SELECT p.id, p.nome, p.email,
+               MAX(m.data_movimento) as ultima_movimentacao
+        FROM pessoas p
+        LEFT JOIN movimentos m ON p.id = m.id_pessoa
+        WHERE p.nome LIKE :search OR p.email LIKE :search
+        GROUP BY p.id, p.nome, p.email
+        ORDER BY p.nome
     ");
     $stmt->execute(['search' => "%{$search_term}%"]);
     $pessoas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -94,7 +97,15 @@ if (isset($_GET['pessoa_id']) && !empty($_GET['pessoa_id'])) {
 
 // Get all pessoas for direct selection if no search or selection
 if (empty($pessoas) && empty($selected_person)) {
-    $stmt = $pdo->query("SELECT id, nome FROM pessoas ORDER BY nome LIMIT 100");
+    $stmt = $pdo->query("
+        SELECT p.id, p.nome,
+               MAX(m.data_movimento) as ultima_movimentacao
+        FROM pessoas p
+        LEFT JOIN movimentos m ON p.id = m.id_pessoa
+        GROUP BY p.id, p.nome
+        ORDER BY p.nome
+        LIMIT 100
+    ");
     $pessoas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -122,6 +133,7 @@ include_once __DIR__ . '/../includes/header.php';
                             <tr>
                                 <th>Nome</th>
                                 <th>Email</th>
+                                <th>Data do Movimento</th>
                                 <th>Ação</th>
                             </tr>
                         </thead>
@@ -130,6 +142,13 @@ include_once __DIR__ . '/../includes/header.php';
                             <tr>
                                 <td><?= htmlspecialchars($pessoa['nome']) ?></td>
                                 <td><?= htmlspecialchars($pessoa['email'] ?? '-') ?></td>
+                                <td>
+                                    <?php if ($pessoa['ultima_movimentacao']): ?>
+                                        <?= date('d/m/Y H:i', strtotime($pessoa['ultima_movimentacao'])) ?>
+                                    <?php else: ?>
+                                        <span class="text-muted">Sem movimentação</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <a href="?pessoa_id=<?= $pessoa['id'] ?>&search=<?= urlencode($search_term) ?>" class="btn btn-sm btn-primary">
                                         Selecionar
