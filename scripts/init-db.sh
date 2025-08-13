@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+.psql_client.sh
+
 POSTGRES_DB=estoque
 POSTGRES_USER=admin
 PGPASSWORD=password
@@ -20,7 +22,7 @@ echo "$PGPASS_CONTENT" > $PGPASSFILE
 chmod 600 $PGPASSFILE
 ## This script creates the database and necessary tables for the Estoque application
 
-/opt/homebrew/bin/psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+/usr/bin/psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     -- Ensure estoque user exists
     DO \$\$
     BEGIN
