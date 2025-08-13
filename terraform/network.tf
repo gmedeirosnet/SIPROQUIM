@@ -4,11 +4,9 @@ resource "aws_vpc" "siproquim_vpc" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
-  tags = {
-    Name        = "${lower(var.project_name)}-vpc"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-vpc"
+  })
 }
 
 # Public subnet in AZ a (for public-facing components)
@@ -18,11 +16,9 @@ resource "aws_subnet" "public_subnet_a" {
   availability_zone       = "${var.aws_region}a"
   map_public_ip_on_launch = true
 
-  tags = {
-    Name        = "${lower(var.project_name)}-public-subnet-a"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-public-subnet-a"
+  })
 }
 
 # Public subnet in AZ b (for redundancy)
@@ -32,11 +28,9 @@ resource "aws_subnet" "public_subnet_b" {
   availability_zone       = "${var.aws_region}b"
   map_public_ip_on_launch = true
 
-  tags = {
-    Name        = "${lower(var.project_name)}-public-subnet-b"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-public-subnet-b"
+  })
 }
 
 # Private subnet in AZ a (for database and internal components)
@@ -46,11 +40,9 @@ resource "aws_subnet" "private_subnet_a" {
   availability_zone       = "${var.aws_region}a"
   map_public_ip_on_launch = false
 
-  tags = {
-    Name        = "${lower(var.project_name)}-private-subnet-a"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-private-subnet-a"
+  })
 }
 
 # Private subnet in AZ b (for redundancy)
@@ -60,33 +52,27 @@ resource "aws_subnet" "private_subnet_b" {
   availability_zone       = "${var.aws_region}b"
   map_public_ip_on_launch = false
 
-  tags = {
-    Name        = "${lower(var.project_name)}-private-subnet-b"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-private-subnet-b"
+  })
 }
 
 # Internet Gateway to allow VPC to communicate with the internet
 resource "aws_internet_gateway" "siproquim_igw" {
   vpc_id = aws_vpc.siproquim_vpc.id
 
-  tags = {
-    Name        = "${lower(var.project_name)}-igw"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-igw"
+  })
 }
 
 # Elastic IP for NAT Gateway
 resource "aws_eip" "nat_eip" {
   domain = "vpc"
 
-  tags = {
-    Name        = "${lower(var.project_name)}-nat-eip"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-nat-eip"
+  })
 
   depends_on = [aws_internet_gateway.siproquim_igw]
 }
@@ -96,11 +82,9 @@ resource "aws_nat_gateway" "siproquim_nat_gateway" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet_a.id
 
-  tags = {
-    Name        = "${lower(var.project_name)}-nat-gateway"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-nat-gateway"
+  })
 
   depends_on = [aws_internet_gateway.siproquim_igw]
 }
@@ -114,11 +98,9 @@ resource "aws_route_table" "public_route_table" {
     gateway_id = aws_internet_gateway.siproquim_igw.id
   }
 
-  tags = {
-    Name        = "${lower(var.project_name)}-public-route-table"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-public-route-table"
+  })
 }
 
 # Route table for private subnets
@@ -130,11 +112,9 @@ resource "aws_route_table" "private_route_table" {
     nat_gateway_id = aws_nat_gateway.siproquim_nat_gateway.id
   }
 
-  tags = {
-    Name        = "${lower(var.project_name)}-private-route-table"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-private-route-table"
+  })
 }
 
 # Associate public subnet a with public route table

@@ -54,11 +54,9 @@ resource "aws_security_group" "siproquim_sg" {
     description = "Allow all outbound traffic"
   }
 
-  tags = {
-    Name        = "${lower(var.project_name)}-security-group"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-security-group"
+  })
 }
 
 # AWS key pair for SSH access
@@ -81,9 +79,9 @@ resource "aws_instance" "siproquim_server" {
     volume_size           = var.volume_size
     volume_type           = "gp3"
     delete_on_termination = true
-    tags = {
+    tags = merge(var.common_tags, {
       Name = "${lower(var.project_name)}-root-volume"
-    }
+    })
   }
 
   provisioner "file" {
@@ -119,11 +117,9 @@ resource "aws_instance" "siproquim_server" {
     host        = self.public_ip
   }
 
-  tags = {
-    Name        = "${lower(var.project_name)}-server"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-server"
+  })
 
   user_data = <<-EOF
     #!/bin/bash
@@ -141,11 +137,9 @@ resource "aws_eip" "siproquim_eip" {
   address = var.ec2_eip
   instance = aws_instance.siproquim_server.id
 
-  tags = {
-    Name        = "${lower(var.project_name)}-eip"
-    Environment = var.environment
-    Project     = var.project_name
-  }
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-eip"
+  })
 }
 
 # EIP Association
