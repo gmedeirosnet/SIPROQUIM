@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $messageType = "success";
                     // Clear form
                     $id_produto = $id_pessoa = $id_lugar = '';
-                    $tipo = 'entrada'; // Default to entrada
+                    $tipo = 'saida'; // Default to saida
                     $quantidade = '';
                     $observacao = '';
                 } else {
@@ -163,14 +163,14 @@ include_once __DIR__ . '/../includes/header.php';
             <div class="form-group">
                 <label class="form-label">Tipo de Movimentação: <span class="required">*</span></label>
                 <div class="tipo-selector">
-                    <div class="card tipo-card entrada <?= (!isset($tipo) || (isset($tipo) && $tipo == 'entrada')) ? 'selected' : '' ?>" onclick="selectTipo('entrada')">
+                    <div class="card tipo-card entrada <?= (isset($tipo) && $tipo == 'entrada') ? 'selected' : '' ?>" onclick="selectTipo('entrada')">
                         <div class="card-body">
                             <i class="fa fa-plus-circle"></i>
                             <h3>Entrada</h3>
                             <p>Adicionar itens ao estoque</p>
                         </div>
                     </div>
-                    <div class="card tipo-card saida <?= (isset($tipo) && $tipo == 'saida') ? 'selected' : '' ?>" onclick="selectTipo('saida')">
+                    <div class="card tipo-card saida <?= (!isset($tipo) || (isset($tipo) && $tipo == 'saida')) ? 'selected' : '' ?>" onclick="selectTipo('saida')">
                         <div class="card-body">
                             <i class="fa fa-minus-circle"></i>
                             <h3>Saída</h3>
@@ -178,7 +178,7 @@ include_once __DIR__ . '/../includes/header.php';
                         </div>
                     </div>
                 </div>
-                <input type="hidden" name="tipo" id="tipo" value="<?= isset($tipo) ? $tipo : 'entrada' ?>">
+                <input type="hidden" name="tipo" id="tipo" value="<?= isset($tipo) ? $tipo : 'saida' ?>">
             </div>
 
             <div class="form-row">
