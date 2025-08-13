@@ -49,6 +49,7 @@ public/hot/
 # Temporary files
 tmp/
 temp/
+Agents.md
 
 # Database dumps and backups
 *.dump
