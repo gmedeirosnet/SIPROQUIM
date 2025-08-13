@@ -13,7 +13,7 @@ variable "ec2_ami" {
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
-  default     = "t4g.small"
+  default     = "t4g.micro"
 }
 
 variable "ec2_eip" {
