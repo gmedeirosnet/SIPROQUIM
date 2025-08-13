@@ -58,51 +58,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $enable = isset($_POST['enable']) ? true : false;
     $password = $_POST['password'] ?? '';
 
-    // Se estiver editando e a senha estiver vazia, mantenha a senha atual
-    $passwordSql = '';
-    $params = [
-        'nome' => $nome,
-        'email' => $email,
-        'id_grupo_pessoa' => $id_grupo_pessoa,
-        'enable' => $enable
-    ];
-
-    if (!empty($password)) {
-        // Hash da senha
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $passwordSql = ', password = :password';
-        $params['password'] = $passwordHash;
+    // Validate required fields
+    $errors = [];
+    if (empty($nome)) {
+        $errors[] = "O nome da pessoa é obrigatório.";
+    }
+    if (empty($id_grupo_pessoa)) {
+        $errors[] = "O grupo da pessoa é obrigatório.";
     }
 
-    if ($editing) {
-        // Update existing person
-        $sql = "UPDATE pessoas SET nome = :nome, email = :email, id_grupo_pessoa = :id_grupo_pessoa, enable = :enable$passwordSql WHERE id = :id";
-        $params['id'] = $_GET['id'];
-        $stmt = $pdo->prepare($sql);
-        if ($stmt->execute($params)) {
-            $message = "Pessoa atualizada com sucesso!";
-            $messageType = "success";
-        } else {
-            $message = "Erro ao atualizar pessoa.";
-            $messageType = "error";
-        }
-    } else {
-        // Insert new person
-        $sql = "INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable, password) VALUES (:nome, :email, :id_grupo_pessoa, :enable, :password)";
-        $stmt = $pdo->prepare($sql);
-        if ($stmt->execute([
+    // If no validation errors, proceed with database operation
+    if (empty($errors)) {
+        // Se estiver editando e a senha estiver vazia, mantenha a senha atual
+        $passwordSql = '';
+        $params = [
             'nome' => $nome,
             'email' => $email,
             'id_grupo_pessoa' => $id_grupo_pessoa,
-            'enable' => $enable,
-            'password' => $passwordHash
-        ])) {
-            $message = "Pessoa cadastrada com sucesso!";
-            $messageType = "success";
-        } else {
-            $message = "Erro ao cadastrar pessoa.";
-            $messageType = "error";
+            'enable' => $enable
+        ];
+
+        if (!empty($password)) {
+            // Hash da senha
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $passwordSql = ', password = :password';
+            $params['password'] = $passwordHash;
         }
+
+        if ($editing) {
+            // Update existing person
+            $sql = "UPDATE pessoas SET nome = :nome, email = :email, id_grupo_pessoa = :id_grupo_pessoa, enable = :enable$passwordSql WHERE id = :id";
+            $params['id'] = $_GET['id'];
+            $stmt = $pdo->prepare($sql);
+            if ($stmt->execute($params)) {
+                $message = "Pessoa atualizada com sucesso!";
+                $messageType = "success";
+            } else {
+                $message = "Erro ao atualizar pessoa.";
+                $messageType = "error";
+            }
+        } else {
+            // Insert new person - require password for new users
+            if (empty($password)) {
+                $message = "A senha é obrigatória para novos usuários.";
+                $messageType = "error";
+            } else {
+                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                $sql = "INSERT INTO pessoas (nome, email, id_grupo_pessoa, enable, password) VALUES (:nome, :email, :id_grupo_pessoa, :enable, :password)";
+                $stmt = $pdo->prepare($sql);
+                if ($stmt->execute([
+                    'nome' => $nome,
+                    'email' => $email,
+                    'id_grupo_pessoa' => $id_grupo_pessoa,
+                    'enable' => $enable,
+                    'password' => $passwordHash
+                ])) {
+                    $message = "Pessoa cadastrada com sucesso!";
+                    $messageType = "success";
+                } else {
+                    $message = "Erro ao cadastrar pessoa.";
+                    $messageType = "error";
+                }
+            }
+        }
+    } else {
+        // Display validation errors
+        $message = implode('<br>', $errors);
+        $messageType = "error";
     }
 }
 
@@ -155,8 +177,10 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
 
         <div class="form-group">
-            <label for="password" class="form-label">Senha:</label>
-            <input type="password" name="password" id="password" class="form-control">
+            <label for="password" class="form-label">Senha:<?php if (!$editing): ?> <span class="text-danger">*</span><?php endif; ?></label>
+            <input type="password" name="password" id="password" class="form-control" 
+                   <?php if (!$editing): ?>required<?php endif; ?>
+                   placeholder="<?= $editing ? 'Deixe em branco para manter a senha atual' : 'Digite a senha' ?>">
         </div>
 
         <div class="btn-group mt-4">
