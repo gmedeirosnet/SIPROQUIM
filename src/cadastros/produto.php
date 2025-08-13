@@ -58,6 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($nome)) {
         $errors[] = "O nome do produto é obrigatório.";
     }
+    if (empty($id_grupo)) {
+        $errors[] = "O grupo do produto é obrigatório.";
+    }
+    if (empty($id_fabricante)) {
+        $errors[] = "O fabricante do produto é obrigatório.";
+    }
 
     // If no validation errors, proceed with database operation
     if (empty($errors)) {
@@ -171,8 +177,8 @@ if ($editing_blocked) {
 
             <div class="form-row">
                 <div class="form-col">
-                    <label for="id_fabricante" class="form-label">Fabricante:</label>
-                    <select name="id_fabricante" id="id_fabricante" class="form-select">
+                    <label for="id_fabricante" class="form-label">Fabricante: <span class="required-indicator">*</span></label>
+                    <select name="id_fabricante" id="id_fabricante" required class="form-select">
                         <option value="">-- Selecione um Fabricante --</option>
                         <?php foreach ($fabricantes as $fab): ?>
                             <option value="<?= $fab['id'] ?>" <?= ($editing && $produto['id_fabricante'] == $fab['id']) ? 'selected' : (isset($id_fabricante) && $id_fabricante == $fab['id'] ? 'selected' : '') ?>>
@@ -184,8 +190,8 @@ if ($editing_blocked) {
                 </div>
 
                 <div class="form-col">
-                    <label for="id_grupo" class="form-label">Grupo:</label>
-                    <select name="id_grupo" id="id_grupo" class="form-select">
+                    <label for="id_grupo" class="form-label">Grupo: <span class="required-indicator">*</span></label>
+                    <select name="id_grupo" id="id_grupo" required class="form-select">
                         <option value="">-- Selecione um Grupo --</option>
                         <?php foreach ($grupos as $grupo): ?>
                             <option value="<?= $grupo['id'] ?>" <?= ($editing && $produto['id_grupo'] == $grupo['id']) ? 'selected' : (isset($id_grupo) && $id_grupo == $grupo['id'] ? 'selected' : '') ?>>
