@@ -143,7 +143,6 @@ include_once __DIR__ . '/../includes/header.php';
             <table class="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Grupo</th>
@@ -154,7 +153,6 @@ include_once __DIR__ . '/../includes/header.php';
                 <tbody>
                     <?php foreach ($pessoas as $pessoa): ?>
                         <tr>
-                            <td><?= $pessoa['id'] ?></td>
                             <td><a href="../relatorios/movimentacao_por_pessoa.php?pessoa_id=<?= $pessoa['id'] ?>"><?= htmlspecialchars($pessoa['nome']) ?></a></td>
                             <td><?= htmlspecialchars($pessoa['email'] ?? '-') ?></td>
                             <td>

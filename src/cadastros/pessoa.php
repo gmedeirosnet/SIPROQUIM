@@ -178,7 +178,7 @@ include_once __DIR__ . '/../includes/header.php';
 
         <div class="form-group">
             <label for="password" class="form-label">Senha:<?php if (!$editing): ?> <span class="text-danger">*</span><?php endif; ?></label>
-            <input type="password" name="password" id="password" class="form-control" 
+            <input type="password" name="password" id="password" class="form-control"
                    <?php if (!$editing): ?>required<?php endif; ?>
                    placeholder="<?= $editing ? 'Deixe em branco para manter a senha atual' : 'Digite a senha' ?>">
         </div>
