@@ -8,6 +8,7 @@ Este documento registra as decisões arquiteturais significativas tomadas durant
 - [ADR-002: Melhoria da Conectividade com PostgreSQL e Containerização](#adr-002-melhoria-da-conectividade-com-postgresql-e-containerização)
 - [ADR-003: Implementação de Infraestrutura como Código com Terraform](#adr-003-implementação-de-infraestrutura-como-código-com-terraform)
 - [ADR-004: Estratégia de Segurança e Monitoramento Aprimorado](#adr-004-estratégia-de-segurança-e-monitoramento-aprimorado)
+- [ADR-005: Validações Obrigatórias e Melhorias de Interface de Usuário](#adr-005-validações-obrigatórias-e-melhorias-de-interface-de-usuário)
 
 ---
 
@@ -345,3 +346,101 @@ A implementação da estratégia de segurança e monitoramento aprimorado repres
 Esta abordagem proativa à segurança alinha-se com as decisões arquiteturais anteriores e fornece uma base sólida para o crescimento futuro do sistema, garantindo que a segurança seja tratada como um aspecto fundamental da arquitetura e não como uma consideração posterior.
 
 > **Revisão:** Este ADR deve ser revisado a cada 3 meses ou após qualquer incidente de segurança significativo.
+
+---
+
+# ADR-005: Validações Obrigatórias e Melhorias de Interface de Usuário
+
+**Data:** 2025-08-13
+**Status:** Aceito
+**Responsáveis:** Equipe de Desenvolvimento e UX
+
+## Contexto
+
+Após períodos de uso do sistema SIPROQUIM em produção e feedback dos usuários, identificou-se a necessidade de melhorar a integridade dos dados e a experiência do usuário. Problemas específicos incluíam:
+
+1. **Dados inconsistentes:** Produtos cadastrados sem fabricante ou grupo, gerando dificuldades na organização e relatórios
+2. **Dificuldades de navegação:** Interfaces sobrecarregadas com informações desnecessárias (como IDs) prejudicando a usabilidade
+3. **Filtros limitados:** Sistema de busca e filtros insuficiente para grandes volumes de dados
+4. **Configurações padrão inadequadas:** Valores padrão que não refletiam o uso real do sistema
+5. **Falta de padronização no desenvolvimento:** Ausência de diretrizes claras para novos desenvolvimentos
+
+## Decisão
+
+Implementar um conjunto abrangente de melhorias focadas na qualidade dos dados, experiência do usuário e padronização do desenvolvimento:
+
+### 1. Sistema de Validações Obrigatórias
+
+- **Campos obrigatórios para produtos:**
+  - Fabricante: Obrigatório para garantir rastreabilidade
+  - Grupo: Obrigatório para organização e categorização
+- **Campos obrigatórios para pessoas:**
+  - Grupo: Obrigatório para controle de permissões e organização
+- **Validação condicional de senhas:** Obrigatória apenas para novos usuários, opcional para edição de existentes
+- **Validação server-side robusta:** Implementação de verificações no backend para garantir integridade independente do frontend
+
+### 2. Otimização da Interface de Usuário
+
+- **Remoção da coluna ID das listagens:** Interface mais limpa focada em informações relevantes para o usuário
+- **Paginação otimizada:** Aumento para 100 registros por página para reduzir navegação excessiva
+- **Indicadores visuais:** Marcação clara de campos obrigatórios nos formulários
+- **Pesquisa case-insensitive:** Utilização do operador ILIKE do PostgreSQL para buscas mais intuitivas
+
+### 3. Sistema de Filtros Avançados
+
+- **Filtros hierárquicos:** Sistema de três níveis (Grupo → Fabricante → Tipo) para produtos
+- **Preservação de contexto:** Manutenção dos filtros aplicados durante navegação entre visualizações
+- **Filtros específicos por tipo de relatório:** Adaptação das opções de filtro conforme o contexto
+
+### 4. Configurações Padrão Otimizadas
+
+- **Movimento padrão alterado para "Saída":** Reflete o uso mais comum do sistema
+- **Visualização padrão "Saldo por Almoxarifado":** Mais útil para gestão diária de estoque
+- **Valores padrão baseados em dados de uso real:** Configurações que reduzem o número de cliques necessários
+
+### 5. Padronização para Desenvolvimento com AI
+
+- **Configuração GitHub Copilot:** Instruções específicas para assistentes de IA
+- **Configuração VS Code:** Workspace otimizado para desenvolvimento PHP/PostgreSQL
+- **Documentação de padrões:** Diretrizes claras para arquitetura, nomenclatura e convenções
+- **Exemplos de código:** Patterns documentados para CRUD, validações e apresentação
+
+## Alternativas Consideradas
+
+### Validação apenas no Frontend
+Implementar validações usando apenas JavaScript no frontend seria mais simples, mas comprometeria a segurança e integridade dos dados, especialmente considerando que usuários podem desabilitar JavaScript ou manipular requisições.
+
+### Sistema de Permissões Granular
+Implementar um sistema complexo de permissões por campo foi considerado, mas rejeitado devido à complexidade adicional que não se justificava pelos requisitos atuais do sistema.
+
+### Framework de Validação Externo
+Utilizar bibliotecas como Respect/Validation ou Symfony Validator poderia oferecer recursos avançados, mas introduziria dependências externas e complexidade desnecessária para as validações relativamente simples necessárias.
+
+### Interface Single Page Application (SPA)
+Migrar para uma SPA usando React ou Vue.js melhoraria a experiência do usuário, mas representaria uma reescrita significativa que não se justifica no momento atual.
+
+## Consequências
+
+### Positivas
+- **Qualidade de dados garantida:** Eliminação de registros inconsistentes através de validações obrigatórias
+- **Experiência do usuário aprimorada:** Interface mais limpa e intuitiva com melhor navegação
+- **Eficiência operacional:** Filtros avançados reduzem tempo de busca por informações específicas
+- **Produtividade no desenvolvimento:** Configurações de AI assistants aceleram desenvolvimento futuro
+- **Consistência arquitetural:** Padrões claros facilitam manutenção e extensão do sistema
+- **Melhores práticas de usabilidade:** Configurações padrão baseadas em uso real reduzem fricção
+
+### Negativas
+- **Possível resistência inicial:** Usuários podem precisar de adaptação às validações obrigatórias
+- **Complexidade adicional na lógica:** Validações condicionais aumentam a complexidade do código
+- **Necessidade de migração de dados:** Dados existentes podem precisar de ajustes para conformidade
+- **Manutenção de configurações:** Configurações de desenvolvimento precisam ser mantidas atualizadas
+
+## Conclusão
+
+As melhorias implementadas representam uma evolução natural do sistema SIPROQUIM, baseada em experiência de uso real e feedback dos usuários. As validações obrigatórias garantem a integridade dos dados críticos para controle de estoque, enquanto as melhorias de interface reduzem fricção e aumentam a produtividade dos usuários.
+
+A padronização do ambiente de desenvolvimento com configurações para AI assistants demonstra uma abordagem proativa para acelerar futuras melhorias e manutenção do sistema. Estas decisões se alinham com as escolhas arquiteturais anteriores de modularidade e simplicidade, adicionando robustez sem comprometer a clareza do código.
+
+O conjunto de melhorias estabelece uma base sólida para futuras expansões do sistema, mantendo o equilíbrio entre funcionalidade, usabilidade e facilidade de manutenção.
+
+> **Revisão:** Este ADR deve ser revisado após 6 meses de uso das novas funcionalidades ou quando feedback significativo dos usuários indicar necessidade de ajustes.
