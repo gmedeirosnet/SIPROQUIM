@@ -81,7 +81,7 @@ $fabricantes = $stmt_fabricantes->fetchAll(PDO::FETCH_ASSOC);
 // Handle delete action
 if (isset($_POST['delete']) && isset($_POST['id'])) {
     // Verificar se o usuário tem permissão para excluir
-    if (!userCan(PERMISSION_DELETE)) {
+    if (!$current_user_permissions['delete']) {
         header('Location: /auth/access_denied.php');
         exit;
     }
@@ -152,7 +152,7 @@ include_once __DIR__ . '/../includes/header.php';
         </form>
     </div>
 
-    </br>
+    <br>
     <div class="filter-row">
         <div class="filter-item">
             <label for="filter_grupo">Filtrar por Grupo:</label>
@@ -177,7 +177,7 @@ include_once __DIR__ . '/../includes/header.php';
                 <?php endforeach; ?>
             </select>
         </div>
-        </br>
+        <br>
 
         <?php if ($filter_grupo > 0 || $filter_fabricante > 0 || !empty($search)): ?>
             <a href="list_produtos.php" class="btn btn-outline-secondary">Limpar Filtros</a>
