@@ -10,7 +10,7 @@ requirePermission(PERMISSION_READ, $current_user_grupo);
 // $pageTitle = 'Lista de Produtos';
 
 // Pagination setup
-$per_page = 10;
+$per_page = 100;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $per_page;
 
@@ -189,7 +189,6 @@ include_once __DIR__ . '/../includes/header.php';
             <table class="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
                         <th>Fabricante</th>
                         <th>Grupo</th>
@@ -202,7 +201,6 @@ include_once __DIR__ . '/../includes/header.php';
                 <tbody>
                     <?php foreach ($produtos as $produto): ?>
                         <tr>
-                            <td><?= $produto['id'] ?></td>
                             <td>
                                 <a href="../relatorios/movimentacao_produtos.php?produto_id=<?= $produto['id'] ?>"><?= htmlspecialchars($produto['nome']) ?></a>
                             </td>
