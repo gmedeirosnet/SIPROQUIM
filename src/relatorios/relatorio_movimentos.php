@@ -184,6 +184,7 @@ include_once __DIR__ . '/../includes/header.php';
                 <?php if (count($movimentos) > 0): ?>
                     <?php foreach ($movimentos as $mov): ?>
                     <tr>
+                        <td><?= date("d/m/Y H:i", strtotime($mov['data_movimento'])) ?></td>
                         <td><?= htmlspecialchars($mov['produto']) ?></td>
                         <td><?= htmlspecialchars($mov['pessoa']) ?></td>
                         <td><?= htmlspecialchars($mov['lugar'] ?: 'Não especificado') ?></td>
@@ -195,7 +196,6 @@ include_once __DIR__ . '/../includes/header.php';
                             <?php endif; ?>
                         </td>
                         <td class="text-right"><?= $mov['quantidade'] ?></td>
-                        <td><?= date("d/m/Y H:i", strtotime($mov['data_movimento'])) ?></td>
                         <td><?= htmlspecialchars($mov['observacao'] ?: '') ?></td>
                     </tr>
                     <?php endforeach; ?>
