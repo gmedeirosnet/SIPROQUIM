@@ -244,26 +244,3 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para d
 ## Última Atualização
 
 13 de agosto de 2025
-
-## Melhorias Recentes
-
-### Validações e Interface de Usuário
-- **Campos Obrigatórios**: Implementação de validação obrigatória para campos críticos:
-  - Produtos: Fabricante e Grupo são agora obrigatórios
-  - Pessoas: Grupo obrigatório para todos os usuários
-- **Interface Otimizada**:
-  - Remoção da coluna ID das listagens para interface mais limpa
-  - Paginação otimizada com 100 registros por página
-  - Indicadores visuais para campos obrigatórios
-- **Filtros Avançados**:
-  - Nova opção de filtro por "Tipo" na listagem de produtos
-  - Sistema de filtros em três níveis: Grupo → Fabricante → Tipo
-- **Melhorias de Usabilidade**:
-  - Movimento padrão alterado para "Saída" no registro de movimentações
-  - Relatório de estoque com visualização padrão "Saldo por Almoxarifado"
-  - Pesquisa case-insensitive em todos os relatórios
-
-### Configuração para Desenvolvimento
-- **GitHub Copilot**: Configuração completa com instruções específicas para AI coding assistants
-- **VS Code**: Workspace otimizado com configurações específicas para PHP e PostgreSQL
-- **Padrões de Código**: Documentação detalhada dos padrões arquiteturais utilizados
