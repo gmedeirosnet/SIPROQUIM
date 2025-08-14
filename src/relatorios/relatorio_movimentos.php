@@ -171,7 +171,6 @@ include_once __DIR__ . '/../includes/header.php';
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Produto</th>
                     <th>Pessoa</th>
                     <th>Local</th>
@@ -185,7 +184,6 @@ include_once __DIR__ . '/../includes/header.php';
                 <?php if (count($movimentos) > 0): ?>
                     <?php foreach ($movimentos as $mov): ?>
                     <tr>
-                        <td><?= $mov['id'] ?></td>
                         <td><?= htmlspecialchars($mov['produto']) ?></td>
                         <td><?= htmlspecialchars($mov['pessoa']) ?></td>
                         <td><?= htmlspecialchars($mov['lugar'] ?: 'Não especificado') ?></td>
@@ -203,7 +201,7 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="8" class="text-center">Nenhuma movimentação encontrada para o período selecionado.</td>
+                        <td colspan="7" class="text-center">Nenhuma movimentação encontrada para o período selecionado.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
