@@ -171,12 +171,12 @@ include_once __DIR__ . '/../includes/header.php';
         <table class="table">
             <thead>
                 <tr>
+                    <th>Data do Movimento</th>
                     <th>Produto</th>
                     <th>Pessoa</th>
                     <th>Local</th>
                     <th>Tipo</th>
                     <th>Quantidade</th>
-                    <th>Data do Movimento</th>
                     <th>Observação</th>
                 </tr>
             </thead>
