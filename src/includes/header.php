@@ -128,7 +128,7 @@ function isActive($page, $current_page = null, $current_dir = null) {
                             <a href="/cadastros/list_lugares.php">Almoxarifados</a>
                             <a href="/cadastros/list_fabricantes.php">Fabricantes</a>
                             <a href="/cadastros/list_pessoas.php">Pessoas</a>
-                            <a href="/cadastros/grupo_pessoa.php">Grupos de Pessoas</a>
+                            <a href="/cadastros/list_grupos_pessoa.php">Grupos de Pessoas</a>
                             <a href="/cadastros/list_produtos.php">Produtos</a>
                             <a href="/cadastros/list_grupos.php">Grupos de produtos</a>
                         </div>
