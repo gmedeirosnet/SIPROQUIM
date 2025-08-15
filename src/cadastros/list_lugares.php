@@ -19,22 +19,11 @@ $stmt_count = $pdo->query("SELECT COUNT(*) FROM lugares");
 $total_records = $stmt_count->fetchColumn();
 $total_pages = ceil($total_records / $per_page);
 
-// Search functionality
-$search = isset($_GET['search']) ? $_GET['search'] : '';
-$where_clause = '';
-$params = [];
 
-if (!empty($search)) {
-    $where_clause = "WHERE nome LIKE :search OR descricao LIKE :search";
-    $params[':search'] = "%{$search}%";
-}
 
-// Get lugares with pagination and search
-$sql = "SELECT * FROM lugares {$where_clause} ORDER BY nome ASC LIMIT :limit OFFSET :offset";
+// Get lugares with pagination
+$sql = "SELECT * FROM lugares ORDER BY nome ASC LIMIT :limit OFFSET :offset";
 $stmt = $pdo->prepare($sql);
-foreach ($params as $key => $value) {
-    $stmt->bindValue($key, $value);
-}
 $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
@@ -89,17 +78,7 @@ include_once __DIR__ . '/../includes/header.php';
             <h2>Lista de Almoxarifados</h2>
         </div>
 
-        </br>
-        <form class="search-form" method="get">
-            <div class="form-row">
-                <div class="form-col">
-                    <input type="text" name="search" placeholder="Buscar por nome ou descrição" class="form-control" value="<?= htmlspecialchars($search) ?>">
-                </div>
-                <div>
-                    <button type="submit" class="btn btn-primary">Buscar</button>
-                </div>
-            </div>
-        </form>
+
     </div>
 
     </br>
