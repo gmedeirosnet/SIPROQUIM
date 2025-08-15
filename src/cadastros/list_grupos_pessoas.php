@@ -10,7 +10,7 @@ requirePermission(PERMISSION_READ, $current_user_grupo);
 // $pageTitle = 'Lista de Grupos de Pessoas';
 
 // Pagination setup
-$per_page = 10;
+$per_page = 25;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $per_page;
 
@@ -68,18 +68,18 @@ include_once __DIR__ . '/../includes/header.php';
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Descrição</th>
-                        <th>Pessoas</th>
                         <th>Permissão</th>
+                        <th>Pessoas</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     function grupoPermissaoLabel($id) {
-                        if ($id == 1) return 'Administrador (CRUD)';
-                        if ($id == 3) return 'Técnico (CRU)';
-                        if ($id == 4) return 'Supervisor (CRU)';
-                        if ($id == 5) return 'Auditor (R)';
+                        if ($id == 1) return 'Criação, Leitura, edição e exclusão';
+                        if ($id == 3) return 'Criação, Leitura e edição';
+                        if ($id == 4) return 'Criação, Leitura e edição';
+                        if ($id == 5) return 'Leitura';
                         return 'Leitura';
                     }
                     ?>
