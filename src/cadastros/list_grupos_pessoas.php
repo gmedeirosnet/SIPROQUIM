@@ -69,10 +69,20 @@ include_once __DIR__ . '/../includes/header.php';
                         <th>Nome</th>
                         <th>Descrição</th>
                         <th>Pessoas</th>
+                        <th>Permissão</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php
+                    function grupoPermissaoLabel($id) {
+                        if ($id == 1) return 'Administrador (CRUD)';
+                        if ($id == 3) return 'Técnico (CRU)';
+                        if ($id == 4) return 'Supervisor (CRU)';
+                        if ($id == 5) return 'Auditor (R)';
+                        return 'Leitura';
+                    }
+                    ?>
                     <?php foreach ($grupos as $grupo): ?>
                         <tr>
                             <td><?= $grupo['id'] ?></td>
@@ -84,6 +94,7 @@ include_once __DIR__ . '/../includes/header.php';
                                     <a href="list_pessoas.php?grupo=<?= $grupo['id'] ?>" class="btn btn-sm btn-link">Ver pessoas</a>
                                 <?php endif; ?>
                             </td>
+                            <td><?= grupoPermissaoLabel($grupo['id']) ?></td>
                             <td class="actions">
                                 <?php if (isAdmin($current_user_grupo)): ?>
                                 <a href="grupo_pessoa.php?id=<?= $grupo['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
