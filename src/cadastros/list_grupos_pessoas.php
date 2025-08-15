@@ -19,15 +19,7 @@ $stmt_count = $pdo->query("SELECT COUNT(*) FROM grupos_pessoas");
 $total_records = $stmt_count->fetchColumn();
 $total_pages = ceil($total_records / $per_page);
 
-// Search functionality
-$search = isset($_GET['search']) ? $_GET['search'] : '';
-$where_clause = '';
-$params = [];
 
-if (!empty($search)) {
-    $where_clause = "WHERE nome LIKE :search OR descricao LIKE :search";
-    $params[':search'] = "%{$search}%";
-}
 
 // Get person groups with pagination and search
 $sql = "SELECT gp.*,
@@ -46,33 +38,7 @@ $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Handle delete action
-if (isset($_POST['delete']) && isset($_POST['id'])) {
-    // Verificar se o usuário é administrador
-    requireAdmin($current_user_grupo);
 
-    $id = (int)$_POST['id'];
-
-    try {
-        // Check if there are any persons using this group
-        $stmt_check = $pdo->prepare("SELECT COUNT(*) FROM pessoas WHERE id_grupo_pessoa = :id");
-        $stmt_check->execute([':id' => $id]);
-        $pessoas_count = $stmt_check->fetchColumn();
-
-        if ($pessoas_count > 0) {
-            $error = "Não é possível excluir este grupo pois existem pessoas associadas a ele.";
-        } else {
-            $stmt = $pdo->prepare("DELETE FROM grupos_pessoas WHERE id = :id");
-            $stmt->execute([':id' => $id]);
-
-            // Redirect to avoid resubmission
-            header("Location: list_grupos_pessoas.php?deleted=1");
-            exit;
-        }
-    } catch (PDOException $e) {
-        $error = "Não foi possível excluir este grupo. Erro: " . $e->getMessage();
-    }
-}
 
 // Include header
 include_once __DIR__ . '/../includes/header.php';
@@ -89,12 +55,7 @@ include_once __DIR__ . '/../includes/header.php';
 
     <div class="header-actions">
         <h2>Lista de Grupos de Pessoas</h2>
-        <form class="search-form" method="get">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Buscar por nome ou descrição" value="<?= htmlspecialchars($search) ?>">
-                <button type="submit" class="btn btn-primary">Buscar</button>
-            </div>
-        </form>
+
     </div>
 
     <br>
@@ -125,11 +86,6 @@ include_once __DIR__ . '/../includes/header.php';
                             <td class="actions">
                                 <?php if (isAdmin($current_user_grupo)): ?>
                                 <a href="grupo_pessoa.php?id=<?= $grupo['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
-
-                                <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir este grupo?');" style="display: inline;">
-                                    <input type="hidden" name="id" value="<?= $grupo['id'] ?>">
-                                    <button type="submit" name="delete" class="btn btn-sm btn-danger" <?= $grupo['total_pessoas'] > 0 ? 'disabled title="Não é possível excluir um grupo que está sendo usado"' : '' ?>>Excluir</button>
-                                </form>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -171,14 +127,9 @@ include_once __DIR__ . '/../includes/header.php';
         <?php endif; ?>
     <?php else: ?>
         <div class="alert alert-info">
-            <?php if (!empty($search)): ?>
-                Nenhum grupo de pessoas encontrado com o termo "<?= htmlspecialchars($search) ?>".
-                <p><a href="list_grupos_pessoas.php" class="btn btn-outline-primary mt-2">Limpar busca</a></p>
-            <?php else: ?>
-                <p>Nenhum grupo de pessoas cadastrado.</p>
-                <?php if (isAdmin($current_user_grupo)): ?>
-                <p><a href="grupo_pessoa.php" class="btn btn-primary mt-2">Cadastrar Grupo de Pessoas</a></p>
-                <?php endif; ?>
+            <p>Nenhum grupo de pessoas cadastrado.</p>
+            <?php if (isAdmin($current_user_grupo)): ?>
+            <p><a href="grupo_pessoa.php" class="btn btn-primary mt-2">Cadastrar Grupo de Pessoas</a></p>
             <?php endif; ?>
         </div>
     <?php endif; ?>
