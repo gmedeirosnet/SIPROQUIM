@@ -21,18 +21,19 @@ $total_pages = ceil($total_records / $per_page);
 
 
 
-// Get person groups with pagination and search
+
+// Ensure variables are defined after search removal
+$where_clause = '';
+$params = [];
+
+// Get person groups with pagination
 $sql = "SELECT gp.*,
-        (SELECT COUNT(*) FROM pessoas WHERE id_grupo_pessoa = gp.id) AS total_pessoas
-        FROM grupos_pessoas gp
-        {$where_clause}
-        ORDER BY gp.nome ASC
-        LIMIT :limit OFFSET :offset";
+    (SELECT COUNT(*) FROM pessoas WHERE id_grupo_pessoa = gp.id) AS total_pessoas
+    FROM grupos_pessoas gp
+    ORDER BY gp.nome ASC
+    LIMIT :limit OFFSET :offset";
 
 $stmt = $pdo->prepare($sql);
-foreach ($params as $key => $value) {
-    $stmt->bindValue($key, $value);
-}
 $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
