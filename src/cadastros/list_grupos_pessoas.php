@@ -88,13 +88,13 @@ include_once __DIR__ . '/../includes/header.php';
                             <td><?= $grupo['id'] ?></td>
                             <td><?= htmlspecialchars($grupo['nome']) ?></td>
                             <td><?= htmlspecialchars($grupo['descricao'] ?? '-') ?></td>
+                            <td><?= grupoPermissaoLabel($grupo['id']) ?></td>
                             <td>
                                 <span class="badge badge-secondary"><?= $grupo['total_pessoas'] ?></span>
                                 <?php if ($grupo['total_pessoas'] > 0): ?>
                                     <a href="list_pessoas.php?grupo=<?= $grupo['id'] ?>" class="btn btn-sm btn-link">Ver pessoas</a>
                                 <?php endif; ?>
                             </td>
-                            <td><?= grupoPermissaoLabel($grupo['id']) ?></td>
                             <td class="actions">
                                 <?php if (isAdmin($current_user_grupo)): ?>
                                 <a href="grupo_pessoa.php?id=<?= $grupo['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
