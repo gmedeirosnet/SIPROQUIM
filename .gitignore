@@ -52,6 +52,9 @@ temp/
 Agents.md
 plan-jenkinsImplementation.prompt.md
 
+# Jenkins build artifacts
+build-logs/
+
 # Database dumps and backups
 *.dump
 *.backup
