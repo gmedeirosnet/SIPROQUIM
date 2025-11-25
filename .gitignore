@@ -50,6 +50,7 @@ public/hot/
 tmp/
 temp/
 Agents.md
+plan-jenkinsImplementation.prompt.md
 
 # Database dumps and backups
 *.dump
