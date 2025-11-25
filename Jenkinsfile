@@ -13,11 +13,11 @@ pipeline {
         DB_USER = credentials('siproquim-db-user')
         DB_PASSWORD = credentials('siproquim-db-password')
         DB_PORT = credentials('siproquim-db-port')
-        
+
         // SonarQube Configuration
         SONAR_TOKEN = credentials('sonarqube-token')
         SONAR_HOST_URL = 'https://sonarcloud.io'
-        
+
         // Deployment Configuration
         DEPLOY_ENVIRONMENT = "${env.BRANCH_NAME == 'main' ? 'production' : 'staging'}"
     }
@@ -88,10 +88,10 @@ DB_USER=${DB_USER}
 DB_PASSWORD=${DB_PASSWORD}
 DB_PORT=${DB_PORT}
 EOF
-                        
+
                         # Start services
                         docker compose up -d db php nginx
-                        
+
                         # Wait for services to be healthy
                         echo "Waiting for database to be ready..."
                         for i in {1..30}; do
@@ -102,10 +102,10 @@ EOF
                             echo "Waiting... ($i/30)"
                             sleep 2
                         done
-                        
+
                         echo "Waiting for PHP service to be ready..."
                         sleep 10
-                        
+
                         # Show running containers
                         docker compose ps
                     '''
@@ -120,7 +120,7 @@ EOF
                     sh '''
                         # Check if database is already initialized
                         TABLE_COUNT=$(docker compose exec -T db psql -U ${DB_USER} -d ${DB_NAME} -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';" 2>/dev/null || echo "0")
-                        
+
                         if [ "$TABLE_COUNT" -lt 5 ]; then
                             echo "Database not initialized. Running init-db.sh..."
                             docker compose exec -T db bash /docker-entrypoint-initdb.d/init-db.sh
@@ -139,13 +139,13 @@ EOF
                     sh '''
                         # Check database connectivity
                         docker compose exec -T db pg_isready -U ${DB_USER} || exit 1
-                        
+
                         # Check PHP service
                         docker compose exec -T php php -v || exit 1
-                        
+
                         # Check nginx
                         docker compose exec -T nginx nginx -t || exit 1
-                        
+
                         echo "All health checks passed!"
                     '''
                 }
@@ -163,7 +163,7 @@ EOF
                         # Run deployment with staging SSL
                         chmod +x run.sh
                         ./run.sh --staging
-                        
+
                         echo "Staging deployment completed!"
                     '''
                 }
@@ -192,11 +192,11 @@ EOF
                         # Run deployment with production SSL
                         chmod +x run.sh
                         ./run.sh --production
-                        
+
                         # Verify deployment
                         sleep 5
                         docker compose ps
-                        
+
                         echo "Production deployment completed!"
                     '''
                 }
@@ -212,21 +212,21 @@ EOF
                     # Collect logs for artifacts
                     mkdir -p build-logs
                     docker compose logs --no-color > build-logs/docker-compose.log 2>&1 || true
-                    
+
                     # Clean up .env file
                     rm -f .env
                 '''
-                
+
                 // Archive logs
                 archiveArtifacts artifacts: 'build-logs/*.log', allowEmptyArchive: true
             }
         }
-        
+
         success {
             echo 'Pipeline completed successfully!'
             // Optional: Add notification (email, Slack, etc.)
         }
-        
+
         failure {
             echo 'Pipeline failed!'
             script {
@@ -234,7 +234,7 @@ EOF
             }
             // Optional: Add notification (email, Slack, etc.)
         }
-        
+
         cleanup {
             echo 'Final cleanup...'
             script {
