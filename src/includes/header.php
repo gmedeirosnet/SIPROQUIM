@@ -31,6 +31,15 @@ function isActive($page, $current_page = null, $current_dir = null) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' | SIPROQUIM' : 'SIPROQUIM - Sistema de Gerenciamento'; ?></title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-534LVNS137"></script>
     <script>
@@ -40,6 +49,7 @@ function isActive($page, $current_page = null, $current_dir = null) {
 
       gtag('config', 'G-534LVNS137');
     </script>
+
     <link rel="stylesheet" href="/assets/css/main.css">
     <!-- Add favicon if available -->
     <!-- <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon"> -->
@@ -106,49 +116,59 @@ function isActive($page, $current_page = null, $current_dir = null) {
 
                 <nav class="main-nav">
                     <div class="nav-item <?php echo $current_page === 'index.php' ? 'active' : ''; ?>">
-                        <a href="/index.php">Dashboard</a>
+                        <a href="/index.php">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
                     </div>
 
                     <?php if (isset($current_user_permissions) && ($current_user_permissions['create'] || $current_user_permissions['update'])): ?>
                     <div class="nav-item dropdown">
-                        <a href="#">Cadastros</a>
+                        <a href="#">
+                            <i class="fas fa-plus-circle"></i> Cadastros
+                        </a>
                         <div class="dropdown-content">
-                            <a href="/cadastros/lugar.php">Almoxarifados</a>
-                            <a href="/cadastros/fabricante.php">Fabricantes</a>
-                            <a href="/cadastros/pessoa.php">Pessoas</a>
-                            <a href="/cadastros/produto.php">Produtos</a>
-                            <a href="/cadastros/grupo.php">Grupos de produtos</a>
+                            <a href="/cadastros/lugar.php"><i class="fas fa-warehouse"></i> Almoxarifados</a>
+                            <a href="/cadastros/fabricante.php"><i class="fas fa-industry"></i> Fabricantes</a>
+                            <a href="/cadastros/pessoa.php"><i class="fas fa-users"></i> Pessoas</a>
+                            <a href="/cadastros/produto.php"><i class="fas fa-flask"></i> Produtos</a>
+                            <a href="/cadastros/grupo.php"><i class="fas fa-layer-group"></i> Grupos de produtos</a>
                         </div>
                     </div>
                     <?php endif; ?>
 
                     <div class="nav-item dropdown">
-                        <a href="#">Listas</a>
+                        <a href="#">
+                            <i class="fas fa-list"></i> Listas
+                        </a>
                         <div class="dropdown-content">
-                            <a href="/cadastros/list_lugares.php">Almoxarifados</a>
-                            <a href="/cadastros/list_fabricantes.php">Fabricantes</a>
-                            <a href="/cadastros/list_pessoas.php">Pessoas</a>
-                            <a href="/cadastros/list_grupos_pessoas.php">Grupos de Pessoas</a>
-                            <a href="/cadastros/list_produtos.php">Produtos</a>
-                            <a href="/cadastros/list_grupos.php">Grupos de produtos</a>
+                            <a href="/cadastros/list_lugares.php"><i class="fas fa-warehouse"></i> Almoxarifados</a>
+                            <a href="/cadastros/list_fabricantes.php"><i class="fas fa-industry"></i> Fabricantes</a>
+                            <a href="/cadastros/list_pessoas.php"><i class="fas fa-users"></i> Pessoas</a>
+                            <a href="/cadastros/list_grupos_pessoas.php"><i class="fas fa-user-tag"></i> Grupos de Pessoas</a>
+                            <a href="/cadastros/list_produtos.php"><i class="fas fa-flask"></i> Produtos</a>
+                            <a href="/cadastros/list_grupos.php"><i class="fas fa-layer-group"></i> Grupos de produtos</a>
                         </div>
                     </div>
 
                     <?php if (isset($current_user_permissions) && $current_user_permissions['create']): ?>
                     <div class="nav-item <?php echo $current_page === 'movimento.php' ? 'active' : ''; ?>">
-                        <a href="/cadastros/movimento.php">Movimentação</a>
+                        <a href="/cadastros/movimento.php">
+                            <i class="fas fa-exchange-alt"></i> Movimentação
+                        </a>
                     </div>
                     <?php endif; ?>
 
                     <div class="nav-item dropdown">
-                        <a href="#">Relatórios</a>
+                        <a href="#">
+                            <i class="fas fa-chart-line"></i> Relatórios
+                        </a>
                         <div class="dropdown-content">
-                            <a href="/relatorios/relatorio_estoque.php">Estoque Atual</a>
-                            <!-- <a href="/relatorios/produtos_por_local.php">Produtos por Local</a> -->
-                            <a href="/relatorios/relatorio_movimentos.php">Movimentações</a>
-                            <a href="/relatorios/movimentacao_produtos.php">Movimentação por Produto</a>
-                            <a href="/relatorios/movimentacao_por_pessoa.php">Movimentação por Pessoa</a>
-                            <a href="/relatorios/movimentacao_por_almoxarifado.php">Movimentação por Almoxarifado</a>
+                            <a href="/relatorios/relatorio_estoque.php"><i class="fas fa-boxes"></i> Estoque Atual</a>
+                            <!-- <a href="/relatorios/produtos_por_local.php"><i class="fas fa-map-marker-alt"></i> Produtos por Local</a> -->
+                            <a href="/relatorios/relatorio_movimentos.php"><i class="fas fa-history"></i> Movimentações</a>
+                            <a href="/relatorios/movimentacao_produtos.php"><i class="fas fa-flask"></i> Movimentação por Produto</a>
+                            <a href="/relatorios/movimentacao_por_pessoa.php"><i class="fas fa-user"></i> Movimentação por Pessoa</a>
+                            <a href="/relatorios/movimentacao_por_almoxarifado.php"><i class="fas fa-warehouse"></i> Movimentação por Almoxarifado</a>
                         </div>
                     </div>
                 </nav>
@@ -156,6 +176,7 @@ function isActive($page, $current_page = null, $current_dir = null) {
                 <?php if (isset($_SESSION['user_id'])): ?>
                 <div class="nav-item dropdown user-dropdown">
                     <a href="#">
+                        <i class="fas fa-user-circle"></i>
                         <?= htmlspecialchars($_SESSION['user_name']) ?>
                         <?php if (isset($current_user_grupo)): ?>
                             <?php if ($current_user_grupo == GROUP_ADMINISTRADORES): ?>
@@ -168,8 +189,8 @@ function isActive($page, $current_page = null, $current_dir = null) {
                         <?php endif; ?>
                     </a>
                     <div class="dropdown-content">
-                        <a href="/auth/change_password.php">Alterar Senha</a>
-                        <a href="/auth/logout.php">Sair</a>
+                        <a href="/auth/change_password.php"><i class="fas fa-key"></i> Alterar Senha</a>
+                        <a href="/auth/logout.php"><i class="fas fa-sign-out-alt"></i> Sair</a>
                     </div>
                 </div>
                 <?php endif; ?>
