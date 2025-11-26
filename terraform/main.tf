@@ -128,7 +128,6 @@ resource "aws_instance" "siproquim_server" {
     apt install vim curl zsh git -y
   EOF
 
-  depends_on = [aws_internet_gateway.siproquim_igw]
 }
 
 # EIP Association using existing Elastic IP
