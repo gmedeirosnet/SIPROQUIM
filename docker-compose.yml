@@ -68,6 +68,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./scripts:/scripts
     networks:
       - estoque_network
     healthcheck:
