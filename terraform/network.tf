@@ -57,7 +57,14 @@ resource "aws_subnet" "private_subnet_b" {
   })
 }
 
+# Internet Gateway for public subnets
+resource "aws_internet_gateway" "siproquim_igw" {
+  vpc_id = aws_vpc.siproquim_vpc.id
 
+  tags = merge(var.common_tags, {
+    Name = "${lower(var.project_name)}-igw"
+  })
+}
 
 # Elastic IP for NAT Gateway
 resource "aws_eip" "nat_eip" {
@@ -76,11 +83,19 @@ resource "aws_nat_gateway" "siproquim_nat_gateway" {
   tags = merge(var.common_tags, {
     Name = "${lower(var.project_name)}-nat-gateway"
   })
+
+  # NAT Gateway depends on Internet Gateway
+  depends_on = [aws_internet_gateway.siproquim_igw]
 }
 
 # Route table for public subnets
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.siproquim_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.siproquim_igw.id
+  }
 
   tags = merge(var.common_tags, {
     Name = "${lower(var.project_name)}-public-route-table"

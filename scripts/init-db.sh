@@ -1,28 +1,24 @@
 #!/bin/bash
 set -e
 
-.psql_client.sh
+# This script connects to the Docker container estoque_db to initialize the database
+# Usage: ./scripts/init-db.sh
 
-POSTGRES_DB=estoque
-POSTGRES_USER=admin
-PGPASSWORD=password
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_URL="postgresql://$POSTGRES_USER:$PGPASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
-export PGPASSWORD=$PGPASSWORD
-export PGUSER=$POSTGRES_USER
-export PGHOST=$POSTGRES_HOST
-export PGPORT=$POSTGRES_PORT
-export PGDATABASE=$POSTGRES_DB
-export PGURL=$POSTGRES_URL
-export PGPASSFILE=/tmp/.pgpass
-export PGPASS=/tmp/.pgpass
-export PGPASS_CONTENT="$POSTGRES_HOST:$POSTGRES_PORT:$POSTGRES_DB:$POSTGRES_USER:$PGPASSWORD"
-echo "$PGPASS_CONTENT" > $PGPASSFILE
-chmod 600 $PGPASSFILE
+CONTAINER_NAME="estoque_db"
+POSTGRES_USER="admin"
+POSTGRES_DB="estoque"
+
+# Check if container is running
+if ! docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+    echo "Error: Container ${CONTAINER_NAME} is not running"
+    exit 1
+fi
+
+echo "Connecting to container ${CONTAINER_NAME}..."
+
 ## This script creates the database and necessary tables for the Estoque application
 
-/usr/bin/psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+docker exec -i ${CONTAINER_NAME} psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "${POSTGRES_DB}" <<-EOSQL
     -- Ensure estoque user exists
     DO \$\$
     BEGIN
@@ -195,7 +191,7 @@ chmod 600 $PGPASSFILE
 EOSQL
 
 # Grant permissions after table creation
-/usr/bin/psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "estoque" <<-EOSQL
+docker exec -i ${CONTAINER_NAME} psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "estoque" <<-EOSQL
     -- Grant permissions on all tables
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO estoque;
     GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO estoque;
@@ -213,20 +209,20 @@ echo "Database initialization completed successfully"
 echo "Iniciando atualização do banco de dados estoque..."
 echo ""
 
-# Diretório do script
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# SQL files are mounted at /scripts inside the container
+SCRIPTS_DIR="/scripts"
 
 # Executar o script principal de população do banco
 echo "1/3 - Inserindo dados básicos e 30 pessoas..."
-psql -h localhost -U admin -p 5432 -d estoque -f $DIR/populate_database.sql
+docker exec -i ${CONTAINER_NAME} psql -U "${POSTGRES_USER}" -d estoque -f ${SCRIPTS_DIR}/populate_database.sql
 
 # Executar script que gera 300 produtos
 echo "2/3 - Gerando 300 produtos..."
-psql -h localhost -U admin -p 5432 -d estoque -f $DIR/gerar_produtos.sql
+docker exec -i ${CONTAINER_NAME} psql -U "${POSTGRES_USER}" -d estoque -f ${SCRIPTS_DIR}/gerar_produtos.sql
 
 # Executar script que gera 4.000 movimentações
 echo "3/3 - Gerando 4.000 movimentações no período de 10/01/2025 até 10/04/2025..."
-psql -h localhost -U admin -p 5432 -d estoque -f $DIR/gerar_movimentos.sql
+docker exec -i ${CONTAINER_NAME} psql -U "${POSTGRES_USER}" -d estoque -f ${SCRIPTS_DIR}/gerar_movimentos.sql
 
 echo ""
 echo "Atualização concluída com sucesso!"

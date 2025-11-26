@@ -112,30 +112,34 @@ include_once __DIR__ . '/includes/header.php';
 </head>
 <div class="content">
     <div class="welcome-message">
-        <h1>Bem-vindo ao SIPROQUIM</h1>
-        <p>Sistema de controle de produtos químicos.</p>
+        <h1><i class="fas fa-home"></i> Bem-vindo ao SIPROQUIM</h1>
+        <p><i class="fas fa-info-circle"></i> Sistema de controle e gerenciamento de produtos químicos.</p>
     </div>
 
     <!-- Summary Statistics -->
     <div class="stats-grid">
         <div class="stat-card">
+            <i class="fas fa-flask" style="font-size: 2rem; color: var(--primary-light); margin-bottom: var(--space-3);"></i>
             <div class="stat-value"><?= $total_produtos ?></div>
-            <div class="stat-label">Produtos</div>
+            <div class="stat-label">Produtos Cadastrados</div>
             <div class="stat-action"><a href="cadastros/list_produtos.php" class="btn btn-sm btn-outline-primary">Ver todos</a></div>
         </div>
         <div class="stat-card">
+            <i class="fas fa-users" style="font-size: 2rem; color: var(--primary-light); margin-bottom: var(--space-3);"></i>
             <div class="stat-value"><?= $total_pessoas ?></div>
-            <div class="stat-label">Pessoas</div>
+            <div class="stat-label">Pessoas Registradas</div>
             <div class="stat-action"><a href="cadastros/list_pessoas.php" class="btn btn-sm btn-outline-primary">Ver todos</a></div>
         </div>
         <div class="stat-card">
+            <i class="fas fa-warehouse" style="font-size: 2rem; color: var(--primary-light); margin-bottom: var(--space-3);"></i>
             <div class="stat-value"><?= $total_lugares ?></div>
-            <div class="stat-label">Almoxarifados</div>
+            <div class="stat-label">Almoxarifados Ativos</div>
             <div class="stat-action"><a href="cadastros/list_lugares.php" class="btn btn-sm btn-outline-primary">Ver todos</a></div>
         </div>
         <div class="stat-card">
+            <i class="fas fa-exchange-alt" style="font-size: 2rem; color: var(--primary-light); margin-bottom: var(--space-3);"></i>
             <div class="stat-value"><?= $total_movimentos ?></div>
-            <div class="stat-label">Movimentações</div>
+            <div class="stat-label">Total de Movimentações</div>
             <div class="stat-action"><a href="relatorios/relatorio_movimentos.php" class="btn btn-sm btn-outline-primary">Ver todos</a></div>
         </div>
     </div>
@@ -143,54 +147,54 @@ include_once __DIR__ . '/includes/header.php';
     <!-- Quick Actions -->
     <section class="widget">
         <div class="widget-header">
-            <h3 class="widget-title">Ações Rápidas</h3>
+            <h3 class="widget-title"><i class="fas fa-bolt"></i> Ações Rápidas</h3>
         </div>
         <div class="card-grid">
             <div class="card">
                 <div class="card-header">
-                    <h3>Nova Entrada</h3>
+                    <h3><i class="fas fa-arrow-down"></i> Nova Entrada</h3>
                 </div>
                 <div class="card-body">
                     <p>Registrar entrada de produtos no estoque</p>
                 </div>
                 <div class="card-footer">
-                    <a href="cadastros/movimento.php" class="btn btn-primary">Registrar</a>
+                    <a href="cadastros/movimento.php" class="btn btn-success"><i class="fas fa-plus"></i> Registrar</a>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
-                    <h3>Nova Saída</h3>
+                    <h3><i class="fas fa-arrow-up"></i> Nova Saída</h3>
                 </div>
                 <div class="card-body">
                     <p>Registrar saída de produtos do estoque</p>
                 </div>
                 <div class="card-footer">
-                    <a href="cadastros/movimento.php" class="btn btn-danger">Registrar</a>
+                    <a href="cadastros/movimento.php" class="btn btn-danger"><i class="fas fa-minus"></i> Registrar</a>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
-                    <h3>Novo Produto</h3>
+                    <h3><i class="fas fa-flask"></i> Novo Produto</h3>
                 </div>
                 <div class="card-body">
                     <p>Cadastrar um novo produto no sistema</p>
                 </div>
                 <div class="card-footer">
-                    <a href="cadastros/produto.php" class="btn btn-primary">Cadastrar</a>
+                    <a href="cadastros/produto.php" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Cadastrar</a>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
-                    <h3>Relatório</h3>
+                    <h3><i class="fas fa-chart-bar"></i> Relatório</h3>
                 </div>
                 <div class="card-body">
                     <p>Visualizar relatório de estoque atual</p>
                 </div>
                 <div class="card-footer">
-                    <a href="relatorios/relatorio_estoque.php" class="btn btn-primary">Visualizar</a>
+                    <a href="relatorios/relatorio_estoque.php" class="btn btn-primary"><i class="fas fa-eye"></i> Visualizar</a>
                 </div>
             </div>
         </div>
@@ -200,8 +204,8 @@ include_once __DIR__ . '/includes/header.php';
         <!-- Recent Movements -->
         <div class="widget" style="flex: 2;">
             <div class="widget-header">
-                <h3 class="widget-title">Últimas Movimentações</h3>
-                <a href="relatorios/relatorio_movimentos.php" class="btn btn-sm btn-outline-primary">Ver Todos</a>
+                <h3 class="widget-title"><i class="fas fa-history"></i> Últimas Movimentações</h3>
+                <a href="relatorios/relatorio_movimentos.php" class="btn btn-sm btn-outline-primary"><i class="fas fa-list"></i> Ver Todos</a>
             </div>
 
             <?php if (!empty($movimentos)): ?>
@@ -249,13 +253,13 @@ include_once __DIR__ . '/includes/header.php';
         <!-- Low Stock Alert -->
         <div class="widget" style="flex: 1;">
             <div class="widget-header">
-                <h3 class="widget-title">Estoque Baixo</h3>
-                <a href="relatorios/relatorio_estoque.php" class="btn btn-sm btn-outline-primary">Ver Estoque</a>
+                <h3 class="widget-title"><i class="fas fa-exclamation-triangle"></i> Estoque Baixo</h3>
+                <a href="relatorios/relatorio_estoque.php" class="btn btn-sm btn-outline-primary"><i class="fas fa-boxes"></i> Ver Estoque</a>
             </div>
 
             <?php if (!empty($baixo_estoque)): ?>
                 <div class="alert alert-warning mb-3">
-                    <strong>Atenção!</strong> Produtos com estoque abaixo de 5 unidades.
+                    <i class="fas fa-exclamation-circle"></i> <strong>Atenção!</strong> Produtos com estoque abaixo de 5 unidades.
                 </div>
                 <div class="table-container">
                     <table class="table">
@@ -295,8 +299,8 @@ include_once __DIR__ . '/includes/header.php';
     <!-- Recent Products -->
     <div class="widget">
         <div class="widget-header">
-            <h3 class="widget-title">Produtos Recentes</h3>
-            <a href="cadastros/list_produtos.php" class="btn btn-sm btn-outline-primary">Ver Todos</a>
+            <h3 class="widget-title"><i class="fas fa-flask"></i> Produtos Recentes</h3>
+            <a href="cadastros/list_produtos.php" class="btn btn-sm btn-outline-primary"><i class="fas fa-list"></i> Ver Todos</a>
         </div>
 
         <?php if (!empty($produtos)): ?>
@@ -334,31 +338,31 @@ include_once __DIR__ . '/includes/header.php';
 
     <div class="section">
         <div class="section-header">
-            <h3>Suas Permissões</h3>
+            <h3><i class="fas fa-shield-alt"></i> Suas Permissões</h3>
         </div>
         <div class="permission-info">
             <?php if (isset($current_user_permissions)): ?>
                 <div class="permission-card <?= $current_user_permissions['create'] ? 'permission-enabled' : 'permission-disabled' ?>">
-                    <h4>Criar</h4>
-                    <i class="fas fa-<?= $current_user_permissions['create'] ? 'check' : 'times' ?>"></i>
+                    <i class="fas fa-<?= $current_user_permissions['create'] ? 'check-circle' : 'times-circle' ?>" style="font-size: 2.5rem;"></i>
+                    <h4><i class="fas fa-plus"></i> Criar</h4>
                     <p><?= $current_user_permissions['create'] ? 'Você pode criar novos registros' : 'Você não pode criar novos registros' ?></p>
                 </div>
 
                 <div class="permission-card <?= $current_user_permissions['read'] ? 'permission-enabled' : 'permission-disabled' ?>">
-                    <h4>Ler</h4>
-                    <i class="fas fa-<?= $current_user_permissions['read'] ? 'check' : 'times' ?>"></i>
+                    <i class="fas fa-<?= $current_user_permissions['read'] ? 'check-circle' : 'times-circle' ?>" style="font-size: 2.5rem;"></i>
+                    <h4><i class="fas fa-eye"></i> Ler</h4>
                     <p><?= $current_user_permissions['read'] ? 'Você pode visualizar registros' : 'Você não pode visualizar registros' ?></p>
                 </div>
 
                 <div class="permission-card <?= $current_user_permissions['update'] ? 'permission-enabled' : 'permission-disabled' ?>">
-                    <h4>Atualizar</h4>
-                    <i class="fas fa-<?= $current_user_permissions['update'] ? 'check' : 'times' ?>"></i>
+                    <i class="fas fa-<?= $current_user_permissions['update'] ? 'check-circle' : 'times-circle' ?>" style="font-size: 2.5rem;"></i>
+                    <h4><i class="fas fa-edit"></i> Atualizar</h4>
                     <p><?= $current_user_permissions['update'] ? 'Você pode editar registros existentes' : 'Você não pode editar registros existentes' ?></p>
                 </div>
 
                 <div class="permission-card <?= $current_user_permissions['delete'] ? 'permission-enabled' : 'permission-disabled' ?>">
-                    <h4>Excluir</h4>
-                    <i class="fas fa-<?= $current_user_permissions['delete'] ? 'check' : 'times' ?>"></i>
+                    <i class="fas fa-<?= $current_user_permissions['delete'] ? 'check-circle' : 'times-circle' ?>" style="font-size: 2.5rem;"></i>
+                    <h4><i class="fas fa-trash-alt"></i> Excluir</h4>
                     <p><?= $current_user_permissions['delete'] ? 'Você pode excluir registros' : 'Você não pode excluir registros' ?></p>
                 </div>
             <?php endif; ?>
@@ -366,47 +370,66 @@ include_once __DIR__ . '/includes/header.php';
     </div>
 
     <style>
+        .section {
+            margin-bottom: var(--space-8);
+        }
+
+        .section-header h3 {
+            font-size: 1.5rem;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-6);
+            color: var(--text-primary);
+        }
+
         .permission-info {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-5);
+            margin: var(--space-6) 0;
         }
 
         .permission-card {
-            flex: 1;
-            min-width: 200px;
-            margin: 10px;
-            padding: 15px;
-            border-radius: 5px;
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
             text-align: center;
+            transition: var(--transition-slow);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .permission-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .permission-card h4 {
-            margin-top: 0;
+            margin-top: var(--space-3);
+            margin-bottom: var(--space-2);
+            font-size: 1.125rem;
+            font-weight: var(--font-weight-semibold);
         }
 
-        .permission-card i {
-            font-size: 24px;
-            margin: 10px 0;
+        .permission-card p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            margin: 0;
         }
 
         .permission-enabled {
-            background-color: rgba(131, 197, 190, 0.2);
-            border: 1px solid #83C5BE;
+            background-color: rgba(16, 185, 129, 0.08);
+            border: 2px solid rgba(16, 185, 129, 0.3);
         }
 
-        .permission-enabled i {
-            color: #006D77;
+        .permission-enabled i:first-child {
+            color: var(--success);
         }
 
         .permission-disabled {
-            background-color: rgba(245, 211, 195, 0.2);
-            border: 1px solid #F5D3C3;
+            background-color: rgba(239, 68, 68, 0.05);
+            border: 2px solid rgba(239, 68, 68, 0.2);
         }
 
-        .permission-disabled i {
-            color: #E29578;
+        .permission-disabled i:first-child {
+            color: var(--danger);
         }
     </style>
 </div>
