@@ -67,11 +67,11 @@ resource "aws_key_pair" "gmedeiros_key" {
 
 # EC2 instance
 resource "aws_instance" "siproquim_server" {
-  ami                    = var.ec2_ami
-  instance_type          = var.instance_type
-  subnet_id              = aws_subnet.public_subnet_a.id
-  vpc_security_group_ids = [aws_security_group.siproquim_sg.id]
-  key_name               = aws_key_pair.gmedeiros_key.key_name
+  ami                         = var.ec2_ami
+  instance_type               = var.instance_type
+  subnet_id                   = aws_subnet.public_subnet_a.id
+  vpc_security_group_ids      = [aws_security_group.siproquim_sg.id]
+  key_name                    = aws_key_pair.gmedeiros_key.key_name
   associate_public_ip_address = true
 
   # Root volume
@@ -85,26 +85,19 @@ resource "aws_instance" "siproquim_server" {
   }
 
   provisioner "file" {
-    source      = "scripts/clone_github_repo.sh"
-    destination = "/tmp/clone_github_repo.sh"
-  }
-
-  provisioner "file" {
-    source      = "scripts/docker.sh"
+    source      = "../scripts/docker.sh"
     destination = "/tmp/docker.sh"
   }
 
   provisioner "file" {
-    source      = "scripts/psql_client.sh"
+    source      = "../scripts/psql_client.sh"
     destination = "/tmp/psql_client.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /tmp/clone_github_repo.sh",
       "chmod +x /tmp/docker.sh",
       "chmod +x /tmp/psql_client.sh",
-      "/tmp/clone_github_repo.sh",
       "/tmp/docker.sh",
       "/tmp/psql_client.sh"
     ]
