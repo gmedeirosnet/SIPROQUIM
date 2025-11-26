@@ -6,8 +6,8 @@ variable "aws_region" {
 
 variable "ec2_ami" {
   description = "Ubuntu 24.04 LTS ARM64"
-  type = string
-  default = "ami-07041441b708acbd6"
+  type        = string
+  default     = "ami-07041441b708acbd6"
 }
 
 variable "instance_type" {
@@ -18,14 +18,14 @@ variable "instance_type" {
 
 variable "ec2_eip" {
   description = "EC2 Elastic IP address"
-  type = string
-  default = "174.129.195.18"
+  type        = string
+  default     = "174.129.195.18"
 }
 
 variable "ec2_eip_allocation" {
   description = "Elastic IP address allocation to EC2 instance"
-  type = string
-  default = "eipalloc-02b18da0adb5c6f37"
+  type        = string
+  default     = "eipalloc-02b18da0adb5c6f37"
 }
 
 variable "volume_size" {
@@ -49,7 +49,7 @@ variable "environment" {
 variable "common_tags" {
   description = "Common tags to be applied to all resources"
   type        = map(string)
-  default     = {
+  default = {
     project = "SIPROQUIM"
     env     = "production"
     owner   = "Gilmar Trindade"

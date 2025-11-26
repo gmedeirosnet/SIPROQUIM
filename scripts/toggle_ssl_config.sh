@@ -22,18 +22,17 @@ backup_config() {
 
 use_self_signed() {
     echo "Configuring Nginx to use self-signed certificates..."
-    sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_certificate /etc/nginx/ssl/nginx.crt;|ssl_certificate /etc/nginx/ssl/nginx.crt;|' "$NGINX_CONFIG"
-    sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_certificate_key /etc/nginx/ssl/nginx.key;|ssl_certificate_key /etc/nginx/ssl/nginx.key;|' "$NGINX_CONFIG"
+    sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_certificate /etc/nginx/ssl/nginx.crt;|ssl_certificate /etc/nginx/ssl/nginx.crt;|' "$NGINX_CONFIG"
+    sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_certificate_key /etc/nginx/ssl/nginx.key;|ssl_certificate_key /etc/nginx/ssl/nginx.key;|' "$NGINX_CONFIG"
 
-    sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_certificate /etc/letsencrypt/live/'"$DOMAIN"'/fullchain.pem;|# ssl_certificate /etc/letsencrypt/live/'"$DOMAIN"'/fullchain.pem;|' "$NGINX_CONFIG"
-    sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_certificate_key /etc/letsencrypt/live/'"$DOMAIN"'/privkey.pem;|# ssl_certificate_key /etc/letsencrypt/live/'"$DOMAIN"'/privkey.pem;|' "$NGINX_CONFIG"
-    sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_trusted_certificate /etc/letsencrypt/live/'"$DOMAIN"'/chain.pem;|# ssl_trusted_certificate /etc/letsencrypt/live/'"$DOMAIN"'/chain.pem;|' "$NGINX_CONFIG"
+    sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_certificate /etc/letsencrypt/live/'"$DOMAIN"'/fullchain.pem;|# ssl_certificate /etc/letsencrypt/live/'"$DOMAIN"'/fullchain.pem;|' "$NGINX_CONFIG"
+    sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_certificate_key /etc/letsencrypt/live/'"$DOMAIN"'/privkey.pem;|# ssl_certificate_key /etc/letsencrypt/live/'"$DOMAIN"'/privkey.pem;|' "$NGINX_CONFIG"
+    sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_trusted_certificate /etc/letsencrypt/live/'"$DOMAIN"'/chain.pem;|# ssl_trusted_certificate /etc/letsencrypt/live/'"$DOMAIN"'/chain.pem;|' "$NGINX_CONFIG"
 
     # Disable OCSP stapling
-    sed -i.tmp 's/ssl_stapling on;/# ssl_stapling on;/' "$NGINX_CONFIG"
-    sed -i.tmp 's/ssl_stapling_verify on;/# ssl_stapling_verify on;/' "$NGINX_CONFIG"
+    sed -i 's/ssl_stapling on;/# ssl_stapling on;/' "$NGINX_CONFIG"
+    sed -i 's/ssl_stapling_verify on;/# ssl_stapling_verify on;/' "$NGINX_CONFIG"
 
-    rm -f "${NGINX_CONFIG}.tmp"
     echo "Nginx configured to use self-signed certificates"
 }
 
@@ -43,18 +42,17 @@ use_letsencrypt() {
     if docker-compose run --rm --entrypoint "ls -l /etc/letsencrypt/live/$DOMAIN/fullchain.pem" certbot > /dev/null 2>&1; then
         echo "Let's Encrypt certificates found. Configuring Nginx..."
 
-        sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_certificate /etc/nginx/ssl/nginx.crt;|# ssl_certificate /etc/nginx/ssl/nginx.crt;|' "$NGINX_CONFIG"
-        sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_certificate_key /etc/nginx/ssl/nginx.key;|# ssl_certificate_key /etc/nginx/ssl/nginx.key;|' "$NGINX_CONFIG"
+        sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_certificate /etc/nginx/ssl/nginx.crt;|# ssl_certificate /etc/nginx/ssl/nginx.crt;|' "$NGINX_CONFIG"
+        sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|ssl_certificate_key /etc/nginx/ssl/nginx.key;|# ssl_certificate_key /etc/nginx/ssl/nginx.key;|' "$NGINX_CONFIG"
 
-        sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_certificate /etc/letsencrypt/live/'"$DOMAIN"'/fullchain.pem;|ssl_certificate /etc/letsencrypt/live/'"$DOMAIN"'/fullchain.pem;|' "$NGINX_CONFIG"
-        sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_certificate_key /etc/letsencrypt/live/'"$DOMAIN"'/privkey.pem;|ssl_certificate_key /etc/letsencrypt/live/'"$DOMAIN"'/privkey.pem;|' "$NGINX_CONFIG"
-        sed -i.tmp '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_trusted_certificate /etc/letsencrypt/live/'"$DOMAIN"'/chain.pem;|ssl_trusted_certificate /etc/letsencrypt/live/'"$DOMAIN"'/chain.pem;|' "$NGINX_CONFIG"
+        sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_certificate /etc/letsencrypt/live/'"$DOMAIN"'/fullchain.pem;|ssl_certificate /etc/letsencrypt/live/'"$DOMAIN"'/fullchain.pem;|' "$NGINX_CONFIG"
+        sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_certificate_key /etc/letsencrypt/live/'"$DOMAIN"'/privkey.pem;|ssl_certificate_key /etc/letsencrypt/live/'"$DOMAIN"'/privkey.pem;|' "$NGINX_CONFIG"
+        sed -i '/# SSL Certificate Configuration/,/# SSL Settings/ s|# ssl_trusted_certificate /etc/letsencrypt/live/'"$DOMAIN"'/chain.pem;|ssl_trusted_certificate /etc/letsencrypt/live/'"$DOMAIN"'/chain.pem;|' "$NGINX_CONFIG"
 
         # Enable OCSP stapling
-        sed -i.tmp 's/# ssl_stapling on;/ssl_stapling on;/' "$NGINX_CONFIG"
-        sed -i.tmp 's/# ssl_stapling_verify on;/ssl_stapling_verify on;/' "$NGINX_CONFIG"
+        sed -i 's/# ssl_stapling on;/ssl_stapling on;/' "$NGINX_CONFIG"
+        sed -i 's/# ssl_stapling_verify on;/ssl_stapling_verify on;/' "$NGINX_CONFIG"
 
-        rm -f "${NGINX_CONFIG}.tmp"
         echo "Nginx configured to use Let's Encrypt certificates"
     else
         echo "Error: Let's Encrypt certificates not found!"

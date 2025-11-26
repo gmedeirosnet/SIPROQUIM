@@ -64,9 +64,9 @@ if [ $USE_SSL -eq 1 ]; then
     chmod +x ./scripts/init-letsencrypt.sh
 
     # Update the script with the correct domain and email
-    sed -i.bak "s/domains=.*/domains=($DOMAIN)/" ./scripts/init-letsencrypt.sh
-    sed -i.bak "s/email=.*/email=\"$EMAIL\"/" ./scripts/init-letsencrypt.sh
-    sed -i.bak "s/staging=.*/staging=0/" ./scripts/init-letsencrypt.sh
+    sed -i "s/domains=.*/domains=($DOMAIN)/" ./scripts/init-letsencrypt.sh
+    sed -i "s/email=.*/email=\"$EMAIL\"/" ./scripts/init-letsencrypt.sh
+    sed -i "s/staging=.*/staging=0/" ./scripts/init-letsencrypt.sh
 
     # Run the init-letsencrypt script if certificates need to be renewed or don't exist
     if [ $FORCE_RENEW -eq 1 ] || [ ! -d "./certbot/conf/live/$DOMAIN" ]; then
@@ -81,7 +81,7 @@ if [ $USE_SSL -eq 1 ]; then
   elif [ $USE_STAGING -eq 1 ]; then
     echo "Using Let's Encrypt staging environment for testing..."
     # Update the script to use staging
-    sed -i.bak "s/staging=.*/staging=1/" ./scripts/init-letsencrypt.sh
+    sed -i "s/staging=.*/staging=1/" ./scripts/init-letsencrypt.sh
     chmod +x ./scripts/init-letsencrypt.sh
 
     if [ $FORCE_RENEW -eq 1 ] || [ ! -d "./certbot/conf/live/$DOMAIN" ]; then
