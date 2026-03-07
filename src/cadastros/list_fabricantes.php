@@ -1,35 +1,29 @@
 <?php
 // cadastros/list_fabricantes.php
-require_once __DIR__ . '/../config/db.php';
 
-// Verificação de permissões
+require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../auth/auth_check.php';
 requirePermission(PERMISSION_READ, $current_user_grupo);
 
-// Set page title for the header
 $pageTitle = 'Lista de Fabricantes';
 
-// Pagination setup
 $per_page = 25;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $per_page;
 
-// Get total count for pagination
 $stmt_count = $pdo->query("SELECT COUNT(*) FROM fabricantes");
 $total_records = $stmt_count->fetchColumn();
 $total_pages = ceil($total_records / $per_page);
 
-// Search functionality
-$search = isset($_GET['search']) ? $_GET['search'] : '';
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $where_clause = '';
 $params = [];
 
 if (!empty($search)) {
-    $where_clause = "WHERE nome LIKE :search OR cnpj LIKE :search OR email LIKE :search";
+    $where_clause = "WHERE nome ILIKE :search OR cnpj LIKE :search OR email ILIKE :search";
     $params[':search'] = "%{$search}%";
 }
 
-// Get fabricantes with pagination and search
 $sql = "SELECT * FROM fabricantes {$where_clause} ORDER BY nome ASC LIMIT :limit OFFSET :offset";
 $stmt = $pdo->prepare($sql);
 foreach ($params as $key => $value) {
@@ -42,7 +36,6 @@ $fabricantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle delete action
 if (isset($_POST['delete']) && isset($_POST['id'])) {
-    // Verificar se o usuário tem permissão para excluir
     if (!userCan(PERMISSION_DELETE)) {
         header('Location: /auth/access_denied.php');
         exit;
@@ -51,7 +44,6 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
     $id = (int)$_POST['id'];
 
     try {
-        // Check if there are any products using this fabricante
         $stmt_check = $pdo->prepare("SELECT COUNT(*) FROM produtos WHERE id_fabricante = :id");
         $stmt_check->execute([':id' => $id]);
         $produtos_count = $stmt_check->fetchColumn();
@@ -62,16 +54,15 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
             $stmt = $pdo->prepare("DELETE FROM fabricantes WHERE id = :id");
             $stmt->execute([':id' => $id]);
 
-            // Redirect to avoid resubmission
             header("Location: list_fabricantes.php?deleted=1");
             exit;
         }
     } catch (PDOException $e) {
-        $error = "Não foi possível excluir este fabricante. Erro: " . $e->getMessage();
+        error_log("Fabricante delete failed: " . $e->getMessage());
+        $error = "Não foi possível excluir este fabricante. Tente novamente.";
     }
 }
 
-// Include header
 include_once __DIR__ . '/../includes/header.php';
 ?>
 
@@ -81,7 +72,7 @@ include_once __DIR__ . '/../includes/header.php';
     <?php endif; ?>
 
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?= $error ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
     <div class="header-actions">
@@ -122,7 +113,7 @@ include_once __DIR__ . '/../includes/header.php';
                 <tbody>
                     <?php foreach ($fabricantes as $fabricante): ?>
                         <tr>
-                            <td><?= $fabricante['id'] ?></td>
+                            <td><?= htmlspecialchars($fabricante['id']) ?></td>
                             <td><?= htmlspecialchars($fabricante['nome']) ?></td>
                             <td><?= htmlspecialchars($fabricante['cnpj']) ?></td>
                             <td><?= htmlspecialchars($fabricante['email'] ?? '-') ?></td>
@@ -130,14 +121,14 @@ include_once __DIR__ . '/../includes/header.php';
                             <td><?= htmlspecialchars($fabricante['observacao'] ?? '-') ?></td>
                             <td class="actions">
                                 <?php if ($current_user_permissions['update']): ?>
-                                <a href="fabricante.php?id=<?= $fabricante['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
+                                    <a href="?id=<?= (int)$fabricante['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
                                 <?php endif; ?>
 
                                 <?php if ($current_user_permissions['delete']): ?>
-                                <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir este fabricante?');" style="display: inline;">
-                                    <input type="hidden" name="id" value="<?= $fabricante['id'] ?>">
-                                    <button type="submit" name="delete" class="btn btn-sm btn-danger">Excluir</button>
-                                </form>
+                                    <form method="post" onsubmit="return confirm('Tem certeza que deseja excluir este fabricante?');" style="display: inline;">
+                                        <input type="hidden" name="id" value="<?= (int)$fabricante['id'] ?>">
+                                        <button type="submit" name="delete" class="btn btn-sm btn-danger">Excluir</button>
+                                    </form>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -150,7 +141,7 @@ include_once __DIR__ . '/../includes/header.php';
             <ul class="pagination">
                 <?php if ($page > 1): ?>
                     <li><a href="?page=1<?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Primeira</a></li>
-                    <li><a href="?page=<?= ($page - 1) ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Anterior</a></li>
+                    <li><a href="?page=<?= $page - 1 ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Anterior</a></li>
                 <?php else: ?>
                     <li class="disabled"><span>Primeira</span></li>
                     <li class="disabled"><span>Anterior</span></li>
@@ -168,7 +159,7 @@ include_once __DIR__ . '/../includes/header.php';
                 <?php endfor; ?>
 
                 <?php if ($page < $total_pages): ?>
-                    <li><a href="?page=<?= ($page + 1) ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Próxima</a></li>
+                    <li><a href="?page=<?= $page + 1 ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Próxima</a></li>
                     <li><a href="?page=<?= $total_pages ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Última</a></li>
                 <?php else: ?>
                     <li class="disabled"><span>Próxima</span></li>
