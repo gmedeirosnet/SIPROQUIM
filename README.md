@@ -131,8 +131,8 @@ SIPROQUIM/
 4. Acesse o sistema:
    - Aplicação Web: http://localhost:8080
    - PgAdmin (gerenciador PostgreSQL): http://localhost:5050
-     - Email: admin@admin.com
-     - Senha: admin
+     - Email: admin@siproquim.gov.br
+     - Senha: 123456
 
 5. Para testar a conexão com o banco de dados:
    - Acesse http://localhost:8080/test_connection.php
