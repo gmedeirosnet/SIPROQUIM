@@ -65,7 +65,7 @@ SIPROQUIM/
 │   │   ├── produtos_por_local.php         # Relatório de produtos por local
 │   │   └── movimentacao_produtos.php      # Relatório de movimentação por produto
 │   └── updates/              # Scripts de atualização do sistema
-├── frontend/                 # Interface de usuário moderna (em desenvolvimento)
+├── frontend/                 # Interface de usuário moderna (Vite + React + TypeScript, não integrada ao backend PHP)
 │   ├── build/                # Arquivos compilados do frontend
 │   ├── public/               # Arquivos estáticos públicos
 │   └── src/                  # Código-fonte do frontend
@@ -217,7 +217,7 @@ Se encontrar problemas de conexão com o PostgreSQL:
 - Interface HTML simples e funcional com CSS responsivo
 - Possibilidade de integração com frameworks CSS no futuro
 - Formulários validados tanto no cliente quanto no servidor
-- Frontend moderno em desenvolvimento (diretório frontend/)
+- Frontend moderno em desenvolvimento: Vite + React + TypeScript (diretório `frontend/`, não integrado ao backend PHP)
 - Melhorias na interface dos relatórios de movimentação de produtos
 
 ### Infraestrutura:
