@@ -1,0 +1,92 @@
+# ============================================================
+# Namespace
+# ============================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: siproquim
+
+---
+# ============================================================
+# Secret: database credentials
+# ============================================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: siproquim-db-secret
+  namespace: siproquim
+type: Opaque
+data:
+  # echo -n 'admin' | base64    => YWRtaW4=
+  # echo -n 'password' | base64 => cGFzc3dvcmQ=
+  DB_USER: YWRtaW4=
+  DB_PASSWORD: cGFzc3dvcmQ=
+
+---
+# ============================================================
+# Secret: TLS certificate (self-signed placeholder)
+# Replace tls.crt and tls.key with real base64-encoded values:
+#   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+#     -keyout tls.key -out tls.crt -subj "/CN=siproquim.local"
+#   cat tls.crt | base64 | tr -d '\n'
+#   cat tls.key | base64 | tr -d '\n'
+# ============================================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: siproquim-tls
+  namespace: siproquim
+type: kubernetes.io/tls
+data:
+  tls.crt: PLACEHOLDER_BASE64_CERT
+  tls.key: PLACEHOLDER_BASE64_KEY
+
+---
+# ============================================================
+# ConfigMap: application environment variables
+# ============================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: siproquim-config
+  namespace: siproquim
+data:
+  DB_HOST: "postgres.siproquim.svc.cluster.local"
+  DB_NAME: "estoque"
+  DB_PORT: "5432"
+
+---
+# ============================================================
+# ConfigMap: nginx reverse-proxy configuration
+# Proxies plain HTTP to siproquim-php:80.
+# TLS is terminated at the Ingress — no SSL config here.
+# ============================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: siproquim
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name siproquim.local;
+
+        location / {
+            proxy_pass http://siproquim-php:80;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_cache_bypass $http_upgrade;
+        }
+
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+    }
