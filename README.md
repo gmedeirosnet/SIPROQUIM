@@ -227,6 +227,11 @@ Se encontrar problemas de conexão com o PostgreSQL:
 - Integração expandida com serviços de monitoramento
 - Facilidade para escalar em diferentes provedores de nuvem
 
+### CI/CD:
+- **GitHub Actions** (`.github/workflows/build.yml`): Lightweight PR gate — runs SonarQube static analysis on every push to `main` and every pull request. Not a deployment pipeline.
+- **Jenkins** (`Jenkinsfile`): Full build lifecycle — Docker build, integration tests, SonarQube, staging deploy, and production deploy with manual approval gate. Triggered by SCM polling every 5 minutes.
+- Both systems run SonarQube; GitHub Actions provides fast feedback on PRs, Jenkins provides the authoritative pipeline for deployment.
+
 ## Contribuição
 
 1. Faça um fork do repositório

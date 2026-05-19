@@ -1,3 +1,9 @@
+# CI OWNERSHIP: GitHub Actions
+# This workflow owns static code analysis only (SonarQube).
+# It runs on every push to main and every pull request.
+# It is NOT a deployment pipeline — deployments are handled by Jenkins.
+# See Jenkinsfile for the full build/test/deploy lifecycle.
+
 name: Build
 on:
   push:

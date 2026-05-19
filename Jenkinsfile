@@ -1,3 +1,10 @@
+// CI OWNERSHIP: Jenkins
+// Jenkins owns the full build lifecycle:
+//   Checkout → Build Docker Images → SonarQube → Start Services →
+//   Database Init → Health Check → Deploy to Staging → Approval → Deploy to Production
+// SonarQube also runs here for the full pipeline context.
+// GitHub Actions (.github/workflows/build.yml) serves as the lightweight PR gate (SonarQube only).
+
 pipeline {
     agent {
         docker {
