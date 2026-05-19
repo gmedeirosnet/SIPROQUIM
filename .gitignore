@@ -71,3 +71,6 @@ crash.*.log
 *.tfvars
 *.tfplan
 .terraform.lock.hcl
+
+#Ai generated files
+docs/
