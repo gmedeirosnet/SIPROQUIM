@@ -25,6 +25,7 @@ terraform.rc
 
 # Ignore plan output files
 *.tfplan
+tfplan
 
 # Ignore local environment variable files
 .env
