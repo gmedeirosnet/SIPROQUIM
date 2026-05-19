@@ -223,7 +223,7 @@ spec:
             - "until nc -z postgres.siproquim.svc.cluster.local 5432; do echo waiting for postgres; sleep 2; done"
       containers:
         - name: php
-          image: siproquim-php:latest
+          image: siproquim:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
