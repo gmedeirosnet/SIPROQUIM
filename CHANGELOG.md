@@ -5,6 +5,8 @@ Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/spec/v2.0.0.html).
 
+> Para detalhes internos de implementação e correções de segurança, consulte [journal/IMPLEMENTATION_LOG.md](journal/IMPLEMENTATION_LOG.md).
+
 ## [0.7.0] - 2025-08-13
 
 ### Adicionado

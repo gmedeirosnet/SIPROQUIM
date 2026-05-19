@@ -1,6 +1,7 @@
-# Journal de Implementações - Projeto SIPROQUIM
+# SIPROQUIM — Internal Implementation Log
 
-Este arquivo documenta todas as melhorias de segurança, desempenho e arquitetura implementadas na fase atual do projeto.
+> **This is an internal developer log** documenting security fixes, performance improvements, and architectural decisions.
+> For user-facing release notes, see [CHANGELOG.md](../CHANGELOG.md).
 
 ## [v1.0] - 2025-08-13 (Fase Atual)
 
