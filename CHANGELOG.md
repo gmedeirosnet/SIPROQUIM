@@ -39,24 +39,6 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - Sanitização aprimorada de dados de entrada
 - Controle de permissões mais granular
 
-## [0.6.0] - Em desenvolvimento
-
-### Adicionado
-- Documentação aprimorada para facilitar integração com serviços de terceiros
-- Suporte a monitoramento via API RESTful
-- Otimização do processo de backups do banco de dados
-- Novas ferramentas de análise de desempenho para consultas SQL frequentes
-
-### Alterado
-- Atualização da documentação técnica para refletir as últimas mudanças
-- Aprimoramento da integração de serviços de monitoramento no Terraform
-- Refinamento das ferramentas de diagnóstico de banco de dados
-
-### Segurança
-- Implementação de logs de auditoria avançados
-- Verificação em duas etapas para operações críticas
-- Monitoramento proativo de padrões de acesso suspeitos
-
 ## [0.5.2] - 2025-04-19
 
 ### Adicionado
