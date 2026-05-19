@@ -7,6 +7,19 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 > Para detalhes internos de implementação e correções de segurança, consulte [journal/IMPLEMENTATION_LOG.md](journal/IMPLEMENTATION_LOG.md).
 
+## [0.9.0] - 2026-05-19
+
+### Adicionado
+- Manifesto Kubernetes `manifests/siproquim.yaml` com 13 recursos para deploy completo da stack em cluster local (minikube/kind/k3d)
+- Namespace `siproquim` isolando todos os recursos da aplicação
+- StatefulSet PostgreSQL 15 com PersistentVolumeClaim de 10Gi, probes de readiness/liveness e limites de recursos
+- Deployment PHP 8.4 Apache com initContainer aguardando disponibilidade do banco antes de iniciar
+- Deployment Nginx como reverse proxy com ConfigMap de configuração montado como volume
+- Ingress nginx com TLS terminado no controller usando certificado autoassinado (Secret `siproquim-tls`)
+- Secret `siproquim-db-secret` para credenciais do banco de dados
+- ConfigMap `siproquim-config` para variáveis de ambiente não sensíveis
+- Probes de readiness/liveness e limites de CPU/memória em todos os containers
+
 ## [0.8.0] - 2026-05-19
 
 ### Adicionado
