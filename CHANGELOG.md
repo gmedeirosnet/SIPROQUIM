@@ -7,6 +7,27 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 > Para detalhes internos de implementação e correções de segurança, consulte [journal/IMPLEMENTATION_LOG.md](journal/IMPLEMENTATION_LOG.md).
 
+## [0.8.0] - 2026-05-19
+
+### Adicionado
+- Scaffold do frontend moderno: Vite + React + TypeScript no diretório `frontend/`
+- Subseção CI/CD no `README.md` documentando responsabilidades do GitHub Actions e Jenkins
+- Entrada `tfplan` (sem extensão) no `terraform/.gitignore` para cobrir planos gerados sem extensão
+
+### Alterado
+- Paginação padronizada para 25 registros/página em todas as listagens (`list_grupos.php`, `list_lugares.php`)
+- `journal/CHANGELOG.md` renomeado para `journal/IMPLEMENTATION_LOG.md` com cabeçalho atualizado
+- Referências cruzadas adicionadas entre `CHANGELOG.md` e `journal/IMPLEMENTATION_LOG.md`
+- Descrição do `frontend/` no `README.md` atualizada para refletir stack real (Vite + React + TypeScript)
+- Comentários de propriedade de CI adicionados ao topo de `.github/workflows/build.yml` e `Jenkinsfile`
+
+### Removido
+- Bloco `[0.6.0] - Em desenvolvimento` removido do CHANGELOG (itens nunca implementados)
+- Arquivo binário `terraform/tfplan` removido de todo o histórico git (reescrita de histórico)
+
+### Segurança
+- Arquivo `terraform/tfplan` purgado de todos os 157 commits do histórico via `git filter-repo`
+
 ## [0.7.0] - 2025-08-13
 
 ### Adicionado
