@@ -7,6 +7,13 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 > Para detalhes internos de implementação e correções de segurança, consulte [journal/IMPLEMENTATION_LOG.md](journal/IMPLEMENTATION_LOG.md).
 
+## [0.9.1] - 2026-05-20
+
+### Alterado
+- `docker-compose.yml`: serviço `php` migrado de `image: php:8.4-apache` para `build:` apontando para o `Dockerfile` raiz
+- Removido bloco `command:` redundante do serviço `php` (instalação de dependências e extensões PHP movida para o `Dockerfile`)
+- Removidos volumes de bind-mount `./src` do serviço `php` (arquivos copiados via `COPY` no `Dockerfile`)
+
 ## [0.9.0] - 2026-05-19
 
 ### Adicionado
