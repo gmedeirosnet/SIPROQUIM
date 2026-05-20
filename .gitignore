@@ -74,3 +74,6 @@ crash.*.log
 
 #Ai generated files
 docs/
+
+# Claude Code local memory
+.claude/
