@@ -289,64 +289,64 @@ spec:
     - port: 80
       targetPort: 80
 
-# ---
-# # ============================================================
-# # Deployment: Nginx reverse proxy
-# # Mounts nginx-config ConfigMap as /etc/nginx/conf.d/default.conf
-# # ============================================================
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: siproquim-nginx
-#   namespace: siproquim
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: siproquim-nginx
-#   template:
-#     metadata:
-#       labels:
-#         app: siproquim-nginx
-#     spec:
-#       containers:
-#         - name: nginx
-#           image: nginx:latest
-#           ports:
-#             - containerPort: 80
-#           volumeMounts:
-#             - name: nginx-conf
-#               mountPath: /etc/nginx/conf.d/default.conf
-#               subPath: default.conf
-#           resources:
-#             requests:
-#               cpu: "50m"
-#               memory: "64Mi"
-#             limits:
-#               cpu: "200m"
-#               memory: "128Mi"
-#           readinessProbe:
-#             httpGet:
-#               path: /health
-#               port: 80
-#             initialDelaySeconds: 5
-#             periodSeconds: 5
-#             failureThreshold: 3
-#           livenessProbe:
-#             httpGet:
-#               path: /health
-#               port: 80
-#             initialDelaySeconds: 15
-#             periodSeconds: 10
-#             failureThreshold: 3
-#       volumes:
-#         - name: nginx-conf
-#           configMap:
-#             name: nginx-config
-
-# ---
+---
 # ============================================================
-# Service: Nginx — ClusterIP, port 80
+# Deployment: Nginx reverse proxy
+# Mounts nginx-config ConfigMap as /etc/nginx/conf.d/default.conf
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siproquim-nginx
+  namespace: siproquim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siproquim-nginx
+  template:
+    metadata:
+      labels:
+        app: siproquim-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-config
+
+---
+# ============================================================
+# Service: Nginx — ClusterIP, port 80 → targetPort 3000
 # ============================================================
 apiVersion: v1
 kind: Service

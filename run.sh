@@ -107,8 +107,7 @@ if [ $USE_SSL -eq 1 ]; then
 else
   echo "- Web Application: http://$DOMAIN"
 fi
-echo "- PgAdmin: http://localhost:5050 (admin@admin.com / admin)"
-echo "- Connection test: http://localhost:8080/test_connection.php"
+echo "- Connection test: http://localhost:3000/test_connection.php"
 
 echo ""
 echo "Script execution options:"
