@@ -69,7 +69,7 @@ metadata:
 data:
   default.conf: |
     server {
-        listen 80;
+        listen 3000;
         server_name siproquim.local;
 
         location / {
@@ -389,4 +389,4 @@ spec:
               service:
                 name: siproquim-nginx
                 port:
-                  number: 3000
+                  number: 80
