@@ -29,11 +29,10 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   php:
-    image: php:8.4-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: estoque_php
-    volumes:
-      - ./src:/var/www/html
-      - ./src/php.ini:/usr/local/etc/php/conf.d/custom.ini
     depends_on:
       - db
     environment:
@@ -45,12 +44,6 @@ services:
       - PHP_INI_SCAN_DIR=/usr/local/etc/php/conf.d
     ports:
       - "8080:80"
-    command: >
-      bash -c "apt-get update && apt-get install -y libpq-dev libzip-dev zip unzip &&
-      docker-php-ext-install pdo pdo_pgsql zip &&
-      a2enmod rewrite &&
-      chmod +x /var/www/html/config/sql.sh &&
-      apache2-foreground"
     networks:
       - estoque_network
     restart: unless-stopped
