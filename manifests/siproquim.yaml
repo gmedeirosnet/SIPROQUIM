@@ -202,7 +202,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: siproquim-php
+  name: siproquim
   namespace: siproquim
 spec:
   replicas: 1
@@ -280,7 +280,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: siproquim-php
+  name: siproquim
   namespace: siproquim
 spec:
   selector:
