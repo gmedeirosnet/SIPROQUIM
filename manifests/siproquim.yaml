@@ -360,33 +360,33 @@ spec:
 #     - port: 80
 #       targetPort: 80
 
-# ---
-# # ============================================================
-# # Ingress: TLS termination at nginx ingress controller
-# # Prerequisite: minikube addons enable ingress
-# # Local access: echo "$(minikube ip) siproquim.local" | sudo tee -a /etc/hosts
-# # ============================================================
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: siproquim
-#   namespace: siproquim
-#   annotations:
-#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-# spec:
-#   ingressClassName: nginx
-#   tls:
-#     - hosts:
-#         - siproquim.local
-#       secretName: siproquim-tls
-#   rules:
-#     - host: siproquim.local
-#       http:
-#         paths:
-#           - path: /
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: siproquim-nginx
-#                 port:
-#                   number: 80
+---
+# ============================================================
+# Ingress: TLS termination at nginx ingress controller
+# Prerequisite: minikube addons enable ingress
+# Local access: echo "$(minikube ip) siproquim.local" | sudo tee -a /etc/hosts
+# ============================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: siproquim
+  namespace: siproquim
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - siproquim.local
+      secretName: siproquim-tls
+  rules:
+    - host: siproquim.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: siproquim-nginx
+                port:
+                  number: 3000
