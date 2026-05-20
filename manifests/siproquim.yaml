@@ -344,21 +344,21 @@ spec:
 #           configMap:
 #             name: nginx-config
 
-# # ---
-# # ============================================================
-# # Service: Nginx — ClusterIP, port 80
-# # ============================================================
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: siproquim-nginx
-#   namespace: siproquim
-# spec:
-#   selector:
-#     app: siproquim-nginx
-#   ports:
-#     - port: 80
-#       targetPort: 80
+# ---
+# ============================================================
+# Service: Nginx — ClusterIP, port 80
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: siproquim-nginx
+  namespace: siproquim
+spec:
+  selector:
+    app: siproquim-nginx
+  ports:
+    - port: 80
+      targetPort: 3000
 
 ---
 # ============================================================
