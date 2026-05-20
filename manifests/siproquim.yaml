@@ -1,0 +1,392 @@
+# ============================================================
+# Namespace
+# ============================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: siproquim
+
+---
+# ============================================================
+# Secret: database credentials
+# ============================================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: siproquim-db-secret
+  namespace: siproquim
+type: Opaque
+data:
+  # echo -n 'admin' | base64    => YWRtaW4=
+  # echo -n 'password' | base64 => cGFzc3dvcmQ=
+  DB_USER: YWRtaW4=
+  DB_PASSWORD: cGFzc3dvcmQ=
+
+---
+# ============================================================
+# Secret: TLS certificate (self-signed placeholder)
+# Replace tls.crt and tls.key with real base64-encoded values:
+#   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+#     -keyout tls.key -out tls.crt -subj "/CN=siproquim.local"
+#   cat tls.crt | base64 | tr -d '\n'
+#   cat tls.key | base64 | tr -d '\n'
+# ============================================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: siproquim-tls
+  namespace: siproquim
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURQVENDQWlXZ0F3SUJBZ0lVZUNxY3lDalZ0d2dzSDZwMUt2UUtoUDUyRVBFd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xqRVlNQllHQTFVRUF3d1BjMmx3Y205eGRXbHRMbXh2WTJGc01SSXdFQVlEVlFRS0RBbFRTVkJTVDFGVgpTVTB3SGhjTk1qWXdOVEU1TWpBek1qVTRXaGNOTWpjd05URTVNakF6TWpVNFdqQXVNUmd3RmdZRFZRUUREQTl6CmFYQnliM0YxYVcwdWJHOWpZV3d4RWpBUUJnTlZCQW9NQ1ZOSlVGSlBVVlZKVFRDQ0FTSXdEUVlKS29aSWh2Y04KQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQUt3NUROMlI5SGpLdDBadmt0L0V3dkhxZW5YQnVuRU0xR1U5VVVyRgpNK2xMRFBtNDA3WTRpV0l4Q1VXQ1AyOWZxV3cxV1ZDQThGbDcrM2VMUkI3TGF1ZUh6YkVuUHR3M2t3UkZsdzNtCjNvZUx4Z29JRWdsS2NRbUVyUWxKcnJlSDByVTh0RDdHOTd1WmNWVzlnRkFHcHU1cysrekdURDNERW5DREZzN2sKcEhkbURnQTFTVVRoWkV5MEVYM25TanBjTEY0QUJVeHFGVnJlaWhZdHpHUFlBWUVmTjBpM2V0bkdkRnJRcU5hZQo4WFNxRk5hTU9BNVhzVzBNOUxUcC9JV2NEL2QxR2F5V3ZZcW9JTE5EaXo4eEg0QnVLa1JxWVNJS3ZpampMQmNpCkxlUWZic0V5VjFJbkZWbFVhUGVWL2VIYjE1dEdrWTdyNWNKTyt2MElSQ2JOVTVjQ0F3RUFBYU5UTUZFd0hRWUQKVlIwT0JCWUVGRTBMUjhuY2oxc2xlT0dQbEZWQ1hId1BpWXpMTUI4R0ExVWRJd1FZTUJhQUZFMExSOG5jajFzbAplT0dQbEZWQ1hId1BpWXpMTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCCkFBdk9lY09HeVZJam0xd0xDWW85R0diVHZOU2dmdkNRWlh2MEtRVGxDam5yc3lTREtxeDNQd05DSEVpeUFDR0wKaUJja2FwcndsR3UyRXZXblVqRlUyZ3Q0K2Z3NkVTVGdJeTZhaGNITVRZWVJDMkxMV0ViaGlnK2pSSWU4M3FoaQpxMTFqdm9lNnhGa1pLSE85NUVlYzZJa0tTMTZ3TUxSYWlCV3E4elRPRm5HZDJSdmN4aC9WMmpwMmFTODFDZDA5CjhHckZ5ZFRrMXFwaEV1TldUVG4xd0l2YStRR3BET3hrem50WGFPK0ZwcTFBc2FiWTBqNFdrN0JaM2FYMUlzRzgKUWpEeHQvV0xHWTdMdUd1eGswaldQYWtTbkc4em9PSzMwM2swaEJJblJnclEwbTJtQ3F6Q2pHTlZyOTJwaHN0SgovaGtDREhmamhVZTJ1UURiOUQ3WHhZZz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2Z0lCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktnd2dnU2tBZ0VBQW9JQkFRQ3NPUXpka2ZSNHlyZEcKYjVMZnhNTHg2bnAxd2JweEROUmxQVkZLeFRQcFN3ejV1Tk8yT0lsaU1RbEZnajl2WDZsc05WbFFnUEJaZS90MwppMFFleTJybmg4MnhKejdjTjVNRVJaY041dDZIaThZS0NCSUpTbkVKaEswSlNhNjNoOUsxUExRK3h2ZTdtWEZWCnZZQlFCcWJ1YlB2c3hrdzl3eEp3Z3hiTzVLUjNaZzRBTlVsRTRXUk10QkY5NTBvNlhDeGVBQVZNYWhWYTNvb1cKTGN4ajJBR0JIemRJdDNyWnhuUmEwS2pXbnZGMHFoVFdqRGdPVjdGdERQUzA2ZnlGbkEvM2RSbXNscjJLcUNDegpRNHMvTVIrQWJpcEVhbUVpQ3I0bzR5d1hJaTNrSDI3Qk1sZFNKeFZaVkdqM2xmM2gyOWViUnBHTzYrWENUdnI5CkNFUW16Vk9YQWdNQkFBRUNnZ0VBTHhab0dKcUQ0NVRWV0ZwQUo1TldFNnVlOE54WGUvcGNoaE9tU3RHeE9FdHYKVUVYRENOTGJhUy9zRDRlbGpXOXoxS1NmZDEzUm1UM0hTdStXWCs4Ukd4MnIxUkJjWlB5QzQwdWRtY3p5TWRBNwpCTm9oQ0U1RXFxd09YWGc2WDI2dzR5R21USFc5SFJzK2ZBbFVjRXpwVGs0WThTdGtoQXgyV2JIVnhocUloeVk2ClZGcXhNTU9Wa0N3NzVIeGtPN2xlM3pkMjdpY3JSUmJQSHpETG5ET2lXU3NGU3dhMG0zQzdLMVRUbW5lbTZmSnEKRmRaRjJ6cldRWVdoWGtHY3lqQ3ZPQVZDWWtXajNOMkliQmZOeGRMbUlZWHcwdjRSWTFleEo5Q2J0c2ViZWlvdgpzTmpFbFVtZ1N2eWN4L2g0QW9JNjY2TS9iOUxDYzlGWFptbTNFeGp1SFFLQmdRRGsvTXNKcmZXYi9hblFGNmZjCjQwUU0zSi80eUNhUFVNR1NKSGo5YTRmSkpXNmw4RE9uSXRxVUtxVFNlYlQ0L2Q0OXM0M0RHQ21uK1c1VTF0Z0UKVS92SXVtSFJqWnZlY1V2bXZlSlNLaDRMWE1pcEhVelBldnF6cktDWHFpM2hyS1A2blhVc3gxVWNHQkhYZEcxQgoyQklPemZ3OS9TR21sOS9JUFl4SDV6UWpFd0tCZ1FEQWlnVFRNZ1FMU2d5NEVnczJaQjlXS25TNkl2dVhFTmtxCnY1aWI1UEduaFRIdnNFN2JQQWpyWVkzVE56TXpKendpa1dlOTB5anNJd3piVVNGT1MvYmhNdE1rV25FV0t2bysKSHhEVkc1dTd6ZXlNWUVrKzZVWXlEWW8yeFBVQ0prVjFWdGdESlRPYUkyRmNLZkRoVUNlci9MTDBuL1Bqbnd3TgpGWVM0MHZRWjdRS0JnQy9uS2xwMkIrR0FLVndjOXNMZzBFV1lpZWF6aUUyRzZWZTNSWkJPUkhPeDN2bmJ6QkowCjJpRVE0cllkTzl5eXp5RTlSTFRCZzBWZWl0UTR0YXdDSGJRYU9ZaHJCV1o5Y1JGdU84QlFpMFI1UG9rU1ZoVTUKZHVUTGdqVDRKdTBFL3JEWTY4QllXdGVydVYvSFBXdisxWmcvUXp0OGp1T1k5Zm1mMW83Y01TMzlBb0dCQUtONAp5NjN3eWtRM2crTUkxdUpBVWViYnR5Mk9wQ1BYMXpxWFgrQUVtelJMUDJHdFJOYVkrMDIyRHk5a3I2RGYwQXZkCmZzSkp0WFlBTUZ0Slg4alZjSEExc2RVc3dOVThlaWtpUVMxZStuT1MzQ00zWVJqOEFIQmcxSmU1MC9nV1BHVHEKN2c2Rm1IRm5Wck5rbkxNQVZoNk5OL2ZBa3RjUTQ2OThOS3FqMlVMbEFvR0JBSjdWSDF3SmQvMGJpZ0JzSjF0dAp0NUdSUml5WURNQzNCMnU2S0U0a01ZQVBteDgwdUNhQ0VIeHYrZzhUbWduS0dIZVk5MjUzcEt5c1FBeExGNlUvCnpEK01TNXZZcHUxcjZrV0dSWnBqZjRnQUZLcGpzT3BRN0NEV050K08zZmpMVk02V2w3bVBFdnVIVDBTcG5nekUKSWRCQlBxcGVvejNZN1BWcEUzM3BDNTZYCi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+
+---
+# ============================================================
+# ConfigMap: application environment variables
+# ============================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: siproquim-config
+  namespace: siproquim
+data:
+  DB_HOST: "postgres.siproquim.svc.cluster.local"
+  DB_NAME: "estoque"
+  DB_PORT: "5432"
+
+---
+# ============================================================
+# ConfigMap: nginx reverse-proxy configuration
+# Proxies plain HTTP to siproquim-php:80.
+# TLS is terminated at the Ingress — no SSL config here.
+# ============================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: siproquim
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name siproquim.local;
+
+        location / {
+            proxy_pass http://siproquim-php:80;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_cache_bypass $http_upgrade;
+        }
+
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+    }
+
+---
+# ============================================================
+# PersistentVolumeClaim: PostgreSQL data directory
+# Uses the cluster default StorageClass (minikube: standard)
+# ============================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: siproquim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# ============================================================
+# StatefulSet: PostgreSQL 15
+# ============================================================
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: siproquim
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: siproquim-db-secret
+                  key: DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: siproquim-db-secret
+                  key: DB_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: siproquim-config
+                  key: DB_NAME
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "admin"]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "admin"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+---
+# ============================================================
+# Service: headless — gives stable DNS postgres.siproquim.svc.cluster.local
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: siproquim
+spec:
+  clusterIP: None
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+
+---
+# ============================================================
+# Deployment: PHP 8.4 Apache application
+# Image built from project Dockerfile: docker build -t siproquim-php:latest .
+# Load into minikube: minikube image load siproquim-php:latest
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siproquim
+  namespace: siproquim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siproquim-php
+  template:
+    metadata:
+      labels:
+        app: siproquim-php
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - "until nc -z postgres.siproquim.svc.cluster.local 5432; do echo waiting for postgres; sleep 2; done"
+      containers:
+        - name: php
+          image: gmedeirosnet/siproquim:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: siproquim-config
+                  key: DB_HOST
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: siproquim-config
+                  key: DB_NAME
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: siproquim-config
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: siproquim-db-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: siproquim-db-secret
+                  key: DB_PASSWORD
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+
+---
+# ============================================================
+# Service: PHP app — ClusterIP, port 80
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: siproquim
+  namespace: siproquim
+spec:
+  selector:
+    app: siproquim-php
+  ports:
+    - port: 80
+      targetPort: 80
+
+---
+# ============================================================
+# Deployment: Nginx reverse proxy
+# Mounts nginx-config ConfigMap as /etc/nginx/conf.d/default.conf
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siproquim-nginx
+  namespace: siproquim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siproquim-nginx
+  template:
+    metadata:
+      labels:
+        app: siproquim-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-config
+
+---
+# ============================================================
+# Service: Nginx — ClusterIP, port 80
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: siproquim-nginx
+  namespace: siproquim
+spec:
+  selector:
+    app: siproquim-nginx
+  ports:
+    - port: 80
+      targetPort: 80
+
+---
+# ============================================================
+# Ingress: TLS termination at nginx ingress controller
+# Prerequisite: minikube addons enable ingress
+# Local access: echo "$(minikube ip) siproquim.local" | sudo tee -a /etc/hosts
+# ============================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: siproquim
+  namespace: siproquim
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - siproquim.local
+      secretName: siproquim-tls
+  rules:
+    - host: siproquim.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: siproquim-nginx
+                port:
+                  number: 80
