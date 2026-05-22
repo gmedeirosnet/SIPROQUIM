@@ -7,6 +7,17 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 > Para detalhes internos de implementação e correções de segurança, consulte [journal/IMPLEMENTATION_LOG.md](journal/IMPLEMENTATION_LOG.md).
 
+## [0.9.2] - 2026-05-22
+
+### Corrigido
+- `manifests/siproquim.yaml`: Deployment `siproquim-nginx` descomentado — estava comentado enquanto o Service e o Ingress o referenciavam, impedindo o roteamento de tráfego
+- `manifests/siproquim.yaml`: `containerPort` do nginx corrigido de `80` para `3000`, alinhado com `listen 3000` no ConfigMap
+- `manifests/siproquim.yaml`: Probes de readiness/liveness do nginx corrigidas para a porta `3000`
+- `manifests/siproquim.yaml`: ConfigMap `nginx-config` atualizado para `listen 3000` (de `listen 80`)
+- `nginx/default.conf`: `proxy_pass` corrigido de `http://localhost:80` para `http://php:80` para funcionar corretamente no Docker Compose via DNS interno
+- `docker-compose.yml`: Serviço `nginx` descomentado; mapeamento de porta corrigido de `3000:80` para `3000:3000`
+- `run.sh`: Removida referência órfã ao PgAdmin (porta 5050, serviço inexistente); URL de teste de conexão corrigida para porta `3000`
+
 ## [0.9.1] - 2026-05-20
 
 ### Alterado
