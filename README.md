@@ -129,14 +129,11 @@ SIPROQUIM/
    ```
 
 4. Acesse o sistema:
-   - Aplicação Web: http://localhost:8080
-   - PgAdmin (gerenciador PostgreSQL): http://localhost:5050
-     - Email: admin@siproquim.gov.br
-     - Senha: 123456
+   - Aplicação Web: http://localhost:3000 (via nginx) ou http://localhost:80 (PHP direto)
 
 5. Para testar a conexão com o banco de dados:
-   - Acesse http://localhost:8080/test_connection.php
-   - Para diagnóstico avançado de consultas SQL: http://localhost:8080/test_search.php
+   - Acesse http://localhost:3000/test_connection.php
+   - Para diagnóstico avançado de consultas SQL: http://localhost:3000/test_search.php
 
 ### Instalação Manual
 
@@ -183,8 +180,8 @@ Se encontrar problemas de conexão com o PostgreSQL:
 
 2. Acesse as ferramentas de diagnóstico:
    ```
-   http://localhost:8080/test_connection.php  # Para problemas de conexão ao banco
-   http://localhost:8080/test_search.php      # Para diagnóstico de consultas SQL
+   http://localhost:3000/test_connection.php  # Para problemas de conexão ao banco
+   http://localhost:3000/test_search.php      # Para diagnóstico de consultas SQL
    ```
 
 3. Verifique os logs do container PostgreSQL:
