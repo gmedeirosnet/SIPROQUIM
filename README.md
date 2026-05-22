@@ -243,6 +243,3 @@ Antes de enviar seu código, certifique-se de seguir as diretrizes de segurança
 
 Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
 
-## Última Atualização
-
-13 de agosto de 2025
