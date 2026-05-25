@@ -12,12 +12,12 @@ $current_dir = dirname($_SERVER['PHP_SELF']);
 
 // Function to check if a navigation item should be active
 function isActive($page, $current_page = null, $current_dir = null) {
-    if ($current_page === null) $current_page = basename($_SERVER['PHP_SELF']);
-    if ($current_dir === null) $current_dir = dirname($_SERVER['PHP_SELF']);
+    if ($current_page === null) { $current_page = basename($_SERVER['PHP_SELF']); }
+    if ($current_dir === null) { $current_dir = dirname($_SERVER['PHP_SELF']); }
 
     if (is_array($page)) {
         foreach ($page as $p) {
-            if ($current_page === $p) return true;
+            if ($current_page === $p) { return true; }
         }
         return false;
     }
@@ -51,11 +51,10 @@ function isActive($page, $current_page = null, $current_dir = null) {
     </script>
 
     <link rel="stylesheet" href="/assets/css/main.css">
-    <!-- Add favicon if available -->
-    <!-- <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon"> -->
+    <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
 
     <!-- Include any additional page-specific CSS or scripts in the head -->
-    <?php if (isset($additionalHead)) echo $additionalHead; ?>
+    <?php if (isset($additionalHead)) { echo $additionalHead; } ?>
 
     <style>
         /* Estilos adaptados para o dropdown de usuário seguindo o padrão existente */
