@@ -156,11 +156,11 @@ include_once __DIR__ . '/../includes/header.php';
                 <tbody>
                     <?php foreach ($pessoas as $pessoa): ?>
                         <tr>
-                            <td><a href="../relatorios/movimentacao_por_pessoa.php?pessoa_id=<?= $pessoa['id'] ?>"><?= htmlspecialchars($pessoa['nome']) ?></a></td>
+                            <td><a href="../relatorios/movimentacao_por_pessoa.php?pessoa_id=<?= $pessoa['id'] ?>" aria-label="Ver movimentações de <?= htmlspecialchars($pessoa['nome']) ?>"><?= htmlspecialchars($pessoa['nome']) ?></a></td>
                             <td><?= htmlspecialchars($pessoa['email'] ?? '-') ?></td>
                             <td>
                                 <?php if (!empty($pessoa['grupo_nome'])): ?>
-                                    <a href="list_pessoas.php?grupo=<?= $pessoa['grupo_id'] ?>"><?= htmlspecialchars($pessoa['grupo_nome']) ?></a>
+                                    <a href="list_pessoas.php?grupo=<?= $pessoa['grupo_id'] ?>" aria-label="Filtrar por grupo <?= htmlspecialchars($pessoa['grupo_nome']) ?>"><?= htmlspecialchars($pessoa['grupo_nome']) ?></a>
                                 <?php else: ?>
                                     <span class="text-muted">Não atribuído</span>
                                 <?php endif; ?>

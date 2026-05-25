@@ -246,7 +246,7 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php foreach ($produtos as $produto): ?>
                         <tr>
                             <td>
-                                <a href="../relatorios/movimentacao_produtos.php?produto_id=<?= $produto['id'] ?>"><?= htmlspecialchars($produto['nome']) ?></a>
+                                <a href="../relatorios/movimentacao_produtos.php?produto_id=<?= $produto['id'] ?>" aria-label="Ver movimentações de <?= htmlspecialchars($produto['nome']) ?>"><?= htmlspecialchars($produto['nome']) ?></a>
                             </td>
                             <td>
                                 <?php if (!empty($produto['fabricante_nome'])): ?>

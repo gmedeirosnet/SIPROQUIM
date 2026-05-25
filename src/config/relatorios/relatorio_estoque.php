@@ -145,7 +145,7 @@ foreach ($estoques as $estoque) {
             </div>
         </div>
 
-        <?php if (count($produtos_por_grupo) > 0): ?>
+        <?php if (!empty($produtos_por_grupo)): ?>
         <h2>Produtos por Grupo</h2>
         <table>
             <thead>
