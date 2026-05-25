@@ -12,23 +12,28 @@ $date_end = null;
 $date_range_start = $_GET['date_start'] ?? '';
 $date_range_end = $_GET['date_end'] ?? '';
 
+// Date format constants
+define('DATE_FORMAT_START', 'Y-m-d 00:00:00');
+define('DATE_FORMAT_END', 'Y-m-d 23:59:59');
+define('DATE_FORMAT_BR', 'd/m/Y');
+
 // Define date filters based on selected filter type
 if ($filter_type === 'diario') {
     // Daily filter (today)
-    $date_start = date('Y-m-d 00:00:00');
-    $date_end = date('Y-m-d 23:59:59');
+    $date_start = date(DATE_FORMAT_START);
+    $date_end = date(DATE_FORMAT_END);
 } elseif ($filter_type === 'semanal') {
     // Weekly filter (last 7 days)
-    $date_start = date('Y-m-d 00:00:00', strtotime('-6 days'));
-    $date_end = date('Y-m-d 23:59:59');
+    $date_start = date(DATE_FORMAT_START, strtotime('-6 days'));
+    $date_end = date(DATE_FORMAT_END);
 } elseif ($filter_type === 'mensal') {
     // Monthly filter (current month)
     $date_start = date('Y-m-01 00:00:00');
     $date_end = date('Y-m-t 23:59:59');
 } elseif ($filter_type === 'personalizado' && !empty($date_range_start) && !empty($date_range_end)) {
     // Custom date range filter
-    $date_start = date('Y-m-d 00:00:00', strtotime($date_range_start));
-    $date_end = date('Y-m-d 23:59:59', strtotime($date_range_end));
+    $date_start = date(DATE_FORMAT_START, strtotime($date_range_start));
+    $date_end = date(DATE_FORMAT_END, strtotime($date_range_end));
 }
 
 // Base SQL query
@@ -101,8 +106,8 @@ include_once __DIR__ . '/../includes/header.php';
             <form method="get" action="" class="mb-0">
                 <div class="form-row">
                     <div class="form-col">
-                        <label class="form-label">Período:</label>
-                        <div class="btn-group mb-3 filter-buttons">
+                        <label for="filter-buttons" class="form-label">Período:</label>
+                        <div id="filter-buttons" class="btn-group mb-3 filter-buttons">
                             <a href="?filter_type=todos" class="btn <?= $filter_type === 'todos' ? 'btn-primary' : 'btn-outline-primary' ?>">Todos</a>
                             <a href="?filter_type=diario" class="btn <?= $filter_type === 'diario' ? 'btn-primary' : 'btn-outline-primary' ?>">Diário</a>
                             <a href="?filter_type=semanal" class="btn <?= $filter_type === 'semanal' ? 'btn-primary' : 'btn-outline-primary' ?>">Semanal</a>
@@ -142,11 +147,9 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
         <div class="dashboard-card">
             <div><strong>Entradas: </strong><?= $total_entradas ?></div>
-            <!-- <div><strong>Quantidade: </strong> <?= $quantidade_entrada ?> itens</div> -->
         </div>
         <div class="dashboard-card">
             <div><strong>Saídas: </strong> <?= $total_saidas ?></div>
-            <!-- <div><strong>Quantidade:</strong> <?= $quantidade_saida ?> itens</div> -->
         </div>
     </div>
 
@@ -155,13 +158,13 @@ include_once __DIR__ . '/../includes/header.php';
     <div class="alert alert-info">
         <strong>Período selecionado:</strong>
         <?php if ($filter_type === 'diario'): ?>
-            Hoje (<?= date('d/m/Y') ?>)
+            Hoje (<?= date(DATE_FORMAT_BR) ?>)
         <?php elseif ($filter_type === 'semanal'): ?>
-            Últimos 7 dias (<?= date('d/m/Y', strtotime('-6 days')) ?> até <?= date('d/m/Y') ?>)
+            Últimos 7 dias (<?= date(DATE_FORMAT_BR, strtotime('-6 days')) ?> até <?= date(DATE_FORMAT_BR) ?>)
         <?php elseif ($filter_type === 'mensal'): ?>
-            Mês atual (<?= date('d/m/Y', strtotime(date('Y-m-01'))) ?> até <?= date('d/m/Y', strtotime(date('Y-m-t'))) ?>)
+            Mês atual (<?= date(DATE_FORMAT_BR, strtotime(date('Y-m-01'))) ?> até <?= date(DATE_FORMAT_BR, strtotime(date('Y-m-t'))) ?>)
         <?php elseif ($filter_type === 'personalizado'): ?>
-            De <?= date('d/m/Y', strtotime($date_range_start)) ?> até <?= date('d/m/Y', strtotime($date_range_end)) ?>
+            De <?= date(DATE_FORMAT_BR, strtotime($date_range_start)) ?> até <?= date(DATE_FORMAT_BR, strtotime($date_range_end)) ?>
         <?php endif; ?>
     </div>
     <?php endif; ?>
@@ -234,3 +237,4 @@ include_once __DIR__ . '/../includes/header.php';
 </script>
 
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
+

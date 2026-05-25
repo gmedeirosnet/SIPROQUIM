@@ -122,7 +122,16 @@ include_once __DIR__ . '/../includes/header.php';
 
         <div class="form-group">
             <label for="descricao" class="form-label">Descrição:</label>
-            <textarea name="descricao" id="descricao" class="form-control"><?= isset($descricao) ? htmlspecialchars($descricao) : ($editing ? htmlspecialchars($grupo['descricao'] ?? '') : '') ?></textarea>
+            <?php
+            if (isset($descricao)) {
+                $descricao_value = htmlspecialchars($descricao);
+            } elseif ($editing) {
+                $descricao_value = htmlspecialchars($grupo['descricao'] ?? '');
+            } else {
+                $descricao_value = '';
+            }
+            ?>
+            <textarea name="descricao" id="descricao" class="form-control"><?= $descricao_value ?></textarea>
         </div>
 
         <div class="btn-group mt-4">

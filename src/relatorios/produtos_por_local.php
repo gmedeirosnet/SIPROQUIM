@@ -145,15 +145,21 @@ include_once __DIR__ . '/../includes/header.php';
             <strong>Filtros aplicados:</strong>
             <?php
             $filtros = [];
-            if (!empty($filter_produto)) $filtros[] = "Produto contendo \"" . htmlspecialchars($filter_produto) . "\"";
+            if (!empty($filter_produto)) {
+                $filtros[] = "Produto contendo \"" . htmlspecialchars($filter_produto) . "\"";
+            }
             if ($filter_grupo > 0) {
                 foreach ($grupos as $g) {
-                    if ($g['id'] == $filter_grupo) $filtros[] = "Grupo: " . htmlspecialchars($g['nome']);
+                    if ($g['id'] == $filter_grupo) {
+                        $filtros[] = "Grupo: " . htmlspecialchars($g['nome']);
+                    }
                 }
             }
             if ($filter_fabricante > 0) {
                 foreach ($fabricantes as $f) {
-                    if ($f['id'] == $filter_fabricante) $filtros[] = "Fabricante: " . htmlspecialchars($f['nome']);
+                    if ($f['id'] == $filter_fabricante) {
+                        $filtros[] = "Fabricante: " . htmlspecialchars($f['nome']);
+                    }
                 }
             }
             echo implode(", ", $filtros);

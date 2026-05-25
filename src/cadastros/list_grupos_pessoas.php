@@ -5,6 +5,8 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../auth/auth_check.php';
 requirePermission(PERMISSION_READ, $current_user_grupo);
 
+define('SEARCH_PARAM', '&search=');
+
 $pageTitle = 'Lista de Grupos de Pessoas';
 
 $per_page = 25;
@@ -135,8 +137,8 @@ include_once __DIR__ . '/../includes/header.php';
         <?php if ($total_pages > 1): ?>
             <ul class="pagination">
                 <?php if ($page > 1): ?>
-                    <li><a href="?page=1<?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Primeira</a></li>
-                    <li><a href="?page=<?= $page - 1 ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Anterior</a></li>
+                    <li><a href="?page=1<?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?>">Primeira</a></li>
+                    <li><a href="?page=<?= $page - 1 ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?>">Anterior</a></li>
                 <?php else: ?>
                     <li class="disabled"><span>Primeira</span></li>
                     <li class="disabled"><span>Anterior</span></li>
@@ -149,13 +151,13 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php if ($i == $page): ?>
                         <li class="active"><span><?= $i ?></span></li>
                     <?php else: ?>
-                        <li><a href="?page=<?= $i ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>"><?= $i ?></a></li>
+                        <li><a href="?page=<?= $i ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?>" aria-label="Página <?= $i ?>"><?= $i ?></a></li>
                     <?php endif; ?>
                 <?php endfor; ?>
 
                 <?php if ($page < $total_pages): ?>
-                    <li><a href="?page=<?= $page + 1 ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Próxima</a></li>
-                    <li><a href="?page=<?= $total_pages ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">Última</a></li>
+                    <li><a href="?page=<?= $page + 1 ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?>">Próxima</a></li>
+                    <li><a href="?page=<?= $total_pages ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?>">Última</a></li>
                 <?php else: ?>
                     <li class="disabled"><span>Próxima</span></li>
                     <li class="disabled"><span>Última</span></li>

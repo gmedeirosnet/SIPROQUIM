@@ -164,7 +164,20 @@ include_once __DIR__ . '/../includes/header.php';
                 <div>
                     <button type="submit" class="btn btn-primary">Buscar</button>
                     <?php if (!empty($search)): ?>
-                        <a href="?<?= $filter_grupo ? 'grupo=' . $filter_grupo : '' ?><?= $filter_fabricante ? ($filter_grupo ? '&' : '') . 'fabricante=' . $filter_fabricante : '' ?><?= !empty($filter_tipo) ? (($filter_grupo || $filter_fabricante) ? '&' : '') . 'tipo=' . urlencode($filter_tipo) : '' ?>" class="btn btn-outline-secondary">Limpar Busca</a>
+                        <?php
+                        $clear_params = [];
+                        if ($filter_grupo) {
+                            $clear_params[] = 'grupo=' . $filter_grupo;
+                        }
+                        if ($filter_fabricante) {
+                            $clear_params[] = 'fabricante=' . $filter_fabricante;
+                        }
+                        if (!empty($filter_tipo)) {
+                            $clear_params[] = 'tipo=' . urlencode($filter_tipo);
+                        }
+                        $clear_url = '?' . implode('&', $clear_params);
+                        ?>
+                        <a href="<?= $clear_url ?>" class="btn btn-outline-secondary">Limpar Busca</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -287,10 +300,10 @@ include_once __DIR__ . '/../includes/header.php';
             <?php
             // Build pagination URL parameters
             $pagination_params = [];
-            if ($filter_grupo > 0) $pagination_params[] = 'grupo=' . $filter_grupo;
-            if ($filter_fabricante > 0) $pagination_params[] = 'fabricante=' . $filter_fabricante;
-            if (!empty($filter_tipo)) $pagination_params[] = 'tipo=' . urlencode($filter_tipo);
-            if (!empty($search)) $pagination_params[] = 'search=' . urlencode($search);
+            if ($filter_grupo > 0) { $pagination_params[] = 'grupo=' . $filter_grupo; }
+            if ($filter_fabricante > 0) { $pagination_params[] = 'fabricante=' . $filter_fabricante; }
+            if (!empty($filter_tipo)) { $pagination_params[] = 'tipo=' . urlencode($filter_tipo); }
+            if (!empty($search)) { $pagination_params[] = 'search=' . urlencode($search); }
             $pagination_query = !empty($pagination_params) ? '&' . implode('&', $pagination_params) : '';
             ?>
             <ul class="pagination">
@@ -309,7 +322,7 @@ include_once __DIR__ . '/../includes/header.php';
                     <?php if ($i == $page): ?>
                         <li class="active"><span><?= $i ?></span></li>
                     <?php else: ?>
-                        <li><a href="?page=<?= $i ?><?= $pagination_query ?>"><?= $i ?></a></li>
+                        <li><a href="?page=<?= $i ?><?= $pagination_query ?>" aria-label="Página <?= $i ?>"><?= $i ?></a></li>
                     <?php endif; ?>
                 <?php endfor; ?>
 
