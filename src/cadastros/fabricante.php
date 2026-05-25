@@ -134,31 +134,76 @@ include_once __DIR__ . '/../includes/header.php';
     <form method="post" id="fabricante-form" class="form">
         <div class="form-group">
             <label for="nome" class="form-label">Fabricante: <span class="text-danger">*</span></label>
+            <?php
+            if ($editing) {
+                $nome_value = htmlspecialchars($fabricante['nome']);
+            } elseif (isset($nome)) {
+                $nome_value = htmlspecialchars($nome);
+            } else {
+                $nome_value = '';
+            }
+            ?>
             <input type="text" name="nome" id="nome" class="form-control" required
-                   value="<?= $editing ? htmlspecialchars($fabricante['nome']) : (isset($nome) ? htmlspecialchars($nome) : '') ?>">
+                   value="<?= $nome_value ?>">
         </div>
 
         <div class="form-group">
             <label for="cnpj" class="form-label">CNPJ: <span class="text-danger">*</span></label>
+            <?php
+            if ($editing) {
+                $cnpj_value = htmlspecialchars($fabricante['cnpj']);
+            } elseif (isset($cnpj)) {
+                $cnpj_value = htmlspecialchars($cnpj);
+            } else {
+                $cnpj_value = '';
+            }
+            ?>
             <input type="text" name="cnpj" id="cnpj" class="form-control" oninput="formatCNPJ(this)" required maxlength="18"
-                   value="<?= $editing ? htmlspecialchars($fabricante['cnpj']) : (isset($cnpj) ? htmlspecialchars($cnpj) : '') ?>">
+                   value="<?= $cnpj_value ?>">
         </div>
 
         <div class="form-group">
             <label for="endereco" class="form-label">Endereço:</label>
+            <?php
+            if ($editing) {
+                $endereco_value = htmlspecialchars($fabricante['endereco'] ?? '');
+            } elseif (isset($endereco)) {
+                $endereco_value = htmlspecialchars($endereco);
+            } else {
+                $endereco_value = '';
+            }
+            ?>
             <input type="text" name="endereco" id="endereco" class="form-control"
-                   value="<?= $editing ? htmlspecialchars($fabricante['endereco'] ?? '') : (isset($endereco) ? htmlspecialchars($endereco) : '') ?>">
+                   value="<?= $endereco_value ?>">
         </div>
 
         <div class="form-group">
             <label for="email" class="form-label">E-mail:</label>
+            <?php
+            if ($editing) {
+                $email_value = htmlspecialchars($fabricante['email'] ?? '');
+            } elseif (isset($email)) {
+                $email_value = htmlspecialchars($email);
+            } else {
+                $email_value = '';
+            }
+            ?>
             <input type="email" name="email" id="email" class="form-control"
-                   value="<?= $editing ? htmlspecialchars($fabricante['email'] ?? '') : (isset($email) ? htmlspecialchars($email) : '') ?>">
+                   value="<?= $email_value ?>">
         </div>
 
         <div class="form-group">
             <label for="observacao" class="form-label">Observação:</label>
-            <textarea name="observacao" id="observacao" class="form-control"><?= $editing ? htmlspecialchars($fabricante['observacao'] ?? '') : (isset($observacao) ? htmlspecialchars($observacao) : '') ?></textarea>
+            <?php
+            if ($editing) {
+                $observacao_value = htmlspecialchars($fabricante['observacao'] ?? '');
+            } elseif (isset($observacao)) {
+                $observacao_value = htmlspecialchars($observacao);
+            } else {
+                $observacao_value = '';
+            }
+            ?>
+            <textarea name="observacao" id="observacao" class="form-control"><?= $observacao_value ?></textarea>
         </div>
 
         <div class="btn-group mt-4">
@@ -195,5 +240,6 @@ include_once __DIR__ . '/../includes/header.php';
         input.value = value;
     }
 </script>
+
 
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
