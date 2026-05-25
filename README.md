@@ -1,245 +1,111 @@
-# SIPROQUIM - Sistema de Controle de Produtos Químicos
+# SIPROQUIM — Sistema de Controle de Produtos Químicos
 
-## DESCRIÇÃO
+SIPROQUIM is a web-based chemical inventory management system built with **PHP 8.4** and **PostgreSQL 15**. It gives organizations full traceability of chemical products across storage locations, with role-based access control and detailed movement history.
 
-Sistema para controle e gerenciamento de produtos químicos desenvolvido com PHP 8.4 e PostgreSQL 15, implementando os seguintes módulos:
+---
 
-- Cadastro de Pessoas e Grupos de Pessoas
-- Cadastro de Produtos, Grupos de Produtos e Fabricantes
-- Cadastro de Lugares de Estocagem (Almoxarifados)
-- Movimentações (entradas e saídas) de Produtos
-- Geração de Relatórios de Movimentações e Estoque Atual
+## Features
 
-O sistema é estruturado em camadas, separando configuração, conexão com banco de dados, operações CRUD para cada módulo e geração de relatórios. Este projeto demonstra boas práticas de modelagem relacional e implementação PHP com foco em segurança e confiabilidade.
+### Inventory Management
+- Register and track chemical products with manufacturer, group, and storage location
+- Record **entries and exits** with quantity, date, and responsible person
+- Real-time stock balance per product and location
+- Low-stock visual indicators on reports
 
-## Requisitos
+### People & Access Control
+- Role-based access control (RBAC) with four permission levels:
+  - **Administrators** — full CRUD access
+  - **Técnicos / Supervisores** — create, read, update
+  - **Auditores** — read-only
+- User and group management with enable/disable controls
 
-- PHP 8.4 ou superior
-- PostgreSQL 15
-- Docker e Docker Compose (para ambiente de desenvolvimento)
-- Terraform 1.5+ (para provisionamento da infraestrutura)
-- Nginx (para produção)
+### Reporting
+- **Current stock report** — balance per product grouped by storage location
+- **Movement history** — filterable log of all entries and exits
+- **Products by location** — what is stored where
+- **Movement by product** — full lifecycle of a specific chemical
+- **Movement by person** — audit trail per responsible user
 
-## Características Principais
+### Master Data (Cadastros)
+- Products, product groups, and manufacturers
+- People and people groups
+- Storage locations (almoxarifados)
+- All list views include search, pagination, and inline filters
 
-- **Segurança Avançada:** Proteção contra SQL Injection, XSS e implementação de headers de segurança HTTP adicionais
-- **Interface Responsiva:** Layout adaptável para diferentes dispositivos e tamanhos de tela
-- **Infraestrutura como Código:** Configuração completa de ambiente de produção usando Terraform
-- **Monitoramento Integrado:** Capacidade de integração com serviços de monitoramento em tempo real
-- **Diagnóstico Facilitado:** Utilitários para solução de problemas de conexão e diagnóstico de consultas SQL
+### Security
+- All queries use **PDO prepared statements** — SQL injection is not possible
+- Input sanitization (`trim`, `htmlspecialchars`) on every form
+- Session-based authentication with `session.cookie_secure`
+- HTTP security headers: CSP, HSTS, X-Content-Type-Options
+- Least-privilege Docker volume permissions
 
-## Estrutura de Arquivos e Organização do projeto
+### Infrastructure & Deployment
+- **Docker Compose** stack: nginx, PHP 8.4 Apache, PostgreSQL 15, Certbot
+- **Kubernetes / K3S** manifests with ArgoCD GitOps sync (`manifests/siproquim.yaml`)
+- **Terraform** (AWS) — EC2 t4g.micro, VPC, security groups, Elastic IP, Let's Encrypt SSL
+- Multi-platform Docker images (`linux/amd64` + `linux/arm64`) published to Docker Hub
+
+### CI/CD
+- **GitHub Actions — SonarQube** — static analysis on every push and pull request
+- **GitHub Actions — CD** — triggered on merge to `main`: auto-bumps semantic version, builds and pushes Docker image, updates the Kubernetes manifest
+- **CodeQL** — automated security scanning on every push
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/gmedeirosnet/SIPROQUIM.git
+cd SIPROQUIM
+./run.sh          # starts nginx + PHP + PostgreSQL via Docker Compose
+```
+
+Access the application at **http://localhost:8080**
+
+---
+
+## Requirements
+
+| Component | Version |
+|---|---|
+| PHP | 8.4+ |
+| PostgreSQL | 15 |
+| Docker & Docker Compose | any recent |
+| Terraform | 1.5+ (production only) |
+
+---
+
+## Project Structure
 
 ```
 SIPROQUIM/
-├── src/                      # Código-fonte da aplicação principal
-│   ├── index.php             # Página inicial/Dashboard
-│   ├── test_connection.php   # Ferramenta para testar a conexão com o DB
-│   ├── test_search.php       # Utilitário para diagnóstico avançado de consultas SQL
-│   ├── php.ini               # Configuração personalizada do PHP
-│   ├── api/                  # Endpoints de API
-│   │   └── uploads/          # Diretório para uploads de arquivos
-│   ├── assets/               # Recursos estáticos
-│   │   └── css/              # Folhas de estilo
-│   │       └── main.css      # Estilo principal da aplicação
-│   ├── cadastros/            # Formulários e operações CRUD
-│   │   ├── pessoa.php        # Cadastro de pessoas
-│   │   ├── grupo.php         # Cadastro de grupos de produtos
-│   │   ├── grupo_pessoa.php  # Cadastro de grupos de pessoas
-│   │   ├── produto.php       # Cadastro de produtos
-│   │   ├── fabricante.php    # Cadastro de fabricantes
-│   │   ├── lugar.php         # Cadastro de lugares de estoque
-│   │   ├── movimento.php     # Registro de movimentações
-│   │   └── list_*.php        # Listagens de cadastros
-│   ├── config/               # Configurações da aplicação
-│   │   ├── db.php            # Conexão com o banco de dados
-│   │   ├── sql.sh            # Scripts SQL auxiliares
-│   │   ├── cadastros/        # Configurações específicas para cadastros
-│   │   └── relatorios/       # Configurações para relatórios
-│   ├── includes/             # Componentes reutilizáveis
-│   │   ├── header.php        # Cabeçalho comum das páginas
-│   │   └── footer.php        # Rodapé comum das páginas
-│   ├── relatorios/           # Geração de relatórios
-│   │   ├── relatorio_estoque.php          # Relatório geral de estoque
-│   │   ├── relatorio_movimentos.php       # Relatório de movimentações
-│   │   ├── produtos_por_local.php         # Relatório de produtos por local
-│   │   └── movimentacao_produtos.php      # Relatório de movimentação por produto
-│   └── updates/              # Scripts de atualização do sistema
-├── frontend/                 # Interface de usuário moderna (Vite + React + TypeScript, não integrada ao backend PHP)
-│   ├── build/                # Arquivos compilados do frontend
-│   ├── public/               # Arquivos estáticos públicos
-│   └── src/                  # Código-fonte do frontend
-│       ├── components/       # Componentes reutilizáveis
-│       ├── context/          # Contextos e estado global
-│       ├── pages/            # Páginas da aplicação
-│       └── services/         # Serviços e APIs
-├── scripts/                  # Scripts de inicialização e utilitários
-│   ├── init-db.sh            # Script para inicialização do banco de dados
-│   ├── populate_database.sql # Script para popular o banco com dados iniciais
-│   ├── clone_github_repo.sh  # Script para clonar repositório
-│   ├── docker.sh             # Utilitários para Docker
-│   ├── psql_client.sh        # Cliente PostgreSQL
-│   └── siproquim             # Chaves SSH (siproquim.pub)
-├── nginx/                    # Configuração do servidor web
-│   ├── default.conf          # Configuração padrão do Nginx
-│   ├── nginx.conf            # Configuração principal
-│   └── ssl/                  # Certificados SSL/TLS
-├── logs/                     # Logs de aplicação e servidor
-├── certbot/                  # Configuração para certificados Let's Encrypt
-│   ├── conf/                 # Configurações do Certbot
-│   └── www/                  # Desafios de validação do Let's Encrypt
-├── terraform/                # Arquivos para infraestrutura como código
-│   ├── main.tf               # Configuração principal do Terraform
-│   ├── network.tf            # Configuração de rede
-│   ├── outputs.tf            # Saídas do Terraform
-│   ├── variables.tf          # Variáveis configuráveis do Terraform
-│   └── tfvars.tfvars         # Valores das variáveis por ambiente
-├── docker-compose.yml        # Configuração dos containers Docker
-├── run.sh                    # Script de execução rápida
-├── README.md                 # Este arquivo
-├── CHANGELOG.md              # Histórico de alterações
-├── ADR.md                    # Registro de decisões arquiteturais
-├── SECURITY.md               # Políticas de segurança
-└── Estoque.code-workspace    # Configuração do espaço de trabalho VS Code
+├── src/
+│   ├── cadastros/       # CRUD forms and list pages
+│   ├── relatorios/      # Reports
+│   ├── auth/            # Authentication and permissions
+│   ├── config/          # Database connection
+│   └── includes/        # Shared header/footer
+├── manifests/           # Kubernetes manifests (K3S / ArgoCD)
+├── terraform/           # AWS infrastructure as code
+├── nginx/               # Reverse proxy and SSL configuration
+├── scripts/             # Database init and deployment utilities
+├── .github/workflows/   # GitHub Actions (SonarQube, CD, CodeQL)
+└── docker-compose.yml
 ```
 
-## Instalação e Execução
+---
 
-### Com Docker (Recomendado)
+## Contributing
 
-1. Certifique-se de ter o Docker e o Docker Compose instalados:
-   ```bash
-   docker --version
-   docker-compose --version
-   ```
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -m 'feat: add my feature'`
+4. Push and open a Pull Request against `main`
 
-2. Clone o repositório:
-   ```bash
-   git clone https://github.com/seu-usuario/siproquim.git
-   cd siproquim
-   ```
+See `SECURITY.md` for security guidelines before submitting.
 
-3. Execute o script de inicialização:
-   ```bash
-   ./run.sh
-   ```
-   Ou inicie os contêineres manualmente:
-   ```bash
-   docker-compose up -d
-   ```
+---
 
-4. Acesse o sistema:
-   - Aplicação Web: http://localhost:3000 (via nginx) ou http://localhost:80 (PHP direto)
+## License
 
-5. Para testar a conexão com o banco de dados:
-   - Acesse http://localhost:3000/test_connection.php
-   - Para diagnóstico avançado de consultas SQL: http://localhost:3000/test_search.php
-
-### Instalação Manual
-
-1. Configure um servidor web com PHP 8.4
-2. Configure um servidor PostgreSQL 15
-3. Execute o script `scripts/init-db.sh` para criar o banco de dados
-4. Configure os parâmetros de conexão em `src/config/db.php`
-5. Acesse a aplicação pelo seu servidor web
-
-### Provisionamento com Terraform
-
-Para provisionamento em ambientes de produção:
-
-1. Configure as credenciais do seu provedor de nuvem
-2. Navegue até o diretório `terraform/`:
-   ```bash
-   cd terraform
-   ```
-3. Inicialize o Terraform:
-   ```bash
-   terraform init
-   ```
-4. Personalize as variáveis em `variables.tf` ou crie um arquivo `terraform.tfvars`
-5. O sistema já está configurado com uma chave SSH dedicada para acesso à instância EC2. Se necessário, você pode modificar ou adicionar chaves SSH no arquivo `main.tf`
-6. Valide o plano de execução:
-   ```bash
-   terraform plan -out=tfplan.out
-   ```
-7. Aplique a configuração:
-   ```bash
-   terraform apply tfplan.out
-   ```
-
-8. Após o provisionamento, você receberá a URL de acesso e outras informações úteis como outputs do Terraform.
-
-## Solução de Problemas de Conexão
-
-Se encontrar problemas de conexão com o PostgreSQL:
-
-1. Verifique se o serviço PostgreSQL está em execução:
-   ```bash
-   docker-compose ps
-   ```
-
-2. Acesse as ferramentas de diagnóstico:
-   ```
-   http://localhost:3000/test_connection.php  # Para problemas de conexão ao banco
-   http://localhost:3000/test_search.php      # Para diagnóstico de consultas SQL
-   ```
-
-3. Verifique os logs do container PostgreSQL:
-   ```bash
-   docker-compose logs db
-   ```
-
-4. Certifique-se de que as credenciais de banco de dados estão corretas em `src/config/db.php`
-
-5. Aguarde a inicialização completa do PostgreSQL, que pode levar alguns segundos após o início do container
-
-## Considerações Técnicas
-
-### Validações e Segurança:
-- Prepared statements para prevenção de SQL Injection
-- Validação e sanitização de dados nos formulários
-- Headers de segurança HTTP adicionais (CSP, HSTS, X-Content-Type-Options)
-- Estrutura que permite implementação futura de autenticação de usuários
-- Configuração segura de contêineres Docker e infraestrutura
-- Acesso SSH seguro às instâncias EC2 utilizando chaves dedicadas
-- Restrição de permissões nos volumes Docker seguindo princípio do privilégio mínimo
-
-### Modularização:
-- Organização em diretórios funcionais
-- Separação clara entre lógica de dados e apresentação
-- Fácil manutenção e extensão do código
-- Verificação aprimorada da integridade do banco de dados durante inicialização
-
-### Interface e Usabilidade:
-- Interface HTML simples e funcional com CSS responsivo
-- Possibilidade de integração com frameworks CSS no futuro
-- Formulários validados tanto no cliente quanto no servidor
-- Frontend moderno em desenvolvimento: Vite + React + TypeScript (diretório `frontend/`, não integrado ao backend PHP)
-- Melhorias na interface dos relatórios de movimentação de produtos
-
-### Infraestrutura:
-- Configuração containerizada para desenvolvimento
-- Infraestrutura como código usando Terraform para ambientes de produção
-- Utilização de Ubuntu 24.04 TLS como base para instâncias EC2
-- Integração expandida com serviços de monitoramento
-- Facilidade para escalar em diferentes provedores de nuvem
-
-### CI/CD:
-- **GitHub Actions** (`.github/workflows/build.yml`): Lightweight PR gate — runs SonarQube static analysis on every push to `main` and every pull request. Not a deployment pipeline.
-- **Jenkins** (`Jenkinsfile`): Full build lifecycle — Docker build, integration tests, SonarQube, staging deploy, and production deploy with manual approval gate. Triggered by SCM polling every 5 minutes.
-- Both systems run SonarQube; GitHub Actions provides fast feedback on PRs, Jenkins provides the authoritative pipeline for deployment.
-
-## Contribuição
-
-1. Faça um fork do repositório
-2. Crie um branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Faça commit das suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Envie para o branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
-
-Antes de enviar seu código, certifique-se de seguir as diretrizes de segurança descritas em `SECURITY.md`.
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
-
+MIT — see [LICENSE](LICENSE) for details.
