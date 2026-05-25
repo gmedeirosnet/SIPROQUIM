@@ -35,13 +35,13 @@ function isActive($page, $current_page = null, $current_dir = null) {
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" crossorigin="anonymous">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-534LVNS137"></script>
+    <!-- Google tag (gtag.js) — SRI not supported for dynamic gtag scripts -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-534LVNS137" crossorigin="anonymous"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -164,7 +164,7 @@ function isActive($page, $current_page = null, $current_dir = null) {
                         </a>
                         <div class="dropdown-content">
                             <a href="/relatorios/relatorio_estoque.php"><i class="fas fa-boxes"></i> Estoque Atual</a>
-                            <!-- <a href="/relatorios/produtos_por_local.php"><i class="fas fa-map-marker-alt"></i> Produtos por Local</a> -->
+                            <a href="/relatorios/produtos_por_local.php"><i class="fas fa-map-marker-alt"></i> Produtos por Local</a>
                             <a href="/relatorios/relatorio_movimentos.php"><i class="fas fa-history"></i> Movimentações</a>
                             <a href="/relatorios/movimentacao_produtos.php"><i class="fas fa-flask"></i> Movimentação por Produto</a>
                             <a href="/relatorios/movimentacao_por_pessoa.php"><i class="fas fa-user"></i> Movimentação por Pessoa</a>
