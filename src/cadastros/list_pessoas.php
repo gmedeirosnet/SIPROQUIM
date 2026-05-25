@@ -199,8 +199,8 @@ include_once __DIR__ . '/../includes/header.php';
         <?php if ($total_pages > 1): ?>
             <ul class="pagination">
                 <?php if ($page > 1): ?>
-                    <li><a href="?page=1<?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>">Primeira</a></li>
-                    <li><a href="?page=<?= ($page - 1) ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>">Anterior</a></li>
+                    <li><a href="?page=1<?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>" aria-label="Primeira página">Primeira</a></li>
+                    <li><a href="?page=<?= ($page - 1) ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>" aria-label="Página anterior">Anterior</a></li>
                 <?php else: ?>
                     <li class="disabled"><span>Primeira</span></li>
                     <li class="disabled"><span>Anterior</span></li>

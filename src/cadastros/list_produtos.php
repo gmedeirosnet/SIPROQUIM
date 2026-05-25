@@ -308,8 +308,8 @@ include_once __DIR__ . '/../includes/header.php';
             ?>
             <ul class="pagination">
                 <?php if ($page > 1): ?>
-                    <li><a href="?page=1<?= $pagination_query ?>">Primeira</a></li>
-                    <li><a href="?page=<?= ($page - 1) ?><?= $pagination_query ?>">Anterior</a></li>
+                    <li><a href="?page=1<?= $pagination_query ?>" aria-label="Primeira página">Primeira</a></li>
+                    <li><a href="?page=<?= ($page - 1) ?><?= $pagination_query ?>" aria-label="Página anterior">Anterior</a></li>
                 <?php else: ?>
                     <li class="disabled"><span>Primeira</span></li>
                     <li class="disabled"><span>Anterior</span></li>
