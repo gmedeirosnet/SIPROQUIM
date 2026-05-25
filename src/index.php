@@ -2,8 +2,7 @@
 // index.php
 require_once __DIR__ . '/config/db.php';
 
-// Set the page title
-// $pageTitle = 'Dashboard';
+$pageTitle = 'Dashboard';
 
 // Fetch limited number of records for each entity
 function fetchLimit($pdo, $table, $limit = 5, $orderBy = 'id DESC') {
@@ -94,8 +93,8 @@ include_once __DIR__ . '/includes/header.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' | SIPROQUIM' : 'SIPROQUIM - Sistema de Gerenciamento'; ?></title>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-534LVNS137"></script>
+    <!-- Google tag (gtag.js) — SRI not supported for dynamic gtag scripts -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-534LVNS137" crossorigin="anonymous"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -105,10 +104,10 @@ include_once __DIR__ . '/includes/header.php';
     </script>
     <link rel="stylesheet" href="/assets/css/main.css">
     <!-- Add favicon if available -->
-    <!-- <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon"> -->
+    <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
 
     <!-- Include any additional page-specific CSS or scripts in the head -->
-    <?php if (isset($additionalHead)) echo $additionalHead; ?>
+    <?php if (isset($additionalHead)) { echo $additionalHead; } ?>
 </head>
 <div class="content">
     <div class="welcome-message">
