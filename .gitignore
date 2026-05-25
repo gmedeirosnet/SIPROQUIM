@@ -59,8 +59,9 @@ build-logs/
 *.dump
 *.backup
 
-# Remove the Private Key from the Public Repository
-siproquim
+# SSL certificates and private keys
+nginx/ssl/*.key
+nginx/ssl/*.crt
 
 # Terraform
 .terraform/
