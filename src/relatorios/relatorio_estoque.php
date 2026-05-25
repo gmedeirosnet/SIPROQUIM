@@ -103,7 +103,7 @@ try {
 
 // Se estamos filtrando um produto específico, vamos buscar o nome dele para exibir
 $produto_nome_filtrado = '';
-if ($produto_id_filter && count($estoques) > 0) {
+if ($produto_id_filter && !empty($estoques)) {
     $produto_nome_filtrado = $estoques[0]['produto'];
 }
 
@@ -190,20 +190,24 @@ include_once __DIR__ . '/../includes/header.php';
             <h5>Tipo de Visualização</h5>
         </div>
         <div class="card-body">
-            <div class="btn-group" role="group">
-                <a href="?view_type=detalhado<?= !empty($search_produto) ? '&search_produto=' . urlencode($search_produto) : '' ?><?= $produto_id_filter ? '&produto_id=' . $produto_id_filter : '' ?>"
+            <?php
+            define('SEARCH_PRODUTO_PARAM', '&search_produto=');
+            define('PRODUTO_ID_PARAM', '&produto_id=');
+            ?>
+            <fieldset class="btn-group">
+                <a href="?view_type=detalhado<?= !empty($search_produto) ? SEARCH_PRODUTO_PARAM . urlencode($search_produto) : '' ?><?= $produto_id_filter ? PRODUTO_ID_PARAM . $produto_id_filter : '' ?>"
                    class="btn <?= $view_type === 'detalhado' ? 'btn-primary' : 'btn-outline-primary' ?>">
                     Saldo Detalhado
                 </a>
-                <a href="?view_type=produto<?= !empty($search_produto) ? '&search_produto=' . urlencode($search_produto) : '' ?><?= $produto_id_filter ? '&produto_id=' . $produto_id_filter : '' ?>"
+                <a href="?view_type=produto<?= !empty($search_produto) ? SEARCH_PRODUTO_PARAM . urlencode($search_produto) : '' ?><?= $produto_id_filter ? PRODUTO_ID_PARAM . $produto_id_filter : '' ?>"
                    class="btn <?= $view_type === 'produto' ? 'btn-primary' : 'btn-outline-primary' ?>">
                     Saldo por Produto
                 </a>
-                <a href="?view_type=almoxarifado<?= !empty($search_produto) ? '&search_produto=' . urlencode($search_produto) : '' ?><?= $produto_id_filter ? '&produto_id=' . $produto_id_filter : '' ?>"
+                <a href="?view_type=almoxarifado<?= !empty($search_produto) ? SEARCH_PRODUTO_PARAM . urlencode($search_produto) : '' ?><?= $produto_id_filter ? PRODUTO_ID_PARAM . $produto_id_filter : '' ?>"
                    class="btn <?= $view_type === 'almoxarifado' ? 'btn-primary' : 'btn-outline-primary' ?>">
                     Saldo por Almoxarifado
                 </a>
-            </div>
+            </fieldset>
         </div>
     </div>
 
@@ -269,7 +273,7 @@ include_once __DIR__ . '/../includes/header.php';
             Saldo por Produto e Almoxarifado
         <?php endif; ?>
     </h3>
-    <?php if (count($estoques) > 0): ?>
+    <?php if (!empty($estoques)): ?>
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -349,3 +353,4 @@ include_once __DIR__ . '/../includes/header.php';
 </style>
 
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
+
