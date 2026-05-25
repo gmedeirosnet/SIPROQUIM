@@ -171,8 +171,17 @@ if ($editing_blocked) {
         <form method="post" class="form" id="produto-form">
             <div class="form-group">
                 <label for="nome" class="form-label">Nome do Produto: <span class="required-indicator">*</span></label>
+                <?php
+                if ($editing) {
+                    $nome_value = htmlspecialchars($produto['nome']);
+                } elseif (isset($nome)) {
+                    $nome_value = htmlspecialchars($nome);
+                } else {
+                    $nome_value = '';
+                }
+                ?>
                 <input type="text" name="nome" id="nome" required class="form-control"
-                       value="<?= $editing ? htmlspecialchars($produto['nome']) : (isset($nome) ? htmlspecialchars($nome) : '') ?>">
+                       value="<?= $nome_value ?>">
             </div>
 
             <div class="form-row">
@@ -181,7 +190,16 @@ if ($editing_blocked) {
                     <select name="id_fabricante" id="id_fabricante" required class="form-select">
                         <option value="">-- Selecione um Fabricante --</option>
                         <?php foreach ($fabricantes as $fab): ?>
-                            <option value="<?= $fab['id'] ?>" <?= ($editing && $produto['id_fabricante'] == $fab['id']) ? 'selected' : (isset($id_fabricante) && $id_fabricante == $fab['id'] ? 'selected' : '') ?>>
+                            <?php
+                            if ($editing && $produto['id_fabricante'] == $fab['id']) {
+                                $fab_selected = 'selected';
+                            } elseif (isset($id_fabricante) && $id_fabricante == $fab['id']) {
+                                $fab_selected = 'selected';
+                            } else {
+                                $fab_selected = '';
+                            }
+                            ?>
+                            <option value="<?= $fab['id'] ?>" <?= $fab_selected ?>>
                                 <?= htmlspecialchars($fab['nome']) ?> <?= !empty($fab['cnpj']) ? '(' . htmlspecialchars($fab['cnpj']) . ')' : '' ?>
                             </option>
                         <?php endforeach; ?>
@@ -194,7 +212,16 @@ if ($editing_blocked) {
                     <select name="id_grupo" id="id_grupo" required class="form-select">
                         <option value="">-- Selecione um Grupo --</option>
                         <?php foreach ($grupos as $grupo): ?>
-                            <option value="<?= $grupo['id'] ?>" <?= ($editing && $produto['id_grupo'] == $grupo['id']) ? 'selected' : (isset($id_grupo) && $id_grupo == $grupo['id'] ? 'selected' : '') ?>>
+                            <?php
+                            if ($editing && $produto['id_grupo'] == $grupo['id']) {
+                                $grupo_selected = 'selected';
+                            } elseif (isset($id_grupo) && $id_grupo == $grupo['id']) {
+                                $grupo_selected = 'selected';
+                            } else {
+                                $grupo_selected = '';
+                            }
+                            ?>
+                            <option value="<?= $grupo['id'] ?>" <?= $grupo_selected ?>>
                                 <?= htmlspecialchars($grupo['nome']) ?>
                             </option>
                         <?php endforeach; ?>
@@ -206,35 +233,80 @@ if ($editing_blocked) {
             </br>
             <div class="form-group">
                 <label for="tipo" class="form-label">Tipo:</label>
+                <?php
+                if ($editing) {
+                    $tipo_value = htmlspecialchars($produto['tipo'] ?? '');
+                } elseif (isset($tipo)) {
+                    $tipo_value = htmlspecialchars($tipo);
+                } else {
+                    $tipo_value = '';
+                }
+                ?>
                 <input type="text" name="tipo" id="tipo" class="form-control"
-                       value="<?= $editing ? htmlspecialchars($produto['tipo'] ?? '') : (isset($tipo) ? htmlspecialchars($tipo) : '') ?>">
+                       value="<?= $tipo_value ?>">
             </div>
 
             <div class="form-row">
                 <div class="form-col">
                     <label for="volume" class="form-label">Volume:</label>
+                    <?php
+                    if ($editing) {
+                        $volume_value = htmlspecialchars($produto['volume'] ?? '');
+                    } elseif (isset($volume)) {
+                        $volume_value = htmlspecialchars($volume);
+                    } else {
+                        $volume_value = '';
+                    }
+                    ?>
                     <input type="text" name="volume" id="volume" class="form-control"
-                           value="<?= $editing ? htmlspecialchars($produto['volume'] ?? '') : (isset($volume) ? htmlspecialchars($volume) : '') ?>">
+                           value="<?= $volume_value ?>">
                 </div>
                 <div class="form-col">
                     <label for="unidade_medida" class="form-label">Unidade de Medida:</label>
+                    <?php
+                    if ($editing) {
+                        $unidade_medida_value = htmlspecialchars($produto['unidade_medida'] ?? '');
+                    } elseif (isset($unidade_medida)) {
+                        $unidade_medida_value = htmlspecialchars($unidade_medida);
+                    } else {
+                        $unidade_medida_value = '';
+                    }
+                    ?>
                     <input type="text" name="unidade_medida" id="unidade_medida" class="form-control"
-                           value="<?= $editing ? htmlspecialchars($produto['unidade_medida'] ?? '') : (isset($unidade_medida) ? htmlspecialchars($unidade_medida) : '') ?>" placeholder="Ex: ml, L, g, kg, etc">
+                           value="<?= $unidade_medida_value ?>" placeholder="Ex: ml, L, g, kg, etc">
                 </div>
             </div>
 
             </br>
             <div class="form-group">
                 <label for="preco" class="form-label">Preço (R$):</label>
+                <?php
+                if ($editing) {
+                    $preco_value = $produto['preco'] ? number_format($produto['preco'], 2, ',', '.') : '';
+                } elseif (isset($preco)) {
+                    $preco_value = number_format($preco, 2, ',', '.');
+                } else {
+                    $preco_value = '';
+                }
+                ?>
                 <input type="text" name="preco" id="preco" class="form-control"
-                       value="<?= $editing ? ($produto['preco'] ? number_format($produto['preco'], 2, ',', '.') : '') : (isset($preco) ? number_format($preco, 2, ',', '.') : '') ?>"
+                       value="<?= $preco_value ?>"
                        placeholder="Ex: 10,50" onblur="formatCurrency(this)">
             </div>
 
             </br>
             <div class="form-group">
                 <label for="descricao" class="form-label">Descrição:</label>
-                <textarea name="descricao" id="descricao" class="form-control"><?= $editing ? htmlspecialchars($produto['descricao'] ?? '') : (isset($descricao) ? htmlspecialchars($descricao) : '') ?></textarea>
+                <?php
+                if ($editing) {
+                    $descricao_value = htmlspecialchars($produto['descricao'] ?? '');
+                } elseif (isset($descricao)) {
+                    $descricao_value = htmlspecialchars($descricao);
+                } else {
+                    $descricao_value = '';
+                }
+                ?>
+                <textarea name="descricao" id="descricao" class="form-control"><?= $descricao_value ?></textarea>
             </div>
 
             </br>
