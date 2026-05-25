@@ -161,16 +161,22 @@ include_once __DIR__ . '/../includes/header.php';
             </div>
 
             <div class="form-group">
-                <label class="form-label">Tipo de Movimentação: <span class="required">*</span></label>
+                <label for="tipo" class="form-label">Tipo de Movimentação: <span class="required">*</span></label>
                 <div class="tipo-selector">
-                    <div class="card tipo-card entrada <?= (isset($tipo) && $tipo == 'entrada') ? 'selected' : '' ?>" onclick="selectTipo('entrada')">
+                    <div class="card tipo-card entrada <?= (isset($tipo) && $tipo == 'entrada') ? 'selected' : '' ?>"
+                         role="button" tabindex="0"
+                         onclick="selectTipo('entrada')"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')selectTipo('entrada')">
                         <div class="card-body">
                             <i class="fa fa-plus-circle"></i>
                             <h3>Entrada</h3>
                             <p>Adicionar itens ao estoque</p>
                         </div>
                     </div>
-                    <div class="card tipo-card saida <?= (!isset($tipo) || (isset($tipo) && $tipo == 'saida')) ? 'selected' : '' ?>" onclick="selectTipo('saida')">
+                    <div class="card tipo-card saida <?= (!isset($tipo) || (isset($tipo) && $tipo == 'saida')) ? 'selected' : '' ?>"
+                         role="button" tabindex="0"
+                         onclick="selectTipo('saida')"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')selectTipo('saida')">
                         <div class="card-body">
                             <i class="fa fa-minus-circle"></i>
                             <h3>Saída</h3>
