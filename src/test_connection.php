@@ -63,4 +63,3 @@ try {
     echo "<li>Port: " . htmlspecialchars($port) . "</li>";
     echo "</ul>";
 }
-?>
