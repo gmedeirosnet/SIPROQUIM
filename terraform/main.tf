@@ -18,12 +18,12 @@ resource "aws_security_group" "siproquim_sg" {
   description = "Security group for ${var.project_name} application"
   vpc_id      = aws_vpc.siproquim_vpc.id
 
-  # SSH access
+  # SSH access — restrict to trusted IPs via var.ssh_allowed_cidrs
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.ssh_allowed_cidrs
     description = "SSH access"
   }
 

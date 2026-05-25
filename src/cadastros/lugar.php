@@ -113,8 +113,16 @@ include_once __DIR__ . '/../includes/header.php';
         <form method="post" class="form">
             <div class="form-group">
                 <label for="nome" class="form-label">Nome do Almoxarifado: <span class="required-indicator">*</span></label>
-                <input type="text" name="nome" id="nome" required class="form-control"
-                       value="<?= $editing ? htmlspecialchars($lugar['nome']) : (isset($nome) ? htmlspecialchars($nome) : '') ?>">
+                <?php
+                if ($editing) {
+                    $nome_value = htmlspecialchars($lugar['nome']);
+                } elseif (isset($nome)) {
+                    $nome_value = htmlspecialchars($nome);
+                } else {
+                    $nome_value = '';
+                }
+                ?>
+                <input type="text" name="nome" id="nome" required class="form-control" value="<?= $nome_value ?>">
             </div>
 
             <div class="form-group">

@@ -57,3 +57,9 @@ variable "common_tags" {
   }
 }
 
+variable "ssh_allowed_cidrs" {
+  description = "List of CIDR blocks allowed to access SSH (port 22)"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+

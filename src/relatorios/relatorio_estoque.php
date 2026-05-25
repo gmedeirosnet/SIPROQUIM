@@ -242,7 +242,7 @@ include_once __DIR__ . '/../includes/header.php';
     </div>
 
     <br>
-    <?php if (count($produtos_por_grupo) > 0): ?>
+    <?php if (!empty($produtos_por_grupo)): ?>
     <h3 class="mt-4">Produtos por Grupo</h3>
     <div class="table-responsive">
         <table class="table">
