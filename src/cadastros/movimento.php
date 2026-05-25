@@ -163,26 +163,22 @@ include_once __DIR__ . '/../includes/header.php';
             <div class="form-group">
                 <label for="tipo" class="form-label">Tipo de Movimentação: <span class="required">*</span></label>
                 <div class="tipo-selector">
-                    <div class="card tipo-card entrada <?= (isset($tipo) && $tipo == 'entrada') ? 'selected' : '' ?>"
-                         role="button" tabindex="0"
-                         onclick="selectTipo('entrada')"
-                         onkeydown="if(event.key==='Enter'||event.key===' ')selectTipo('entrada')">
+                    <button type="button" class="card tipo-card entrada <?= (isset($tipo) && $tipo == 'entrada') ? 'selected' : '' ?>"
+                            onclick="selectTipo('entrada')">
                         <div class="card-body">
                             <i class="fa fa-plus-circle"></i>
                             <h3>Entrada</h3>
                             <p>Adicionar itens ao estoque</p>
                         </div>
-                    </div>
-                    <div class="card tipo-card saida <?= (!isset($tipo) || (isset($tipo) && $tipo == 'saida')) ? 'selected' : '' ?>"
-                         role="button" tabindex="0"
-                         onclick="selectTipo('saida')"
-                         onkeydown="if(event.key==='Enter'||event.key===' ')selectTipo('saida')">
+                    </button>
+                    <button type="button" class="card tipo-card saida <?= (!isset($tipo) || (isset($tipo) && $tipo == 'saida')) ? 'selected' : '' ?>"
+                            onclick="selectTipo('saida')">
                         <div class="card-body">
                             <i class="fa fa-minus-circle"></i>
                             <h3>Saída</h3>
                             <p>Remover itens do estoque</p>
                         </div>
-                    </div>
+                    </button>
                 </div>
                 <input type="hidden" name="tipo" id="tipo" value="<?= isset($tipo) ? $tipo : 'saida' ?>">
             </div>
