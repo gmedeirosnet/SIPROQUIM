@@ -6,8 +6,6 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../auth/auth_check.php';
 requirePermission(PERMISSION_READ, $current_user_grupo);
 
-define('SEARCH_PARAM', '&search=');
-define('GRUPO_PARAM', '&grupo=');
 
 // Set page title for the header
 // $pageTitle = 'Lista de Pessoas';
@@ -196,36 +194,11 @@ include_once __DIR__ . '/../includes/header.php';
             </table>
         </div>
 
-        <?php if ($total_pages > 1): ?>
-            <ul class="pagination">
-                <?php if ($page > 1): ?>
-                    <li><a href="?page=1<?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>" aria-label="Primeira página">Primeira</a></li>
-                    <li><a href="?page=<?= ($page - 1) ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>" aria-label="Página anterior">Anterior</a></li>
-                <?php else: ?>
-                    <li class="disabled"><span>Primeira</span></li>
-                    <li class="disabled"><span>Anterior</span></li>
-                <?php endif; ?>
-
-                <?php
-                $start_page = max(1, $page - 2);
-                $end_page = min($start_page + 4, $total_pages);
-                for ($i = $start_page; $i <= $end_page; $i++): ?>
-                    <?php if ($i == $page): ?>
-                        <li class="active"><span><?= $i ?></span></li>
-                    <?php else: ?>
-                        <li><a href="?page=<?= $i ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>" aria-label="Página <?= $i ?>"><?= $i ?></a></li>
-                    <?php endif; ?>
-                <?php endfor; ?>
-
-                <?php if ($page < $total_pages): ?>
-                    <li><a href="?page=<?= ($page + 1) ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>">Próxima</a></li>
-                    <li><a href="?page=<?= $total_pages ?><?= !empty($search) ? SEARCH_PARAM . urlencode($search) : '' ?><?= $filter_grupo ? GRUPO_PARAM . $filter_grupo : '' ?>">Última</a></li>
-                <?php else: ?>
-                    <li class="disabled"><span>Próxima</span></li>
-                    <li class="disabled"><span>Última</span></li>
-                <?php endif; ?>
-            </ul>
-        <?php endif; ?>
+        <?php
+        $pagination_extra = (!empty($search) ? '&search=' . urlencode($search) : '')
+                          . ($filter_grupo ? '&grupo=' . $filter_grupo : '');
+        include __DIR__ . '/../includes/pagination.php';
+        ?>
     <?php else: ?>
         <div class="alert alert-info">
             <?php if (!empty($search) || $filter_grupo > 0): ?>

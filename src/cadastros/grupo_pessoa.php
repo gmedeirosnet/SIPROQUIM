@@ -116,30 +116,13 @@ include_once __DIR__ . '/../includes/header.php';
     <form method="post" class="form">
         <div class="form-group">
             <label for="nome" class="form-label">Nome: <span class="text-danger">*</span></label>
-            <?php
-            if (isset($nome)) {
-                $nome_value = htmlspecialchars($nome);
-            } elseif ($editing) {
-                $nome_value = htmlspecialchars($grupo['nome']);
-            } else {
-                $nome_value = '';
-            }
-            ?>
-            <input type="text" name="nome" id="nome" class="form-control" required value="<?= $nome_value ?>">
+            <input type="text" name="nome" id="nome" class="form-control" required
+                value="<?= htmlspecialchars($editing ? $grupo['nome'] : ($nome ?? '')) ?>">
         </div>
 
         <div class="form-group">
             <label for="descricao" class="form-label">Descrição:</label>
-            <?php
-            if (isset($descricao)) {
-                $descricao_value = htmlspecialchars($descricao);
-            } elseif ($editing) {
-                $descricao_value = htmlspecialchars($grupo['descricao'] ?? '');
-            } else {
-                $descricao_value = '';
-            }
-            ?>
-            <textarea name="descricao" id="descricao" class="form-control"><?= $descricao_value ?></textarea>
+            <textarea name="descricao" id="descricao" class="form-control"><?= htmlspecialchars($editing ? ($grupo['descricao'] ?? '') : ($descricao ?? '')) ?></textarea>
         </div>
 
         <div class="btn-group mt-4">

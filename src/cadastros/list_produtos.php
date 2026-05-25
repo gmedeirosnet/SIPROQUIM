@@ -296,45 +296,15 @@ include_once __DIR__ . '/../includes/header.php';
             </table>
         </div>
 
-        <?php if ($total_pages > 1): ?>
-            <?php
-            // Build pagination URL parameters
-            $pagination_params = [];
-            if ($filter_grupo > 0) { $pagination_params[] = 'grupo=' . $filter_grupo; }
-            if ($filter_fabricante > 0) { $pagination_params[] = 'fabricante=' . $filter_fabricante; }
-            if (!empty($filter_tipo)) { $pagination_params[] = 'tipo=' . urlencode($filter_tipo); }
-            if (!empty($search)) { $pagination_params[] = 'search=' . urlencode($search); }
-            $pagination_query = !empty($pagination_params) ? '&' . implode('&', $pagination_params) : '';
-            ?>
-            <ul class="pagination">
-                <?php if ($page > 1): ?>
-                    <li><a href="?page=1<?= $pagination_query ?>" aria-label="Primeira página">Primeira</a></li>
-                    <li><a href="?page=<?= ($page - 1) ?><?= $pagination_query ?>" aria-label="Página anterior">Anterior</a></li>
-                <?php else: ?>
-                    <li class="disabled"><span>Primeira</span></li>
-                    <li class="disabled"><span>Anterior</span></li>
-                <?php endif; ?>
-
-                <?php
-                $start_page = max(1, $page - 2);
-                $end_page = min($start_page + 4, $total_pages);
-                for ($i = $start_page; $i <= $end_page; $i++): ?>
-                    <?php if ($i == $page): ?>
-                        <li class="active"><span><?= $i ?></span></li>
-                    <?php else: ?>
-                        <li><a href="?page=<?= $i ?><?= $pagination_query ?>" aria-label="Página <?= $i ?>"><?= $i ?></a></li>
-                    <?php endif; ?>
-                <?php endfor; ?>
-
-                <?php if ($page < $total_pages): ?>
-                    <li><a href="?page=<?= ($page + 1) ?><?= $pagination_query ?>">Próxima</a></li>
-                    <li><a href="?page=<?= $total_pages ?><?= $pagination_query ?>">Última</a></li>
-                <?php else: ?>
-                    <li class="disabled"><span>Próxima</span></li>
-                    <li class="disabled"><span>Última</span></li>
-                <?php endif; ?>
-            </ul>
-        <?php endif; ?>
+        <?php
+        $pagination_params = [];
+        if ($filter_grupo > 0) { $pagination_params[] = 'grupo=' . $filter_grupo; }
+        if ($filter_fabricante > 0) { $pagination_params[] = 'fabricante=' . $filter_fabricante; }
+        if (!empty($filter_tipo)) { $pagination_params[] = 'tipo=' . urlencode($filter_tipo); }
+        if (!empty($search)) { $pagination_params[] = 'search=' . urlencode($search); }
+        $pagination_extra = !empty($pagination_params) ? '&' . implode('&', $pagination_params) : '';
+        include __DIR__ . '/../includes/pagination.php';
+        ?>
     <?php else: ?>
         <div class="alert alert-info">
             <?php if (!empty($search) || $filter_grupo > 0 || $filter_fabricante > 0 || !empty($filter_tipo)): ?>

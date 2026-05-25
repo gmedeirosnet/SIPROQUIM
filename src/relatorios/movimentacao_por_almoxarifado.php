@@ -159,20 +159,7 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
 
         <br>
-        <div class="dashboard-cards">
-            <div class="dashboard-card">
-                <div>Total de Movimentações: <strong><?= $total_movements ?></strong></div>
-            </div>
-            <div class="dashboard-card">
-                <div>Total de Entradas: <strong><?= $total_entrada ?></strong></div>
-            </div>
-            <div class="dashboard-card">
-                <div>Total de Saídas: <strong><?= $total_saida ?></strong></div>
-            </div>
-            <div class="dashboard-card">
-                <div>Produtos Movimentados: <strong><?= count($produtos_movimentados) ?></strong></div>
-            </div>
-        </div>
+        <?php include __DIR__ . '/../includes/movimento_summary_cards.php'; ?>
 
         <br>
         <?php if (!empty($produtos_movimentados)): ?>
