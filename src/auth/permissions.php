@@ -21,33 +21,16 @@ define('GROUP_AUDITORES', 5);  // Adicionado para o grupo de Auditores
  * @return bool True se o usuário tem a permissão, false caso contrário
  */
 function hasPermission($permission, $user_group_id) {
-    // Administradores possuem acesso total (CRUD)
-    if ($user_group_id == GROUP_ADMINISTRADORES) {
-        return true;
-    }
+    $permissions = [
+        GROUP_ADMINISTRADORES => [PERMISSION_CREATE, PERMISSION_READ, PERMISSION_UPDATE, PERMISSION_DELETE],
+        GROUP_TECNICOS        => [PERMISSION_CREATE, PERMISSION_READ, PERMISSION_UPDATE],
+        GROUP_SUPERVISORES    => [PERMISSION_CREATE, PERMISSION_READ, PERMISSION_UPDATE],
+        GROUP_AUDITORES       => [PERMISSION_READ],
+    ];
 
-    // Técnicos e Supervisores possuem acesso parcial (CRU)
-    if ($user_group_id == GROUP_TECNICOS || $user_group_id == GROUP_SUPERVISORES) {
-        if ($permission == PERMISSION_DELETE) {
-            return false;
-        }
-        return true;
-    }
+    $allowed = $permissions[$user_group_id] ?? [PERMISSION_READ];
 
-    // Auditores podem apenas ler, sem permissão para criar, atualizar ou excluir
-    if ($user_group_id == GROUP_AUDITORES) {
-        if ($permission == PERMISSION_READ) {
-            return true;
-        }
-        return false;
-    }
-
-    // Demais grupos possuem acesso restrito (R)
-    if ($permission == PERMISSION_READ) {
-        return true;
-    }
-
-    return false;
+    return in_array($permission, $allowed);
 }
 
 /**
@@ -145,12 +128,9 @@ function isAdmin($user_group_id) {
  */
 function requireAdmin($user_group_id, $redirect_url = null) {
     if (!isAdmin($user_group_id)) {
-        // Se um URL de redirecionamento específico não foi fornecido, use o padrão
         if ($redirect_url === null) {
             $redirect_url = '/auth/access_denied.php';
         }
-
-        // Redirecionar para a página de acesso negado
         header('Location: ' . $redirect_url);
         exit;
     }
