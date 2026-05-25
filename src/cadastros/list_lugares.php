@@ -119,7 +119,7 @@ include_once __DIR__ . '/../includes/header.php';
 
         <?php
         $pagination_extra = !empty($search) ? '&search=' . urlencode($search) : '';
-        include __DIR__ . '/../includes/pagination.php';
+        include_once __DIR__ . '/../includes/pagination.php';
         ?>
     <?php else: ?>
         <div class="alert alert-info">
