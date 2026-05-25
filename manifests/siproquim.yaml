@@ -250,6 +250,15 @@ spec:
                 secretKeyRef:
                   name: siproquim-db-secret
                   key: DB_PASSWORD
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+              ephemeral-storage: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+              ephemeral-storage: "256Mi"
           command:
             - psql
             - -v
