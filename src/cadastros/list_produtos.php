@@ -303,7 +303,7 @@ include_once __DIR__ . '/../includes/header.php';
         if (!empty($filter_tipo)) { $pagination_params[] = 'tipo=' . urlencode($filter_tipo); }
         if (!empty($search)) { $pagination_params[] = 'search=' . urlencode($search); }
         $pagination_extra = !empty($pagination_params) ? '&' . implode('&', $pagination_params) : '';
-        include __DIR__ . '/../includes/pagination.php';
+        include_once __DIR__ . '/../includes/pagination.php';
         ?>
     <?php else: ?>
         <div class="alert alert-info">

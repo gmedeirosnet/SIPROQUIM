@@ -159,7 +159,7 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
 
         <br>
-        <?php include __DIR__ . '/../includes/movimento_summary_cards.php'; ?>
+        <?php include_once __DIR__ . '/../includes/movimento_summary_cards.php'; ?>
 
         <br>
         <?php if (!empty($produtos_movimentados)): ?>
