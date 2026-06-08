@@ -15,6 +15,8 @@ SIPROQUIM is a web-based chemical inventory management system built with **PHP 8
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
 ![Shell](https://img.shields.io/badge/Shell-4EAA25?style=flat&logo=gnu-bash&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white)
+<!-- Security -->
+[![Quality gate](https://sonarqube.souanalogico.com/api/project_badges/quality_gate?project=siproquim&token=sqb_b1e78daee517118dd1aeb4352c2b2d60d157caa2)](https://sonarqube.souanalogico.com/dashboard?id=siproquim)
 
 ---
 
