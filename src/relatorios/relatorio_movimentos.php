@@ -41,6 +41,7 @@ $sql = "SELECT m.id,
                p.nome AS produto,
                pe.nome AS pessoa,
                l.nome AS lugar,
+               ld.nome AS lugar_destino,
                m.tipo,
                m.quantidade,
                m.observacao,
@@ -48,7 +49,8 @@ $sql = "SELECT m.id,
         FROM movimentos m
         JOIN produtos p ON p.id = m.id_produto
         JOIN pessoas pe ON pe.id = m.id_pessoa
-        LEFT JOIN lugares l ON l.id = m.id_lugar";
+        LEFT JOIN lugares l ON l.id = m.id_lugar
+        LEFT JOIN lugares ld ON ld.id = m.id_lugar_destino";
 
 // Add date filter if applicable
 if ($date_start && $date_end) {
@@ -81,13 +83,19 @@ $total_saidas = 0;
 $quantidade_entrada = 0;
 $quantidade_saida = 0;
 
+$total_transferencias = 0;
+$quantidade_transferencia = 0;
+
 foreach ($movimentos as $mov) {
     if ($mov['tipo'] == 'entrada') {
         $total_entradas++;
         $quantidade_entrada += $mov['quantidade'];
-    } else {
+    } elseif ($mov['tipo'] == 'saida') {
         $total_saidas++;
         $quantidade_saida += $mov['quantidade'];
+    } else {
+        $total_transferencias++;
+        $quantidade_transferencia += $mov['quantidade'];
     }
 }
 
@@ -151,6 +159,9 @@ include_once __DIR__ . '/../includes/header.php';
         <div class="dashboard-card">
             <div><strong>Saídas: </strong> <?= $total_saidas ?></div>
         </div>
+        <div class="dashboard-card">
+            <div><strong>Transferências: </strong><?= $total_transferencias ?></div>
+        </div>
     </div>
 
     <br>
@@ -189,12 +200,20 @@ include_once __DIR__ . '/../includes/header.php';
                     <tr>
                         <td><?= date("d/m/Y H:i", strtotime($mov['data_movimento'])) ?></td>
                         <td><?= htmlspecialchars($mov['produto']) ?></td>
-                        <td><?= htmlspecialchars($mov['lugar'] ?: 'Não especificado') ?></td>
+                        <td>
+                            <?php if ($mov['tipo'] == 'transferencia'): ?>
+                                <?= htmlspecialchars($mov['lugar'] ?: 'N/A') ?> → <?= htmlspecialchars($mov['lugar_destino'] ?: 'N/A') ?>
+                            <?php else: ?>
+                                <?= htmlspecialchars($mov['lugar'] ?: 'Não especificado') ?>
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <?php if ($mov['tipo'] == 'entrada'): ?>
                                 <span class="text-success"><strong>Entrada</strong></span>
-                            <?php else: ?>
+                            <?php elseif ($mov['tipo'] == 'saida'): ?>
                                 <span class="text-danger"><strong>Saída</strong></span>
+                            <?php else: ?>
+                                <span class="text-primary"><strong>Transferência</strong></span>
                             <?php endif; ?>
                         </td>
                         <td class="text-right"><?= $mov['quantidade'] ?></td>
