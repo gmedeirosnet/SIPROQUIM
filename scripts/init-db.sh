@@ -163,7 +163,7 @@ docker exec -i ${CONTAINER_NAME} psql -v ON_ERROR_STOP=1 --username "${POSTGRES_
       id_produto INTEGER REFERENCES produtos(id) ON DELETE CASCADE,
       id_pessoa INTEGER REFERENCES pessoas(id) ON DELETE CASCADE,
       id_lugar INTEGER REFERENCES lugares(id) ON DELETE CASCADE,
-      tipo VARCHAR(10) NOT NULL, -- 'entrada' ou 'saida'
+      tipo VARCHAR(15) NOT NULL, -- 'entrada', 'saida' ou 'transferencia'
       quantidade INTEGER NOT NULL,
       data_movimento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       observacao TEXT
@@ -175,6 +175,26 @@ docker exec -i ${CONTAINER_NAME} psql -v ON_ERROR_STOP=1 --username "${POSTGRES_
         IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'movimentos') THEN
             IF NOT EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'movimentos' AND column_name = 'observacao') THEN
                 ALTER TABLE movimentos ADD COLUMN observacao TEXT;
+            END IF;
+        END IF;
+    END
+    \$\$;
+
+    -- Amplia o tipo para suportar 'transferencia' (13 chars)
+    DO \$\$
+    BEGIN
+        IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'movimentos' AND column_name = 'tipo') THEN
+            ALTER TABLE movimentos ALTER COLUMN tipo TYPE VARCHAR(15);
+        END IF;
+    END
+    \$\$;
+
+    -- Adiciona a coluna 'id_lugar_destino' para suportar transferências
+    DO \$\$
+    BEGIN
+        IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'movimentos') THEN
+            IF NOT EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'movimentos' AND column_name = 'id_lugar_destino') THEN
+                ALTER TABLE movimentos ADD COLUMN id_lugar_destino INTEGER REFERENCES lugares(id) ON DELETE SET NULL;
             END IF;
         END IF;
     END
