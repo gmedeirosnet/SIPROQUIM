@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $quantidade  = $_POST['quantidade'] ?? '';
     $data_movimento = $_POST['data_movimento'] ?? date('Y-m-d H:i:s');
     $observacao  = $_POST['observacao'] ?? '';
+    $id_lugar_destino = $_POST['id_lugar_destino'] ?? '';
 
     // Validate required fields
     $errors = [];
@@ -41,6 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($tipo)) {
         $errors[] = "O tipo de movimentação é obrigatório.";
     }
+    if ($tipo == 'transferencia') {
+        if (empty($id_lugar_destino)) {
+            $errors[] = "O almoxarifado de destino é obrigatório.";
+        } elseif ($id_lugar_destino == $id_lugar) {
+            $errors[] = "O almoxarifado de origem e destino não podem ser iguais.";
+        }
+    }
     if (empty($quantidade) || $quantidade <= 0) {
         $errors[] = "A quantidade deve ser maior que zero.";
     }
@@ -49,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($errors)) {
         try {
             // If it's a saida, check if there's enough stock
-            if ($tipo == 'saida') {
+            if ($tipo == 'saida' || $tipo == 'transferencia') {
                 // Get current stock for this product in this location
                 $stmt = $pdo->prepare("
                     SELECT COALESCE(SUM(CASE WHEN tipo = 'entrada' THEN quantidade ELSE -quantidade END), 0) as saldo
@@ -71,17 +79,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (empty($errors)) {
                 // Insert the movement
-                $sql = "INSERT INTO movimentos (id_produto, id_pessoa, id_lugar, tipo, quantidade, data_movimento, observacao)
-                        VALUES (:id_produto, :id_pessoa, :id_lugar, :tipo, :quantidade, :data_movimento, :observacao)";
+                $sql = "INSERT INTO movimentos (id_produto, id_pessoa, id_lugar, tipo, quantidade, data_movimento, observacao, id_lugar_destino)
+                        VALUES (:id_produto, :id_pessoa, :id_lugar, :tipo, :quantidade, :data_movimento, :observacao, :id_lugar_destino)";
                 $stmt = $pdo->prepare($sql);
                 $result = $stmt->execute([
-                    'id_produto' => $id_produto,
-                    'id_pessoa' => $id_pessoa,
-                    'id_lugar' => $id_lugar,
-                    'tipo' => $tipo,
-                    'quantidade' => $quantidade,
-                    'data_movimento' => $data_movimento,
-                    'observacao' => $observacao
+                    'id_produto'       => $id_produto,
+                    'id_pessoa'        => $id_pessoa,
+                    'id_lugar'         => $id_lugar,
+                    'tipo'             => $tipo,
+                    'quantidade'       => $quantidade,
+                    'data_movimento'   => $data_movimento,
+                    'observacao'       => $observacao,
+                    'id_lugar_destino' => ($tipo == 'transferencia' && !empty($id_lugar_destino)) ? $id_lugar_destino : null,
                 ]);
 
                 if ($result) {
@@ -148,11 +157,23 @@ include_once __DIR__ . '/../includes/header.php';
                 </div>
 
                 <div class="form-col">
-                    <label for="id_lugar" class="form-label">Almoxarifado: <span class="required">*</span></label>
+                    <label for="id_lugar" class="form-label" id="label_id_lugar">Almoxarifado: <span class="required">*</span></label>
                     <select name="id_lugar" id="id_lugar" class="form-select" required>
                         <option value="">Selecione um local</option>
                         <?php foreach ($lugares as $lugar): ?>
                         <option value="<?= $lugar['id'] ?>" <?= isset($id_lugar) && $id_lugar == $lugar['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($lugar['nome']) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-col" id="col_lugar_destino" style="display:none;">
+                    <label for="id_lugar_destino" class="form-label">Almoxarifado de destino: <span class="required">*</span></label>
+                    <select name="id_lugar_destino" id="id_lugar_destino" class="form-select">
+                        <option value="">Selecione um local</option>
+                        <?php foreach ($lugares as $lugar): ?>
+                        <option value="<?= $lugar['id'] ?>" <?= isset($id_lugar_destino) && $id_lugar_destino == $lugar['id'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($lugar['nome']) ?>
                         </option>
                         <?php endforeach; ?>
@@ -177,6 +198,14 @@ include_once __DIR__ . '/../includes/header.php';
                             <i class="fa fa-minus-circle"></i>
                             <h3>Saída</h3>
                             <p>Remover itens do estoque</p>
+                        </div>
+                    </button>
+                    <button type="button" class="card tipo-card transferencia <?= (isset($tipo) && $tipo == 'transferencia') ? 'selected' : '' ?>"
+                            onclick="selectTipo('transferencia')">
+                        <div class="card-body">
+                            <i class="fa fa-exchange"></i>
+                            <h3>Movimentar</h3>
+                            <p>Mover o produto para outro almoxarifado</p>
                         </div>
                     </button>
                 </div>
@@ -214,20 +243,36 @@ include_once __DIR__ . '/../includes/header.php';
 
 <script>
     function selectTipo(tipo) {
-        // Update hidden input
         document.getElementById('tipo').value = tipo;
 
-        // Update visual selection
+        var cards = document.querySelectorAll('.tipo-card');
+        cards.forEach(function(card) {
+            card.classList.remove('selected');
+            card.style.backgroundColor = '#f5f5f5';
+            card.style.border = '';
+        });
+
+        var selected = document.querySelector('.tipo-card.' + tipo);
+        selected.classList.add('selected');
+
         if (tipo === 'entrada') {
-            document.querySelector('.tipo-card.entrada').classList.add('selected');
-            document.querySelector('.tipo-card.entrada').style.backgroundColor = '#4CAF50'; // Green
-            document.querySelector('.tipo-card.saida').classList.remove('selected');
-            document.querySelector('.tipo-card.saida').style.backgroundColor = '#f5f5f5'; // Reset to grey
+            selected.style.backgroundColor = '#4CAF50';
+        } else if (tipo === 'saida') {
+            selected.style.backgroundColor = '#f44336';
         } else {
-            document.querySelector('.tipo-card.entrada').classList.remove('selected');
-            document.querySelector('.tipo-card.entrada').style.backgroundColor = '#f5f5f5'; // Reset to grey
-            document.querySelector('.tipo-card.saida').classList.add('selected');
-            document.querySelector('.tipo-card.saida').style.backgroundColor = '#f44336'; // Red
+            selected.style.backgroundColor = '';
+            selected.style.border = '2px solid #4CAF50';
+        }
+
+        var colDestino = document.getElementById('col_lugar_destino');
+        var labelOrigem = document.getElementById('label_id_lugar');
+        if (tipo === 'transferencia') {
+            colDestino.style.display = '';
+            labelOrigem.innerHTML = 'Almoxarifado de origem: <span class="required">*</span>';
+        } else {
+            colDestino.style.display = 'none';
+            labelOrigem.innerHTML = 'Almoxarifado: <span class="required">*</span>';
+            document.getElementById('id_lugar_destino').value = '';
         }
     }
 
@@ -244,14 +289,19 @@ include_once __DIR__ . '/../includes/header.php';
         document.getElementById('data_movimento').value = formattedDateTime;
 
         // Initialize the card backgrounds to grey
-        document.querySelector('.tipo-card.entrada').style.backgroundColor = '#f5f5f5';
-        document.querySelector('.tipo-card.saida').style.backgroundColor = '#f5f5f5';
+        document.querySelectorAll('.tipo-card').forEach(function(card) {
+            card.style.backgroundColor = '#f5f5f5';
+        });
 
-        // Set the color for the initially selected card (usually Entrada)
+        // Set the color for the initially selected card
         if (document.querySelector('.tipo-card.entrada').classList.contains('selected')) {
-            document.querySelector('.tipo-card.entrada').style.backgroundColor = '#4CAF50'; // Green
+            document.querySelector('.tipo-card.entrada').style.backgroundColor = '#4CAF50';
         } else if (document.querySelector('.tipo-card.saida').classList.contains('selected')) {
-            document.querySelector('.tipo-card.saida').style.backgroundColor = '#f44336'; // Red
+            document.querySelector('.tipo-card.saida').style.backgroundColor = '#f44336';
+        } else if (document.querySelector('.tipo-card.transferencia').classList.contains('selected')) {
+            document.querySelector('.tipo-card.transferencia').style.border = '2px solid #4CAF50';
+            document.getElementById('col_lugar_destino').style.display = '';
+            document.getElementById('label_id_lugar').innerHTML = 'Almoxarifado de origem: <span class="required">*</span>';
         }
     });
 </script>
