@@ -180,6 +180,17 @@ docker exec -i ${CONTAINER_NAME} psql -v ON_ERROR_STOP=1 --username "${POSTGRES_
     END
     \$\$;
 
+    -- Adiciona a coluna 'id_lugar_destino' para suportar transferências
+    DO \$\$
+    BEGIN
+        IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'movimentos') THEN
+            IF NOT EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'movimentos' AND column_name = 'id_lugar_destino') THEN
+                ALTER TABLE movimentos ADD COLUMN id_lugar_destino INTEGER REFERENCES lugares(id) ON DELETE SET NULL;
+            END IF;
+        END IF;
+    END
+    \$\$;
+
     -- Criação da tabela de logs de login
     CREATE TABLE IF NOT EXISTS login_logs (
       id SERIAL PRIMARY KEY,
